@@ -1,0 +1,75 @@
+A program egy egyszerű interpreter, így az ilyen alkalmazásoknál megszokott összetevők itt is megjelennek.
+
+\subsection{"Lexer"—Lexikai analízis}
+
+„Az első lépés bármely értelmező vagy fordító létrehozásában a szkennelés1. A szkenner a nyers bemeneti forráskódot karakterek sorozataként fogadja, majd ezeket tokeneknek nevezett csoportokba gyűjti. Ezek a nyelv értelmes »szavai« és »írásjelei« melyek kialakítják annak nyelvtanát.”[2]
+
+A tokenek közé tartoznak például az operátorok, a változónevek, a különböző utasítások és kifejezések nevei, és az úgynevezett „atomok,” melyek olyan értékek, amik például számokat vagy szövegeket tartalmaznak.
+
+A Lexer feladata ezen kívül még az úgynevezett „triviák”, avagy jelentéssel nem bíró elemek megszüntetése is. Ezek közé tartoznak a kommentek (hisz ezeket az értelmező figyelmen kívül hagyja) és az jelentést nem módosító üres helyek (mivel a program szempontjából nem jelent semmiféle különbséget, hogy valaki „5 + 3”-t ír vagy „5          +3”-t vagy mindhárom karaktert különböző sorba írja).
+
+Mivel a lexikai analízis egy elég szimpla és túl sok változatosságot nem mutató folyamat, így kevés hozzá kapcsolódó, néven nevezett algoritmus létezik. A fő befolyásoló elem az a nyelv maga, amelyben az interpreter van írva. Ha rendelkezünk reguláris kifejezésekkel2, az nagyban megkönnyítheti a munkát, hisz a legtöbb lexikai szabály egy-az-egyben kifejezhető ilyenek segítségével.
+
+Az egyetlen hibakezelés, melyet ebben a szekcióban végzünk az értelmetlen tokenek szűrésére vonatkozik. Mivel a lexernek nincs tudása arról, hogy ezeknek milyen sorrendben is kell követniük egymást, ezért például hiba nélkül el fog fogadni egy olyan kódot, mely a következőképp szól „ha amíg x+5” annak ellenére, hogy ez nyilvánvalóan hibás kód. Viszont, ha olyasmit írunk, hogy „ha --” azt már ebben a lépésben is ki tudjuk szűrni, hisz a nyelv nem támogatja a csökkentő operátort.
+
+Feltéve, hogy a bemenetünk nem hibás a lexer a következő lépéseket hajtja végre:
+
+    1. Ellenőrzi, hogy a bemenet végére értünk-e. Ha igen, visszatér a tokenek listájával.
+
+    2. Ha nem, akkor átugorja az úgynevezett triviákat, ezek a fentebb tárgyalt jelentéssel nem rendelkező elemek (kommentek, többszöri üres helyek, többszöri új sor nyitása.)
+
+    3. Izolálja a következő tokent.
+
+        1. Operátorok („+”, „-”, „/” „x”, „←”, „<=”, „>=”, „=”, „=/=”) esetén ez egy, kettő vagy három karaktert jelent. Ez nem okoz problémát, hisz az operátor első (vagy az utolsó operátor esetén az első és a második) karaktere egyértelművé teszi, milyen fajta is.
+
+A lexernek nem feladata, hogy az operátorok precedeniáját (tehát a számítások matematikai szabályok szerinti sorrendben történő kiszámítását) figyelembe vegye. Erről a parser felel.
+
+        2. Kulcsszavak esetén csak egyszerűen végigiterálunk egy listán, mely az összes kulcsszót tartalmazza és visszatérünk, ha bármikor egyezést találunk.
+
+        3. Egyébként a token egy atom, mely szám esetén nem igényel egyéb módosítást, szöveg esetén viszont szükséges az idézőjelek levágása a végeiről.
+
+    4. A lexer létrehoz egy új tokent, beállítja a fajtáját és ha rendelkezik egyéb adattal (például atomok esetén), akkor azt is beállítja az erre a célra kijelölt mezőben.
+
+    5. A lexer hozzáadja a listához a tokent, majd a visszalép az első lépésre.
+
+Az így kapott lista ezután továbbításra kerül a következő egységhez, az értelmezőhöz.
+
+\subsection{"Parser"—Értelmezés}
+
+A „parser” vagyis értelmező feladata az előző lépésben készített tokenekből a gép számára is értelmezhető formátumot alkotni. Ezt egy úgynevezett „absztrakt szintaxisfával” reprezentáljuk, mely egy tokenekből alkotott fa, melynek levelein csak atomok találhatóak, ágain pedig egy vagy több értéket fogadó operátorok és kulcsszavak állnak.
+
+A parser felelős azért is, hogy a statikus szintaktikai hibákat kiszűrjük. Ide tartoznak az egymást nem követhető kulcsszavak, a kulcsszavakhoz való értékadás, hiányzó lezáró tokenek („elágazás vége” hiánya), két egymás utáni atom és bármely egyéb olyan kódszerkezet, amelynek nincs értelme a nyelv specifikációja szerint.
+
+A lexerekkel ellentétben számos parser létezik, alább szeretnék kettőt jellemezni, amelyek a leginkább hasznosnak tűnnek számomra.
+
+\subsubsection{Rekurzív alászálló parser}
+
+A rekurzív alászálló parserek[19] egy felülről-lefelé haladó parser, mely rekurzív procedúrákkal dolgozza fel a tokeneket.
+
+Két fő fajtáját különböztetjük meg az ilyen parsereknek. Az első egy bizonyos véges számú token alapján képes eldönteni pontosan milyen szerkezetnek kell a szintaxisfába kerülnie.
+
+A másik egymás után próbálgatja a szabályokat, amíg vagy a lista végére nem érünk (mely esetben hibát dobunk) vagy találunk egy olyan szabályt, mely illeszkedik a tokenekre.
+
+\subsubsection{PEG parser}
+
+A PEG parser[3] nagyban hasonlít a sima alászálló parserekhez, viszont azokkal ellentétben minden egyes illeszkedő szabály minden esetben garantáltan megadja pontosan milyen értéket is talált a parser. Emiatt nagyon hasznos programozási nyelvekhez és így ezt szeretném használni a projektemben.
+
+\subsection{Virtuális Gép—Végrehajtás}
+
+A „virtuális gép” egy olyan program, melynek feladata, hogy a parser által generált szintaxisfát lefuttassa, úgy mintha az egy képzeletbeli, egyszerűsített számítógépen futna. A felhasználó számára talán ez a „legizgalmasabb” része a programnak, hisz amint ez a része véget ér jelenik meg a képernyőn a kód végeredménye.
+
+A virtuális gép lényegében egy minden érvényes utasítást értelmezni képes switch elágazásból; egy változókat és a nyelven belül definiált függvényeket számon tartó adatszerkezetből (melyet környezetnek nevezünk) és valamilyen futási hibakezelésből áll.
+
+A virtuális gép működésének egyik megközelítése a rekurzió, hisz a szintaxisfánk egy fa, melynek minden ága is egy értelmes szintaxisfának felel meg. Így alkalmas stratégia, hogy egészen addig osztogatjuk fel részproblémákra a futtatást, míg a levelekig nem érünk, melyek nem igényelnek semmiféle feldolgozást. Innentől pedig a rekurzió elkezd visszafejleni és a levelek fölötti ágak eredményei válnak az új levelekké.
+
+Az 3.1. ábra bemutatja a 10 / 2 * 15 + 5 egyenlet kiszámolását egy egyszerű szintaxisfa segítségével.
+
+
+
+A futtatás akkor ér véget, ha vagy a szintaxisfa legvégére értünk vagy hibába ütköztünk. 
+
+Másik megközelítés, hogy ezt a fát először egy tömbbé változtatjuk, melynek utasításai nem függenek egymástól. Ennek előnye, hogy a futtatás bármikor megállítható, a rekurzív megközelítéssel szemben, melynél muszáj egy végeredményt kiértékelnünk mielőtt az algoritmus megállna. 
+
+A saját megvalósításomban ezt az utóbbi megközelítést választottam, mivel így csupán még egy rétegnyi feldolgozás bevezetésével a kód léptethetővé és futás közben változtathatóvá válik. Ennek részleteiről a megvalósításról szóló fejezetben írok.
+
+Mivel a projektspecifikáció része, hogy léptetni is lehessen a kódot előre- és visszafelé is, emiatt a gép állapotát és az egyes környezeteket érdemes úgynevezett megváltoztathatatlan („immutable”) adatszerkezetekben eltárolni, így léptetés esetén csak a jelenleg aktív szerkezetet cseréljük ki egy korábbi vagy újabb verzióra.

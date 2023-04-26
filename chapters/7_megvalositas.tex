@@ -1,0 +1,163 @@
+A felhasználó által begépelt kód több átalakítási lépésen esik át, melyet most sorra veszek. A lépések demonstrálásához a fentebb említett könyv egyik algoritmusát, az Euklideszi algoritmust használom fel példának, mely két szám legnagyobb közös osztóját számolja ki. A jegyzetben prezentált kód a 7.1-es ábrán látható, melynek átirata a 7.1-es forráskódban szerepel.
+
+7.1 Absztrakt szintaxisfa létrehozása
+
+A bementi nyers szöveg szintaxisfává átalakításához az ANTLR lexer és parser generátort választottam eszköznek.
+
+„Az ANTLR egy erős parser generátor, mely alkalmas bináris fájlok és struktúrált szövegek olvasására, feldolgozására, futtatására, és fordítására. Széleskörűen alkalmazzák nyelvek és framework-ök ltérehozására.”[13]
+
+Első lépésben létrehoztam egy úgynevezett grammar („nyelvtan”) fájlt, mely a Pszeudokód programozási nyelv elemeit tartalmazza. Az ANTLR ennek felhasználásával generálja le a nyelvhez használt lexert és parsert.
+
+Ehhez szükséges volt felsorolnom a nyelv tokenjeit (az utasítások építőelemeit) és magukat a lehetséges utasításokat és kifejezéseket. Mivel a nyelv nem rendelkezik specifikációval, így a szabályok és elemek meghatározásához a korábban említett Algoritmusok, adatszerkezetek I. dokumentumot használtam.
+
+7.1.1 Tokenek
+
+A tokenek a lexer által értelmezett legkisebb egységek. Ide tartoznak a konkrét kulcsszavak, mint például „ciklus”, „elágazás”, vagy „függvény” melyeket előre megadott karakterláncok segítségével észlelünk és az olyan értékek, mint például számok, változónevek, és szövegek, melyeket reguláris kifejezésekkel határozunk meg.
+
+A nyelv által használt összes token a 7.2. forráskódban látható.
+
+7.1.2 Utasítások és Kifejezések
+
+Mint a legtöbb más imperatív programozási nyelv, a Pszeudokód is különbséget tesz az utasítások és a kifejezések között. Az előbbi az utóbbival ellentétben nem produkálhat értéket, míg a kifejezéseknek kötelező valamilyen értékké válniuk kiértékelés után.
+
+7.1.2.1 Kifejezések
+
+A legegyszerűbb kifejezések az úgynevezett atomok, melyek olyan értékek, amik saját magukká válnak kiértékelés után. Ilyenek például a számok. Az „5” szám atom, hisz az értéke önmaga, vagyis az ötös szám. A szövegek és a logikai értékek is ide tartoznak.
+
+Ezen alap építőkövekre épülnek a komplexebb kifejezések, például a számítások és logikai műveletek, melyek rekurzívan egymásra is épülhetnek (például többszörös összeadás.) 
+
+Ide tartozik még a függvényhívás is, viszont mivel eljárások esetében nem térünk vissza értékekkel, így csak a kód egyszerűbbé tétele miatt soroljuk a kifejezésekhez.
+
+A kifejezések és precedenciáik a 7.3-es forráskódban vannak felsorolva.
+
+7.1.2.2 Utasítások
+
+Míg a kifejezések magukat az elvégzett számolásokat és műveleteket definiálják, az utasítások a program folyamatvezérlését, a változók elérését és módosítását, a standard kimenetre történő írást, és a hibakereső töréspontjait határozzák meg.
+
+Bár az utasítások definíció szerint nem térhetnek vissza értékekkel, ez alól kivételt képez a „vissza” utasítás, mely annak ellenére, hogy ehhez a kategóriához van sorolva, képes egy függvényt megszakítani és egy értékkel visszatérni.
+
+A nyelv utasításait a 7.4-as forráskód sorolja fel. Az ábrán ezen kívül megfigyelhető még, hogy minden utasítást új sorral zárunk le.
+
+7.1.3 Fa generálás
+
+Az ANTLR könyvtár a grammar fájlt bemenetként felhasználva képes egy komplett lexer és parser osztályt generálni számunkra. A felhasználó kódja először is a lexeren fut keresztül, mely egy tokenekből álló listával tér vissza, melyet a parser kifejezésekké és utasításokká alakít, majd egy szintaxisfába rendezi.
+
+
+
+A fába rendezett, de még lineáris kóddá nem alakított Euklideszi algoritmust a 7.5-es forráskód mutatja be. Ez a fa önmagában semmiféle logikát nem tartalmaz, csupán egy hierarchikus reprezentációja a kódnak.
+
+Fontos megjegyezni, hogy egy érvényes tokenekből álló bemenet nem garantáltan érvényes program. Például a „ha ha ha ha” vagy „elágazás ciklus” bemenet érvényes tokeneket tartalmaz, ám a parser képtelen érvényes szintaxisfát generálni belőlük.
+
+Ennek következménye, hogy a kódban található esetleges hibákat három helyen is kezelnünk kell:
+
+    • A tokenizálás folyamata során,
+
+    • A szintaxisfa generálása közben,
+
+    • A program futása során.
+
+Itt történik a felhasználó által ejtett helyesírási és szintaktikai hibák elkapása is. Ehhez a generált osztályok hibafigyelőit kell felülírnunk, melyek alapértelmezetten a böngésző parancssorába küldik a hibákat.
+
+7.2 Szekvenciális program generálása
+
+Az elkészült szintaxisfát levelei típusainak figyelembevételével átalakítjuk egy egymástól független utasításokból álló listává. Ezt egy egyszerű tömbben tároljuk, mely három adattagokból álló elemekből áll. A példánkban demonstrált algoritmus végleges kódját a 7.6. forráskód tartalmazza.
+
+Az első adattag tartalmazza az úgynevezett opcode-ot (operation code, magyarul „gépi kód”-nak fordítjuk.) Ez egy egyedi név, mely alapján az értelmező el tudja dönteni pontosan mit is kell tennie.
+
+A második adattag opcionális (hiánya esetén null értéket tartalmaz) neve payload („csomag”). Ebben egy extra értéket tárolhatunk, mely a kód végrehajtásához szükséges és fordítás közben kiértékelhető (tehát atom.)
+
+A harmadik adattag az eredeti kód sorszámát tartalmazza, ezt hibakeresés esetén és a felhasználói felületen használjuk fel.
+
+7.2.1 Eredeti megközelítés
+
+A fejlesztés kezdetekor magát az absztrakt szintaxisfát használtam fel a program lefuttatására. Ennek pozitívuma, hogy a kód csupán egy átalakítást igényel (egyszerű szövegből szintaxisfává) majd ezután egy rekurzív eljárás segítségével (melyet a Visitor osztály szekciójában részletezek) könnyedén lefuttatható.
+
+Ugyanakkor a folyamat egyszerűsége egy ezen módszerrel kiküszöbölhetetlen problémát eredményez: Amint elindítottuk a folyamatot a rekurzív függvény addig meg nem áll míg az összes ág ki nem értékelődik. 
+
+Ez nem jelent gondot amíg csupán a végeredményre vagyunk kíváncsiak, ám mivel a program követelményeiben szerepel, hogy tetszőleges pontban megállíthatónak és léptethetőnek kell lennie a futó kódnak, így ezt a megvalósítást végül el kellett vetnem.
+
+Ennek ellenére, az így elvetett kód több részben is inspirálta a végleges megoldást implementáció és folyamatvezérlési logika szempontjából, így hasznos prototípusnak bizonyult.
+
+7.2.2 A PseudoVisitor osztály
+
+A PseudoVisitor osztály az ANTLR által nyújtott, az absztrakt szintaxisfa bejárására szolgáló osztály kiterjesztése, mely a visitor vagyis „látogató” programozási minta alapján képes a fát bejárni és feldolgozni.
+
+Ennek keretein belül a grammar fájlban definiált összes ághoz hozzárendelünk egy-egy metódust, melyek az épp jelenleg feldolgozott elem típusa alapján kerülnek meghívásra.
+
+Egyszerű példa, ha egy számértéket szeretnénk feldolgozni: Az osztály dinamikus küldés (dynamic dispatch) segítségével meghívja a visitNumber metódust az elem típusa alapján, mely az elem értéke alapján képes egy a JavaScript által is értelmezhető számértéket produkálni.
+
+Mivel a legtöbb elem értékét nem akarjuk rögtön kiértékelni, hanem ehelyett hozzá szeretnénk fűzni a szekvenciális utasítások listájához és mivel a legtöbb ilyen utasítás több egyszerűbb műveletre lebontható, a folyamatot egy segédfüggvény segítségével könnyítettem meg és tettem átláthatóbbá:
+
+7.2.2.1 Az „assemble” függvény
+
+Ahogy a neve is sugallja, a függvény egy messzemenően leegyszerűsített verziója a több programozási nyelvben is megtalálható asm kulcsszónak, mellyel a programozó kézzel írt Assembly utasításokat helyezhet el a kódjában.
+
+Hasonlóan az asm kulcsszóhoz, az itt tárgyalt függvény is egy szöveges bemenetet vár. Ezeket ezután sorokra bontja, majd ezen sorok elemeinek feldolgozásával opcode-payload értékeket hoz létre, melyeket ezután a szekvenciális utasítások tömbjéhez is fűz.
+
+Azonban akadnak olyan utasítások (például az elágazások és ciklusok), melyek fordítása közben az ezekben tárolt függvénytörzs illetve kifejezések lefordítása is szükséges. Ilyen esetben a VISIT („meglátogat”) kulcsszó segítségével az osztály meghívja az argumentumnak megfelelő ágat feldolgozó függvényt. (Például a VISIT expression utasítás feldolgozza a jelenlegi ághoz tartozó összes kifejezést.)
+
+Mivel felülírjuk a rekurzív folyamatot és így nem minden ág minden eleme kerül kiértékelésre, előfordul, hogy a bizonyos esetekben a fordító figyelmen kívül hagyná az új sorok kezdetét, melyeket a hibakeresőben használunk fel.
+
+Ennek kiküszöbölésére az NL (New Line, vagyis „új sor”) kulcsszót implementáltam, mely nem illeszt utasítást a listába, hanem manuálisan növeli a sorokat számláló változó értékét.
+
+7.2.2.2 Példák
+
+Az alábbiakban szeretnék bemutatni három példát a generált lineáris kódokra:
+
+Print
+
+Első példának a kiíratást megvalósító függvényt választottam, hisz ez az utasítás rendelkezik a legrövidebb assemble hívással, melyben csupán a hozzátartozó kifejezést értékeli ki, majd ezt kiírja. Ez a 7.7. forráskódban látható.
+
+A print kulcsszó lekéri a verem legfelső elemét, majd ezt a programozó által megadott kimeneti függvénynek továbbítja, ezt a 7.8-es forráskód mutatja be. 
+
+Push
+
+A push kulcsszó segítségével egy előre megadott értéket helyezhetünk el a vermen. Ez az egyike azon kevés esetnek, ahol nem az assemble függvényt használjuk, hanem az egyetlen opcode-ot létrehozó createOp függvényt, ahogyan az a 7.9. forráskódban látható.
+
+Ciklus
+
+Egy ciklus végrehajtásához először is szükségünk van egy új lexikális scope létrehozására, hisz az itt létrehozott változók a ciklus végével meg kell, hogy szűnjenek létezni.
+
+Ezután a generátor elhelyez egy jelző utasítást, mely önmagában semmit nem csinál, viszont ezt használjuk visszatérési pontnak, miután a ciklus egy iterációja végigfutott és vissza kell térnünk az elejére.
+
+Itt történik annak eldöntése is, hogy egyáltalán belépünk-e a jelenlegi iterációba, ezt a while kulcsszóval tesszük, mely, ha igaz értéket talál továbblép, ha hamisat, akkor viszont ugrik a loop utasítás utánra 
+
+Végül pedig a fent említett loop utasítás hajtódik végre, mely csupán annyit tesz, hogy visszalép a ciklushoz tartozó whilePrep jelölőhöz. Az Euklideszi algoritmusban használt ciklus generált kódját a 7.11-es forráskód mutatja be.
+
+Fontos még megjegyezni, hogy a ciklusok rendelkeznek egy számmal, mely egyértelműen beazonosítja, mely utasításhármasok is tartoznak egymáshoz. Ez azért szükséges, mivel, ha tegyük fel be szeretnénk ágyazni két ciklust egymásba, az első ciklus loop utasítása a második ciklus whilePrep utasításáig menne csak vissza, mely hamis eredményt ad. Ezen számláló növelése és csökkentése a 7.10-es forráskódban látható.
+
+7.3 Végrehajtás
+
+7.3.1 Futtatási környezet
+
+A futtatási környezet lényegében egy egyszerűsített virtuális gépként funkcionál. A szekvenciális utasítások listáját és a kigyűjtött funkció-szignatúrákat a konstruktorban adjuk át.
+
+Az utasításokon és függvény paraméter típusokon kívül az osztályban tároljuk még a jelenlegi utasításra mutató számlálót, a rögtön felhasznált értékeket tartalmazó vermet, a változókat tartalmazó asszociatív tömböt, és azt a vermet mely a visszatéréskor elmentett utasítás-számláló értékeket tartalmazza.
+
+7.3.2 A létrehozott program végrehajtása
+
+A létrehozott szekvenciális kód egy egyszerű verem-alapú modell alapján működik. Minden utasítás vagy kifejezés vagy a veremről vesz ki értékeket vagy oda helyez el. Hibát nem generáló program esetén a verem garantáltan üres a végrehajtás végeztével.
+
+Ezen felül az osztály rendelkezik még egy asszociatív tömbbel, mely a különböző változókat tárolja kulcs-érték formában. Ez a tömb figyelembe veszi a különböző utasítások határait, így például egy függvényhívás esetén nem érhetünk el olyan változókat, melyeket nem adtunk át paraméterként vagy nem a függvényen belül definiáltunk.
+
+Mivel a környezetnek aktívan kommunikálnia kell a felhasználónak futtatás közben, így létrehozáskor elfogad egy objektumot, mely függvényeket tartalmaz, amelyek bizonyos esetekben meghívásra kerülnek. Ilyen események egy érték veremre kerülése vagy levétele, egy változó értékének módosítása, de akár egy utasítás végrehajtásának befejezése. Ezáltal az értelmező megfelelő függvényekkel ellátva nem csupán böngészőben, de bármilyen környezetben képes működni.
+
+7.3.3 Felhasználói felület
+
+A felhasználói felület egy egyszerű HTML5 weboldal, mely tetszőleges webszerverrel szolgálható fel. A képernyő bal oldalán egy kódszerkesztő található, ahová a Pszeudokód írható be. Fordítás után (melyet az imént taglaltunk) az elkészült kód futtatható állapotban van és felhasználói parancsra indítható. Lehetőségünk van vagy soronként léptetni a kódot vagy a program végéig futtatni. Ez a 7.2-es ábrán van bemutatva.
+
+Utóbbi esetben a program tetszőleges ponton megszakítható a kódban elhelyezett debug kulcsszóval.
+
+A felület által nyújtott információk a következőek:
+
+    • Szekvenciális kód – A lefordított kód egy színezett kulcsszavakból álló listában jelenik meg a képernyő jobb oldalán. Az egér rávitelekor a kódnak megfelelő eredeti sor kiemelésre kerül a szerkesztőben. Ezen kívül a jelenleg futó utasítás világosabb színnel van kiemelve.
+
+    • Verem – A verem tartalma jelenik itt meg hozzáadás szerinti sorrendben. Az értékek futás közben szerkeszthetőek a felhasználó által.
+
+    • Változók – A változók listája jelenik itt meg. Frissülés és törlés esetén a felület egy apró animációval jelzi a változást. Az érték itt is szerkeszthető.
+
+    • Hívási verem – A meghívott függvények listáját jeleníti meg és azokat a címeket ahová a kód visszatéréskor fog lépni.
+
+    • Kimenet – A program a “kiír” utasítás használatakor ide küldi az adott értéket.
+
+    • Példaprogramok - A lista elemére kattintva egy tetszőleges teszt programot tölthetünk be.

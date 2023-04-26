@@ -1,0 +1,63 @@
+Az alábbi fejezetben szeretném bemutatni azokat a nyelveket és implementációjukat, melyek segítettek a téma megértésében.
+
+4.1 Brainf**k
+
+4.1.1 A nyelvről röviden
+
+A Brainf**ck (BF) egy úgynevezett „ezoterikus programozási nyelv,” mely annyit jelent, hogy nem valós használatra szánták, hanem szimplán viccből vagy valami érdekes megkötés vállalásával alkották. A nyelv érdekessége, hogy összesen nyolc utasítást tartalmaz, melyek mind egy-egy karakterből állnak, ennek ellenére a nyelv Turing-teljes és elméletileg bármely más Turing-teljes nyelven megoldott probléma átültethető bele, bár ez a nyelv különleges szintaxisa miatt felettébb nehéz.
+
+Azért választottam ennek a nyelvnek a bemutatását, mivel ez az egyik legkisebb olyan nyelv, amit nagyon egyszerűen megvalósíthatunk, de mellé megtanítja a nyelvkészítés alapjait.
+
+A BF működési elve egy, a Turing-géphez hasonló, cellákra felosztott szalag, mely egyszerre a program által felhasznált adatokat tartalmazza és egy külön lista, mely a program által végrehajtott utasításokból áll. Ezen kívül rendelkezik egy képzeletbeli „fejjel,” mely mindig az adatokat tároló szalag egyik cellájára mutat. Ez a fej felelős az adatok írásáért és olvasásáért, programozási analógiával élve a szalag egy hosszú, számokat tartalmazó tömb, a fej pedig a tömb egyik elemére mutató pointer.
+
+A nyelv a következő utasításokat érti:
+
+    • < - Egyel balra lépteti a fejet a szalagon.
+
+    • > - Egyel jobbra lépteti a fejet a szalagon.
+
+    • + - Egyel megnöveli a jelenlegi cella értékét.
+
+    • - - Egyel csökkenti a jelenlegi cella értékét.
+
+    • [ - Ha a fej alatti érték nulla előreugrik a következő ] karakterhez az utasításokban. Ellenkező esetben szimplán tovább lép a következő utasításra.
+
+    • ] - Ha a fej alatti érték nem nulla, visszaugrik az előző [ karakterhez az utasításokban, különben tovább lép a következőre.
+
+    • , - Beolvas egy bájtot a bemenetről és eltárolja a szalag jelenlegi cellájában.
+
+    • .  Kiírja a fej alatti cella értékét a standard kimenetre karakterként értelmezve.
+
+Egy egyszerű BF program, mely összead két számot: [->+<]
+
+Tehát addig hajtjuk végre ezeket az utasításokat, míg az első cellában lévő szám nullává nem válik úgy, hogy egyel csökkentjük az első cella értékét, majd jobbra lépünk, a jobboldalit egyel növeljük, majd visszalépünk az eredetire.
+
+4.1.2 Projekt bemutatása
+
+A nyelvre írt interpreter bemutatásához egy C nyelvben írt egyszerű interpretert[9] szeretnék felhasználni, mely emellett egy API-t is elérhetővé tesz a felhasználó számára, mellyel más projektekbe is beépíthetővé válik az értelmező.
+
+A program belépés után ellenőrzi milyen közegben is lett meghívva és ennek alapján tölti be a kódot vagy egy fájlból vagy a standard bemenetről (vagy dob hibát hibás meghívás esetén.) Az egyszerűség kedvéért én a standard bemenetről történő beolvasást fogom végigvezetni, hisz a program többi funkcionalitása (fájlkezelés, szövegbeolvasás közben történő hibakezelés) számunkra nem releváns. A bemutatott kód egésze a 4.1-es forráskódban látható.
+
+Az első sor inicializál egy üres láncolt listát, mely az utasításokat fogja tartalmazni. A második pedig egy üres 30.000 hosszúságú tömböt inicializál, ez lesz az szalagunk. 
+
+Ezután belépünk a brainfuck\_parse\_string függvénybe, mely egyszerre végzi a Lexer és a Parser feladatát. A függvény átlépked az utasításokon és úgy csoportosítja a jobbra -balra lépéseket, a beolvasást és kiírást és a növelést-csökkenést, hogy az ugyanolyan fajtájúak egy-egy instrukcióvá változnak. Például, ha egymás után három pluszjelet lát a program, akkor ahelyett, hogy a szalag értékét háromszor egyel növelné, helyette egy olyan instrukciót helyez el, mely hárommal növeli az értéket egyszer. Ezen kívül, ami érdekes még, az az, hogy a szögletes zárójelek által definiált ciklusok külön beágyazott fákként jelennek meg a végső szintaxisfában.
+
+Ezután az így kapott fát behelyezzük az utasításokat tartalmazó listába és lefuttatjuk. Mivel a BF utasításai remekül illeszkednek az egyszerű tömb/pointer műveletekre így a legtöbb elem szimplán egy sorrá átalakítható.
+
+Végül pedig felszabadítjuk mind az utasítás, mind az adatok listájának memóriáját és sikerrel visszatérünk.
+
+4.2 Rockstar
+
+4.2.1 A nyelvről röviden
+
+A Rockstar[2] egy paródia programozási nyelv, mely különlegessége, hogy a nyelven írt kód az elmúlt évtizedek Rock és Metál szövegeire emlékeztet. A nyelv a BF-hez hasonlóan szintén Turing-teljes, bár annak ellenére, hogy nem általános programozásra alkották sokkal inkább használható. A nyelvet Dylan Beattie alkotta, akit egy Twitteren olvasott üzenet ihletett meg.
+
+A nyelv specifikációja megtalálható a Github tárolóján1, így én nem szeretnék erre külön kitérni, kivéve, ahol ez szükséges. Én a nyelv referencia implementációjára szeretnék most fókuszálni, mely egy JavaScriptben írt értelmező, mely a böngészőn belül és azon kívül is működik.
+
+4.2.2 Projekt bemutatása
+
+A referencia implementáció, mely a Satriani névre hallgat egy PEG.js nevű könyvtárat használ a Parser legenerálására.
+
+„A PEG.js egy egyszerű JavaScript parser generátor, mely gyors parsereket generál remek hibaüzenetekkel. Bonyolult adatok feldolgozására, programozási nyelvekhez, fordítói rendszerekhez, értelmezőkhöz, fordítókhoz és egyéb eszközökhöz is egyszerűen használható.”[8]
+
+Az ebből kapott szintaxisfát egy aránylag szimpla virtuális gép futtatja, mely két fő részből áll: Egy Environment-nek nevezett adatstruktúrából, mely a változókat és az egyéb, futtatáshoz szükséges, információkat tartalmazza és egy hosszú switch-elágazásból, mely végrehajtja a szintaxisfa utasításait.

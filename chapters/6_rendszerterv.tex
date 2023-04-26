@@ -1,0 +1,21 @@
+6.1 Összeállítás
+
+A diplomamunka egyes elemei külön egységekként lesznek lekódolva, melyek interfészekkel lesznek képesek egymással kommunikálni. Ez azért ideális, mert a végeredmény egy nagyon kevés fájlból álló, egyszerűen mozgatható és felállítható csomag, viszont az eredeti forrásállományok egymással való nem függése miatt könnyű bármelyik részt lecserélni, ha ez esetleg szükségessé válna.
+
+Mivel a fent felsorolt nyelvek majdnem mind képesek natív formátumba is fordulni, ezért amíg el nem érünk a felhasználó interfész kialakításához, a kód helyileg is tesztelhető, akár egy nyelvre specifikus unit teszt frameworkkel, akár valamely automatizált módszer segítségével.
+
+A külső könyvtár által generált szintaxisfát egy általam írt átalakító osztályban használom fel, mely képes rekurzív adatstruktúrából tömbszerűt alkotni. Ez utána egy futtató osztályba kerül, mely a felhasználói felülettel kapcsolatban áll oly módon, hogy annak információkat küld és attól parancsokat fogad. Ennek folyamatát a 6.1-es ábra mutatja be.
+
+Mivel a program egyszerű JavaScriptből és HTML+CSS fájlokból áll és letöltés után a végfelhasználó számítógépén fut, így szinte bármilyen interneteléréssel és statikus fájlokat elérhetővé tenni képes szerverrel felszerelt gépről felszolgálható.
+
+6.2 Felhasználói interfész
+
+Mivel a projekt célja, hogy a Pszeudokód megértéséhez és megtanulásához nyújtson segítséget, így a felhasználói interfésznek ehhez minél több és hasznosabb eszközt kell nyújtania. Szeretném, hogy a képernyő egyik oldalán a felhasználó folyamatosan láthassa milyen értékeket vettek fel a változók, amik a program során létrejönnek. Ezen kívül szeretnék egy szekciót, mely a hibákat sorolja fel. A program vizuális felosztása a 6.2-es ábrán látható.
+
+Ezen kívül természetesen egy szövegszerkesztő részlegre is szükség van, ahová a bemenetet írhatjuk. Alapvetően szöveges bemenetet képzeltem el, viszont ha az időm engedi esetleg valamiféle képről történő szövegfelismerést (OCR) is felhasználhatnék a felhasználótól való adatbekérésre. A kód megjelenítésénél hasznos volna, ha szintaxiskiemelést alkalmazhatnánk, erre remek külső könyvtárak állnak rendelkezésre (pl.: highlight.js), de szükség szerint kézzel is megírható.
+
+Futás közben pedig a kód leggyakrabban lefutó részeit valamilyen látványos módon ki szeretném emelni (például azzal, hogy elsötétedik a sor.) Szükség van még egy eszköztárra is, ahol a léptetésre, futtatásra, megállításra és betöltésre/mentésre szolgáló gombok vannak.
+
+Az oldal dizájnjához a Twitternél kifejlesztett Bootstrap[3] nevű frontend könyvtárat szeretném használni. Segítségével egyszerűen lehet konzisztens felhasználói felületeket létrehozni. Ezen túl természetesen az oldal sima HTML+CSS+JS+Backend-ből állna össze. A dizájn a 6.2-es ábrán látható.
+
+Ha van idő a fejlesztés során szeretnék egy extra oldalsó sávot is az oldalra helyezni, mely felsorolja a Pszeudokód PDF-ében található algoritmusokat és kattintásra be is tölti ezeket. Ezek tárolása egyszerű, szöveges statikus fájlokként megoldható.

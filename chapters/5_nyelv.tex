@@ -1,0 +1,246 @@
+Bár az interpreterek nem triviális programok, mégis szinte bármely programnyelv felhasználható az implementálásukra. Mivel szeretném, hogy a projektmunkám webes felületen is elérhető legyen, így ezt a funkcionalitást mindenképp figyelembe kell vennem, amikor a nyelveket értékelem.
+
+Ideális esetben a nyelv rögtön weben is futtatható állománnyá fordul, ám mivel a legtöbb programozási nyelv nem képes ilyesmire, ezért jó lehetőségnek kínálkozik az úgy nevezett WebAssembly-re való fordítás.
+
+„A WebAssembly (rövidítve Wasm) egy biztonságos, hordozható, és alacsony-szintű kódformátum, melyet gyors futtatásra és kompakt méretű ábrázolásra terveztek. A fő célja, hogy lehetővé tegyen gyorsan futtatható programokat a Weben, anélkül hogy bármilyen Web-irányú feltételezést tenne vagy Web-specifikus funkciókat tenne lehetővé, ezáltal más közegekben is használhatóvá váljon.”[20]
+
+Alább szeretném kifejteni melyik nyelveket vettem fontolóra:
+
+5.1.1 C
+
+Természetesen nem hagyhatjuk ki az egyik legöregebb és mégis széles körűen használatos nyelvet.
+
+A C pozitívumai közé sorolandó, hogy nagyon könnyen lehet más platformokra fordítani. Az Emscripten nevű fordítói csomag segítségével a C Wasm formátumba is fordítható, ezáltal böngészőben is futni képes.
+
+„Az Emscripten egy nyílt-forráskódú fordító WebAssembly-re. A segítségével C és C++ kódot vagy bármely más LLVM-et használó nyelvet WebAssembly-re fordíthatunk és az Web-en, Node.js-en, vagy más wasm futtatási környezetben futtathatjuk.”[4]
+
+A nyelv pozitívumai közé sorolandó még, hogy nem túl „meglepő” (kevés szintaxissal és aránylag átlátható szabályokkal rendelkezik), kifejezetten gyors és kis állományokká fordul, és szinte páratlan szabadságot ad a fejlesztőnek a rendszer erőforrásainak felhasználásához.
+
+Cserébe  viszont a több évtizedes standard könyvtár és a nyelv pár furcsasága miatt könnyen futhat a programozó furcsa hibákba, mint például a szövegeknél esetlegesen hiányzó null byteok esetén történő túlcsordulások, vagy a hibásan lefoglalt / korábban felszabadított memóriaterületekre való írás/olvasás esetén előforduló végzetes hibák.
+
+Ezen kívül a teljesen manuális memóriakezelés bár nagyon hasznos tud lenni, de jelen problémához fölösleges plusz terhet jelent csak. Ezen kívül a nyelv nem támogatja az osztályokat, helyette struct-ok átadogatásával oldjuk meg az egybefüggő objektumok megváltoztatását. Ez sajnos nagyon könnyen tud átláthatatlansághoz vezetni, mely egy ilyen nem-triviális projektnél elfogadhatatlan.
+
+Bár a nyelv az egyik személyes kedvencem, számomra nem megfelelő a feladathoz. A nyelv értékelésének összefoglalója az 5.1-es táblázatban látható.
+
+5.1. táblázat: A C nyelv értékelése.
+
+Pozitívumok
+
+Negatívumok
+
+Könnyen fordítható Wasm-be
+
+Manuális memóriakezelés
+
+Jól felszerelt eszköztár
+
+Nincs OOP
+
+Személyes ismeretség
+
+Kényelmi funkciók hiánya (pl.: regex, for-each, map, adatszerkezetek, stb.)
+
+Más nyelveket is ebben írtak (pl.: Python)
+
+Nincs könnyű mód a hibakezelésre (segfault)
+
+
+
+5.1.2 C++
+
+A C++ kijavítja a C főbb hibáit a RAII-vel (Resource Aquisition Is Initialization[18], „az erőforrás lefoglalása egyben inicializáció is,” magyarul a különböző adattagok létrehozásakor a memória automatikusan lefoglalódik, megszűnésükkor pedig felszabadul) és egy sokkal kevésbé meglepő standard könyvtárral, viszont cserébe új negatívumokat ad az egyenlethez. 
+
+Bár az Emscripten képes Wasm formátumba fordítani a nyelvet, a hibakezelése problematikus. Alapesetben a generált kód végzetes hibával lép ki bármilyen hiba esetén, beleértve az amúgy elkapható exception-öket. Ugyan egy kapcsoló segítségével engedélyezhetjük, hogy az utóbbi hibák újra elkaphatóak legyenek, ez súlyos lelassuláshoz vezet a programban.[5]
+
+Ezen kívül a szövegkezelése a lentebb tárgyalt nyelvekhez képest igen nehézkes. Bár vannak regex könyvtárak, de ezekkel kapcsolatban semmi ismeretségem nincs. A C++ rendelkezik hibakezeléssel, viszont ennek ellenére dobhat segfaultot1. A nyelv nem rendelkezik hivatalos csomagkezelővel sem, így a könyvtárak beimportálása nem feltétlen egyszerű és nem garantált, hogy ezek valóban át is fordulnának Wasm-ra.
+
+Mivel a nyelv használhatósága ennyire kétséges, így nem felel meg számomra a feladathoz. A nyelv értékelésének összefoglalója az 5.2-es táblázatban látható.
+
+5.2. táblázat: A C++ nyelv értékelése.
+
+Pozitívum
+
+Negatívum
+
+Van OOP
+
+Bár van hibakezelés, de segfaultok itt is történhetnek
+
+RAII (memóriakezelést leegyszerűsíti)
+
+A szövegkezelés nehézkes (stream-ek, atoi és hasonló átalakító függvények furcsaságai)
+
+Ésszerű, kiforrott standard könyvtár
+
+A WebAssemblybe való fordítás lassú és több előkészületet igényel
+
+Személyes tapasztalat (bár nem annyi mint a C-vel)
+
+Nem minden külső könyvtár alkalmas a Wasm-ba való fordításra
+
+
+
+5.1.3 C\# 
+
+„A Blazor a Microsoft új kísérletbeli framework-je, mely pluginok használata nélkül hozza el a C\#-ot bármely böngészőbe.”[11] Az előző két nyelvvel ellentétben a C\# teljesen automatikus memóriakezeléssel rendelkezik, ezen kívül a C++-hoz hasonlóan ugyanúgy lehet benne osztályokat és interfészeket használni, mely által a kód sokkal átláthatóbb.
+
+Viszont míg a többi nyelvnél a kliens maga képes a kód teljes feldolgozására és lefuttatására, a Blazor használatánál szükséges egy szervergép is, melyet fel kell szerelnünk a szerver futtatásának minden szükséges elemével (megfelelő hardver, .NET Core telepítése.)
+
+Bár az egyetemi tanulmányaim miatt sok tapasztalattal rendelkezem már a nyelvvel kapcsolatban, nem szívesen kötném magam egy webes frameworkhöz, így a C\# sem megfelelő számomra a feladathoz. A nyelv értékelésének összefoglalója az 5.3-as táblázatban látható.
+
+5.3. táblázat: A C\# nyelv értékelése.
+
+Pozitívum
+
+Negatívum
+
+Sok személyes tapasztalat
+
+Terjengősebb mint a többi nyelv
+
+Erős OOP
+
+Semennyi tapasztalatom nincs a webes frameworkökkel
+
+A memóriakezelést a rendszer intézi, nekünk nem kell foglalkoznunk vele
+
+Futtatási környezetet igényel, nagyobb mint a fentebbi nyelvek.
+
+Kiváló standard könyvtár
+
+
+
+Blazor framework kifejezetten webes alkalmazások fejlesztésére
+
+
+
+Jó szövegkezelés
+
+
+
+
+
+5.1.4 TypeScript
+
+„A TypeScript egy erősen típusos programozási nyelv, mely a JavaScriptre épül és bármely kódméret esetén jobb eszközkészletet nyújt.”[10] Mivel nem igényel valódi fordítást, ezért nagyon gyorsan lehet vele prototípusokat gyártani és a program futtatása szinte semmi előfeltételt nem igényel egy böngészőn túl.
+
+Viszont mivel a TypeScript alatt futó JavaScript dinamikus típusokkal rendelkezik és szinte semmi analízist nem futtat a kódon futtatás előtt, ezért könnyű hibákba futni. Ezen kívül bár rendelkezik pár OOP struktúrával, ezek nem annyira kiforrottak, mint a fentebb említett nyelvek.
+
+Bár a nyelv nagyon közel áll ahhoz, amit keresek, az általa nyújtott garanciák nem kifejezetten hasznosak a jelenlegi projekthez, így nem akarom magam az eszköztárához kötni. A nyelv értékelésének összefoglalója az 5.4-es táblázatban látható.
+
+5.4. táblázat: A TypeScript nyelv értékelése.
+
+Pozitívum
+
+Negatívum
+
+Natívan az interneten futó kód
+
+Gyengébb típusellenőrzés mint egy normálisan fordított nyelvben
+
+Sok személyes tapasztalat
+
+Lassabb mint a fentebbi nyelvek
+
+Nagyon gyorsan prototípizálható nyelv
+
+Mivel a TS alatt futó JS dinamikusan típusos emiatt könnyen lehet váratlan hibákba futni
+
+Jó szövegkezelés (beépített regex)
+
+A nyelv OOP-je nem kifejezetten kiforrott
+
+Automatikus memóriakezelés, extra védelmek a böngészőben való futás miatt
+
+
+
+
+
+5.1.5 LiSP
+
+A LiSP[16] egy C-hez hasonló korú nyelv, mely lényege, hogy a kód és az adat ugyanolyan adatszerkezetben vannak tárolva. Ez nem más, mint a láncolt lista, mely lehetővé teszi, hogy bármilyen hosszúságú és bonyolultságú adatot el tudjunk tárolni aránylag egyszerű módon.
+
+Bár egyáltalán nem tartom megfelelő nyelvnek a projektemhez, nem hagyhattam ki a megemlítését, hisz a láncolt lista futtatása nagyon hasonlít a virtuális gépről szóló fejezetben tárgyalt működéséről.
+
+A Structure and Interpretation of Computer Programs[1] című könyv sokat segített a folyamat megértésében, mely a LiSP egyik átalakított változatát, a Scheme-t használja és egy fejezetében egy interpreter majd később egy fordító megírását mutatja be. A nyelv értékelésének összefoglalója az 5.5-ös táblázatban látható.
+
+5.5. táblázat: A LiSP nyelv értékelése.
+
+Pozitívum
+
+Negatívum
+
+A kód maga egyben adat is
+
+Semmi reális tapasztalatom nincs a nyelvvel
+
+Nem igényel fordítást, gyorsan lehet prototípizálni vele
+
+Idegen, nehezen átlátható szintaxissal rendelkezik
+
+Páratlan listafeldolgozási képességekkel rendelkezik
+
+Nem igazán interneten át való futtatásra kitalált nyelv
+
+Kiforrott standard könyvtárral rendelkezik
+
+Nem szeretném használni
+
+
+
+5.1.6 Rust
+
+„A Rust programozási nyelv segít, hogy gyorsabb és megbízhatóbb szoftvert írjunk. A magas-szintű ergonómia és az alacsony-szintű irányítás gyakran összeegyeztethetetlen a programozási nyelvek dizájnjában; a Rust ezt az állítást kérdőjelezi meg.”[7]
+
+A Rust egy relatíve új programozási nyelv, mely céljának a teljes memória-biztonságot és a gyakori hibák elkerülését tűzte ki, emellett natív fordításra is képes. A statikus analízise erősebb az összes fentebb felsorolt nyelvnél, a sebessége pedig a C/C++-hoz hasonlatos. Ezen kívül remek könyvtárakkal rendelkezik, melyek például a regexelést nagyon egyszerűvé teszik. A nyelv natívan fordul WebAssembly-re így ez se okoz problémát.
+
+Cserébe a nyelv írása nagyon nehézkes, a fordító ott ahol tud felhívja a figyelmét a programozónak az esetleges hibákra vagy kifelejtett ellenőrzésekre. Ez természetesen a program minőségére nézve abszolút pozitív, ám cserébe nagyon nehézkessé teszi a prototípusok létrehozását.
+
+Mivel a nyelv használata ilyen nehézkes és a prototípizálás lassú, így nem szeretném ezt a nyelvet választani. A nyelv értékelésének összefoglalója az 5.6-os táblázatban látható.
+
+5.6. táblázat: A Rust nyelv értékelése.
+
+Pozitívum
+
+Negatívum
+
+Gazdag standard könyvtár
+
+Nehézkes szintaxissal rendelkezik
+
+Jó hibakezelés, segfault átlagos kódban lehetetlen
+
+Nincs vele elég tapasztalatom
+
+Remek könyvtárak, csomagkezelővel
+
+Fordítás kicsit lassú
+
+Natív fordulás böngésző által is érthető formátumba
+
+
+
+
+
+5.1.7 JavaScript
+
+Mivel a program követelményei közé tartozik, hogy internetről elérhető felületen lehessen használni és mivel az ANTLR natívan képes rá kódot generálni[14], így végül a JavaScriptre esett a választásom, mint a szakdolgozat megvalósításához választott programozási nyelv.
+
+Bár a JavaScript még a TypeScriptnél is kevesebb ígéretet tesz a típusok biztonságáról, ez nem jelent különösebb hátrányt, mivel az ANTLR által generált kód alapból se él ezekkel a típusossági garanciákkal. Habár létezik egy TypeScriptbe átültetett változata a programnak, néhány egyszerű teszt során azt tapasztaltam, hogy a kód sokkal kevésbé könnyen kezelhető, mint a sima JavaScript verzióval, így végül az utóbbi mellett döntöttem. A nyelv értékelésének összefoglalója az 5.7-es táblázatban látható.
+
+Pozitívum
+
+Negatívum
+
+A legegyszerűbb szerverről felszolgálható
+
+Lassabb mint egy fordított nyelv
+
+A végfelhasználónak csak böngészővel kell rendelkeznie
+
+A legtöbb rossz típusból eredő hiba csak futás során derül ki
+
+Dinamikus tömbökkel és automatikus memóriakezeléssel rendelkezik
+
+Kiforrott eszközökkel rendelkezik, melyek segítségével a hibák száma és a kód mérete minimalizálható
+
