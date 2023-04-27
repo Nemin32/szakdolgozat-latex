@@ -7,7 +7,7 @@
 \usepackage{float}
 \usepackage{graphicx}
 \usepackage{pdfpages}
-\usepackage{caption}
+% \usepackage{caption}
 \usepackage[colorlinks=false, pdfborder={0 0 0}, linkcolor=black, unicode]{hyperref}
 \usepackage{mathtools}
 \usepackage{relsize}
@@ -22,8 +22,12 @@
 \usepackage{titlesec}
 \usepackage{titletoc}
 
+\usepackage{parskip}
+\usepackage{tabularx}
+\usepackage[format=plain, font=normalfont]{caption}
+
 % lista elemek közti hely, és vonal mint lista elem előtti jel beállítása
-\setlist{nosep, label={--}}
+% \setlist{nosep, label={--}}
 
 % tartalomjegyzék formázása
 \dottedcontents{section}[1.5em]{}{1.5em}{1pc}
@@ -31,14 +35,18 @@
 \dottedcontents{subsubsection}[5em]{}{3em}{1pc}
 
 % fejezet cím formázás: 14 pontos betűméret, nagybetűs
-\titleformat{\section}{\normalfont\fontsize{14}{14}\mdseries\MakeUppercase}{\thesection}{1em}{}
-\titleformat{\subsection}{\normalfont\fontsize{12}{12}\bfseries}{\thesubsection}{1em}{}
-\titleformat{\subsubsection}{\normalfont\fontsize{12}{12}\bfseries}{\thesubsubsection}{1em}{}
+\titleformat{\section}{\normalfont\fontsize{16}{16}\mdseries\MakeUppercase}{\thesection}{1em}{}
+\titleformat{\subsection}{\normalfont\fontsize{14}{14}\mdseries}{\thesubsection}{1em}{}
+\titleformat{\subsubsection}{\normalfont\fontsize{14}{14}\mdseries}{\thesubsubsection}{1em}{}
+\titleformat{\paragraph}{\normalfont\fontsize{12}{12}\mdseries}{\theparagraph}{1em}{}
 
 % fejezet cím térközök
 \titlespacing*{\section}{0em}{0em}{1em}
 \titlespacing*{\subsection}{0em}{1em}{1em}
 \titlespacing*{\subsubsection}{0em}{1em}{1em}
+\titlespacing*{\paragraph}{0em}{1em}{1em}
+
+\setcounter{secnumdepth}{5}
 
 
 % margó
@@ -63,15 +71,21 @@
 \numberwithin{figure}{section}
 
 % ábra, táblázat cím formázás
-\captionsetup[figure]{labelfont={it, small},textfont={it, small},labelsep=colon}
-\captionsetup[table]{labelfont={it, small},textfont={it, small},labelsep=colon}
+% \captionsetup[figure]{labelfont={it, small},textfont={it, small},labelsep=colon}
+% \captionsetup[table]{labelfont={it, small},textfont={it, small},labelsep=colon}
+
+\captionsetup[figure]{labelsep=colon}
+\captionsetup[table]{labelsep=colon}
 
 % hivatkozások formátuma és bib fájl importálása
+\nocite{*}
+
 \usepackage[backend=biber,style=ieee,doi=true,isbn=true,url=false,eprint=false]{biblatex}
 \addbibresource{references.bib}
 
+
 % bekezdés behúzása
-\setlength{\parindent}{5 mm}
+% \setlength{\parindent}{5 mm}
 
 % bekezdés térköz
 \setlength{\parskip}{8pt}

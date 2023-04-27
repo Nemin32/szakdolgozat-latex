@@ -1,0 +1,272 @@
+\subsection{Üres helyek és sorkihagyások}
+
+A Pszeudokód nem értelmezi az üres helyeket, ezeket csupán a kód fordításánál használjuk fel a nyelvi elemek és utasítások elhatárolására, a végső szintaxisfából kiszűrésre kerülnek.
+
+Viszont mivel a kód nem tartalmaz semmiféle sorlezáró jelet (például a C-hez hasonlatos nyelvekben használt ";"), így az egymás után következő utasításokat célszerűen sortöréssel választjuk el egymástól.
+A kód elemeit pedig egy soron belül legalább egy üres hellyel választhatjuk el.
+
+\subsection{Kommentek}
+
+\begin{footnotesize}
+\begin{verbatim}
+<comment> ::= '//' .* '\n'
+\end{verbatim}
+\end{footnotesize}
+
+Bár a jegyzetben használt Pszeudokód nem definiálja a kommentelést, mint lehetséges nyelvi elem, hasznossága miatt ez az implementáció figyelmen kívül hagyja a C nyelvből megszokott két perjellel kezdődő sorokat.
+
+\subsection{Típusok}
+
+\begin{footnotesize}
+\begin{verbatim}
+<type> ::= ('egész' | 'logikai' 'szöveg') 'tömb'?
+\end{verbatim}
+\end{footnotesize}
+
+A Pszeudokód háromféle típust különböztet meg. Ezek az egész számok, a logikai értékek, és a karakterláncok. Ezen kívül a nyelv értelmezi még az ezen típusokból alkotott tömböket is.
+
+\subsection{Atomi értékek}
+
+\begin{footnotesize}
+\begin{verbatim}
+<number> ::= '0' | '1'-'9' '0'-'9'*
+<bool> ::= 'igaz' | 'hamis' | 'Igaz' | 'Hamis'
+<string> ::= '"' .* '"'
+
+<atom> ::= <number> | <bool> | <string>
+\end{verbatim}
+\end{footnotesize}
+
+Az atom kifejezést a Scheme nyelvből vettem át. Olyan értékeket jelöl, melyek minden külső tényezőt figyelmen kívül hagyva, mindig önmagukra értékelődnek ki. A Pszeudokód három ilyen értéket ismer, ezek az egész számok, az idézőjelek közé zárt tetszőleges hosszúságú karakterláncok, és az igaz és hamis logikai értékek.
+
+Tehát az '500' karakterlánc az ötszázas számnak felel meg, az 'igaz' az igaz logikai értéknek, a '"példa"' pedig a "példa" szövegnek.
+
+\subsection{Műveletek}
+
+\begin{footnotesize}
+\begin{verbatim}
+<value> ::= <array_index> | <variable> | <atom>
+<factor> ::= <value> | '(' <logic_binop> ')'
+\end{verbatim}
+\end{footnotesize}
+
+\subsubsection{Aritmetika}
+
+\begin{footnotesize}
+\begin{verbatim}
+<arithm_add_op> ::= '+' | '-'
+<arithm_mul_op> ::= '*' | '/' | 'mod'
+
+<arithm_add_binop> ::= <expression> <arithm_add_op> <expression>
+<arithm_mul_binop> ::= <expression> <arithm_mul_op> <expression> | <arithm_add_binop>
+\end{verbatim}
+\end{footnotesize}
+
+\subsubsection{Összehasonlítások}
+
+\begin{footnotesize}
+\begin{verbatim}
+<comparison_op> ::= '<=' | '>=' | '<' | '>' | '=' | '=/='
+<comparsion_binop> ::= <expression> <comparison_op> <expression> | <arithm_mul_binop>
+\end{verbatim}
+\end{footnotesize}
+
+\subsubsection{Logikai}
+
+\begin{footnotesize}
+\begin{verbatim}
+<logic_op> ::= 'és' | 'vagy'
+<logic_binop> ::= <expression> <logic_op> <expression> | <comparsion_binop>
+\end{verbatim}
+\end{footnotesize}
+
+
+A műveletek szabadon ágyazhatóak egymásba, ezáltal lehetővé válnak a C-szerű nyelvekből megszokott komplex összehasonlítások, mint például annak ellenőrzése, hogy egy lista végére értünk-e már és, ha nem, akkor az éppen ellenőrzött elem milyen értékkel rendelkezik.
+
+\subsubsection{Negálás}
+
+\begin{footnotesize}
+\begin{verbatim}
+<negation> ::= '~' <expression>
+\end{verbatim}
+\end{footnotesize}
+
+Lehetőségünk van még egy logikai értéket negálni is, ez esetben az igaz érték hamissá válik, a hamis pedig igazzá.
+
+\subsection{Változók}
+
+\begin{footnotesize}
+\begin{verbatim}
+<variable> ::= 'a'-'z'
+\end{verbatim}
+\end{footnotesize}
+
+A változók nevei csupa kisbetűvel írt szavak. Típusuk értékadáskor dől el implicit módon, a jobboldalt álló érték típusa alapján. Egy változó típusa inicializálás után nem változhat. Konstans deklaráció nem lehetséges, a programozó feladata, hogy a változók értéke ne változhasson, ha az nem szándékos.
+
+A nyelv elődeklarációt nem támogat, a változók létrehozáskor kötelezően értéket is kapnak, ebből következően null-értékkel rendelkező vagy üres változó nem létezik.
+
+A változó értékét annak nevével érhetjük el. Nem létező változó értékének elérése futásközbeni hibához vezet.
+
+\subsubsection{Értékadás}
+
+\begin{footnotesize}
+\begin{verbatim}
+<assignment> ::= <variable> '<-' <expression>
+\end{verbatim}
+\end{footnotesize}
+
+Egy változó bármely adattípust képes eltárolni. Ha egy változó értékét egy másikára állítjuk érték-alapú másolás történik, tehát az így keletkezett adat az eredetitől függetlenül módosítható.
+
+\subsubsection{Tömbök}
+
+\begin{footnotesize}
+\begin{verbatim}
+<array_create> ::= <variable> '<-' 'Létrehoz[' <type> '](' <expression> ')'
+<array_index> ::= <variable> '[' <expression> (',' <expression>)* ']'
+<array_set> ::= <variable '[' <expression> ']' '<-' <expression>
+<array_shorthand> ::= '(' <expression> (',' <expression>)* ')'
+\end{verbatim}
+\end{footnotesize}
+
+Tömböket kétféleképp deklarálhatunk a Pszeudokód nyelvben. Egyrészt készítetünk megadott típussal és hosszal rendelkező tömböt, mely ekkor a típusnak megfelelő üres értékekkel töltődik fel (0 szám, "" szöveg, és hamis logikai érték esetén). Másrészt lehetőségünk van kézzel megadni a tömb elemeit. Ezesetben a típusoknak nem feltétlen kell egyezniük. Tömbök értékeinek lekérése esetén nem a C-ből megszokott `tömb[x][y]` szintaxist használjuk, hanem ehelyett a C\#-ból ismert `tömb[x, y]`-t.
+
+\subsubsection{Cím lekérése}
+
+\begin{footnotesize}
+\begin{verbatim}
+<reference> ::= '&' (<array_index> | <variable>)
+\end{verbatim}
+\end{footnotesize}
+
+Lehetőségünk van még egy változó címének lekérésére is. Ez egy olyan számérték, mely a nyelvet futtató virtuális gép memóriájának a változó értékének megfelelő cellájára mutat. Ez a tömbök elemeinek címét is képes lekérni.
+
+A címszerint átadott paramétereknél kerül használatra. Tömbökkel egyszerű mutató-aritmetikát is végezhetünk (tömb + n = n. elem), viszont a futtatási környezet hibát dob, ha megpróbálunk a tömb határain kívülre indexelni ilyen módon.
+
+\subsection{Folyamatvezérlési szerkezetek}
+
+A Pszeudokód a három leggyakoribb Folyamatvezérlési szerkezetet bocsájtja a programozó rendelkezésére.
+
+\subsubsection{Elágazás}
+
+\begin{footnotesize}
+\begin{verbatim}
+<else> ::= 'különben' <block>
+<else_if> ::= 'különben' 'ha' <expression> 'akkor' <block>
+<if> ::= 'ha' <expression> 'akkor' <block> (<else>? | <else_if>+ <else>)
+\end{verbatim}
+\end{footnotesize}
+
+A nyelv háromféle elágazást támogat: 
+
+\begin{itemize}
+  \item Egyszerű predikátum-vizsgálat (if)
+  \item Predikátum-vizsgálat és egy alternatív ág (if-else)
+  \item Predikátum-vizsgálat, több alternatív ág, és egy végleges ág (if-else if-else)
+\end{itemize}
+
+\subsubsection{Ciklusok}
+
+\begin{footnotesize}
+\begin{verbatim}
+<while> ::= 'ciklus' 'amíg' <expression> <block> 'ciklus' 'vége'
+<do_while> ::= 'ciklus' <block> 'amíg' <expression>
+<for> ::= 
+  'ciklus' <variable> '<-' 
+  <expression> ('-tól'|'-től') <expression> '-ig'
+    <block> 
+  'ciklus' 'vége'
+\end{verbatim}
+\end{footnotesize}
+
+A Pszeudokód a C nyelvből ismert for, while, és do while ciklusszerkezetek megfelelőit támogatja. For-szerű ciklus esetén a változó az első értékkel inicializálódik és ciklusonként egyel nő, amíg el nem éri a második értéket. Az érték elérésekor még lefut a ciklus.
+
+\subsubsection{Függvények}
+
+\begin{footnotesize}
+\begin{verbatim}
+<function_name> ::= 'A'-'Z' ('a'-'z' | 'A'-'Z')*
+\end{verbatim}
+\end{footnotesize}
+
+Lehetőségünk van függvények létrehozására és hívására is. A függvények neveit nagybetűvel kezdjük, így különböztetve meg őket a változóktól.
+
+\paragraph{Deklarálás}
+
+\begin{footnotesize}
+\begin{verbatim}
+<func_decl_parameter> ::= 'címszerint'? <variable> ':' <type>
+
+<func_decl_param_list> ::= 
+  | '(' ')' 
+  | '(' <func_decl_parameter> (',' <func_decl_parameter>)* ')'
+
+<function_declaration> ::= 
+  'függvény' <function_name> <func_decl_param_list> 
+    <block> 
+  'függvény' 'vége'
+\end{verbatim}
+\end{footnotesize}
+
+A függvények deklarációját azok meghívása előtt kell megtennünk. Új függvény másik függvényen belül nem deklarálható. Lehetőségünk van érték szerint és cím szerint is bekérni paramétereket.
+
+Előbbi esetben a változó értékének egy másolata kerül átadásra, melynek változtatása nem befolyásolja az eredeti értéket. Cím szerinti átadás esetén viszont a két változó ugyanarra az értékre mutat, így az egyik változtatása változtatja a másikat is.
+
+\paragraph{Visszatérés}
+
+\begin{footnotesize}
+\begin{verbatim}
+<return> ::= 'vissza' <expression>
+\end{verbatim}
+\end{footnotesize}
+
+Függvényból értékkel visszatérni a 'vissza' kulcsszó segítségével tudunk. Ennek meghívásakor a függvény azonnal megszakad és a kapott értékkel tér vissza.
+
+\paragraph{Hívás}
+
+\begin{footnotesize}
+\begin{verbatim}
+<func_call_parameter_list> ::= '(' ')' | '(' <expression> (',' <expression>)* ')'
+<function_call> ::= <function_name> <func_call_parameter_list>
+\end{verbatim}
+\end{footnotesize}
+
+Függvény hívható kifejezésként is, mely esetben az azt hívó utasítás a visszatérési értékét kapja meg, vagy hívható önmagában utasításként is, ekkor a visszatérési érték eldobásra kerül. Függvény hívhat más függvényt.
+
+\subsection{Kiírás}
+
+\begin{footnotesize}
+\begin{verbatim}
+<print> ::= 'kiír' <expression>
+\end{verbatim}
+\end{footnotesize}
+
+Meghíváskor a kapott érték a felhasználó számára látható módon megjelenítésre kerül (például konzolon).
+
+\subsection{Megszakítás}
+
+\begin{footnotesize}
+\begin{verbatim}
+<debug> ::= 'debug'
+\end{verbatim}
+\end{footnotesize}
+
+A kulcsszó használatakor az értelmező futtatása rögtön megszakad. Ezután a felhasználó a kódot léptetheti vagy a változók és a verem értékeit megvizsgálhatja.
+
+\subsection{Kifejezések}
+
+\begin{footnotesize}
+\begin{verbatim}
+<expression> ::= <negation> | <array_shorthand> | <function_call> | <logic_binop>
+\end{verbatim}
+\end{footnotesize}
+
+\subsection{Utasítások}
+
+\begin{footnotesize}
+\begin{verbatim}
+<statement> ::= <array_set> | <array_create> | <if> | <return> | <for> | <assignment> | <function_declaration> | <print> | <do_while> | <while> | <debug> | <function_call>
+<block> ::= <statement>*
+\end{verbatim}
+\end{footnotesize}
+
+A kifejezések és utasítások közötti különbségeket később tárgyaljuk. A program szintaxisfájának gyökere egy <block> elem.
