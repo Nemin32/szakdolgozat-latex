@@ -1,6 +1,6 @@
 A felhasználó által begépelt kód több átalakítási lépésen esik át, melyet most sorra veszek. A lépések demonstrálásához a fentebb említett könyv egyik algoritmusát, az Euklideszi algoritmust használom fel példának, mely két szám legnagyobb közös osztóját számolja ki. A jegyzetben prezentált kód a 7.1-es ábrán látható, melynek átirata a 7.1-es forráskódban szerepel.
 
-7.1 Absztrakt szintaxisfa létrehozása
+\subsection{Absztrakt szintaxisfa létrehozása}
 
 A bementi nyers szöveg szintaxisfává átalakításához az ANTLR lexer és parser generátort választottam eszköznek.
 
@@ -10,17 +10,17 @@ Első lépésben létrehoztam egy úgynevezett grammar („nyelvtan”) fájlt, 
 
 Ehhez szükséges volt felsorolnom a nyelv tokenjeit (az utasítások építőelemeit) és magukat a lehetséges utasításokat és kifejezéseket. Mivel a nyelv nem rendelkezik specifikációval, így a szabályok és elemek meghatározásához a korábban említett Algoritmusok, adatszerkezetek I. dokumentumot használtam.
 
-7.1.1 Tokenek
+\subsubsection{Tokenek}
 
 A tokenek a lexer által értelmezett legkisebb egységek. Ide tartoznak a konkrét kulcsszavak, mint például „ciklus”, „elágazás”, vagy „függvény” melyeket előre megadott karakterláncok segítségével észlelünk és az olyan értékek, mint például számok, változónevek, és szövegek, melyeket reguláris kifejezésekkel határozunk meg.
 
 A nyelv által használt összes token a 7.2. forráskódban látható.
 
-7.1.2 Utasítások és Kifejezések
+\subsubsection{Utasítások és Kifejezések}
 
 Mint a legtöbb más imperatív programozási nyelv, a Pszeudokód is különbséget tesz az utasítások és a kifejezések között. Az előbbi az utóbbival ellentétben nem produkálhat értéket, míg a kifejezéseknek kötelező valamilyen értékké válniuk kiértékelés után.
 
-7.1.2.1 Kifejezések
+\paragraph{Kifejezések}
 
 A legegyszerűbb kifejezések az úgynevezett atomok, melyek olyan értékek, amik saját magukká válnak kiértékelés után. Ilyenek például a számok. Az „5” szám atom, hisz az értéke önmaga, vagyis az ötös szám. A szövegek és a logikai értékek is ide tartoznak.
 
@@ -30,7 +30,7 @@ Ide tartozik még a függvényhívás is, viszont mivel eljárások esetében ne
 
 A kifejezések és precedenciáik a 7.3-es forráskódban vannak felsorolva.
 
-7.1.2.2 Utasítások
+\paragraph{Utasítások}
 
 Míg a kifejezések magukat az elvégzett számolásokat és műveleteket definiálják, az utasítások a program folyamatvezérlését, a változók elérését és módosítását, a standard kimenetre történő írást, és a hibakereső töréspontjait határozzák meg.
 
@@ -38,7 +38,7 @@ Bár az utasítások definíció szerint nem térhetnek vissza értékekkel, ez 
 
 A nyelv utasításait a 7.4-as forráskód sorolja fel. Az ábrán ezen kívül megfigyelhető még, hogy minden utasítást új sorral zárunk le.
 
-7.1.3 Fa generálás
+\subsubsection{Fa generálás}
 
 Az ANTLR könyvtár a grammar fájlt bemenetként felhasználva képes egy komplett lexer és parser osztályt generálni számunkra. A felhasználó kódja először is a lexeren fut keresztül, mely egy tokenekből álló listával tér vissza, melyet a parser kifejezésekké és utasításokká alakít, majd egy szintaxisfába rendezi.
 
@@ -50,15 +50,15 @@ Fontos megjegyezni, hogy egy érvényes tokenekből álló bemenet nem garantál
 
 Ennek következménye, hogy a kódban található esetleges hibákat három helyen is kezelnünk kell:
 
-    • A tokenizálás folyamata során,
-
-    • A szintaxisfa generálása közben,
-
-    • A program futása során.
+\begin{itemize}
+    \item A tokenizálás folyamata során,
+    \item A szintaxisfa generálása közben,
+    \item A program futása során.
+\end{itemize}
 
 Itt történik a felhasználó által ejtett helyesírási és szintaktikai hibák elkapása is. Ehhez a generált osztályok hibafigyelőit kell felülírnunk, melyek alapértelmezetten a böngésző parancssorába küldik a hibákat.
 
-7.2 Szekvenciális program generálása
+\subsection{Szekvenciális program generálása}
 
 Az elkészült szintaxisfát levelei típusainak figyelembevételével átalakítjuk egy egymástól független utasításokból álló listává. Ezt egy egyszerű tömbben tároljuk, mely három adattagokból álló elemekből áll. A példánkban demonstrált algoritmus végleges kódját a 7.6. forráskód tartalmazza.
 
@@ -126,7 +126,7 @@ Végül pedig a fent említett loop utasítás hajtódik végre, mely csupán an
 
 Fontos még megjegyezni, hogy a ciklusok rendelkeznek egy számmal, mely egyértelműen beazonosítja, mely utasításhármasok is tartoznak egymáshoz. Ez azért szükséges, mivel, ha tegyük fel be szeretnénk ágyazni két ciklust egymásba, az első ciklus loop utasítása a második ciklus whilePrep utasításáig menne csak vissza, mely hamis eredményt ad. Ezen számláló növelése és csökkentése a 7.10-es forráskódban látható.
 
-7.3 Végrehajtás
+\subsection{Végrehajtás}
 
 7.3.1 Futtatási környezet
 
@@ -150,14 +150,11 @@ Utóbbi esetben a program tetszőleges ponton megszakítható a kódban elhelyez
 
 A felület által nyújtott információk a következőek:
 
-    • Szekvenciális kód – A lefordított kód egy színezett kulcsszavakból álló listában jelenik meg a képernyő jobb oldalán. Az egér rávitelekor a kódnak megfelelő eredeti sor kiemelésre kerül a szerkesztőben. Ezen kívül a jelenleg futó utasítás világosabb színnel van kiemelve.
-
-    • Verem – A verem tartalma jelenik itt meg hozzáadás szerinti sorrendben. Az értékek futás közben szerkeszthetőek a felhasználó által.
-
-    • Változók – A változók listája jelenik itt meg. Frissülés és törlés esetén a felület egy apró animációval jelzi a változást. Az érték itt is szerkeszthető.
-
-    • Hívási verem – A meghívott függvények listáját jeleníti meg és azokat a címeket ahová a kód visszatéréskor fog lépni.
-
-    • Kimenet – A program a “kiír” utasítás használatakor ide küldi az adott értéket.
-
-    • Példaprogramok - A lista elemére kattintva egy tetszőleges teszt programot tölthetünk be.
+\begin{itemize}
+    \item \textbf{Szekvenciális kód:} A lefordított kód egy színezett kulcsszavakból álló listában jelenik meg a képernyő jobb oldalán. Az egér rávitelekor a kódnak megfelelő eredeti sor kiemelésre kerül a szerkesztőben. Ezen kívül a jelenleg futó utasítás világosabb színnel van kiemelve.
+    \item \textbf{Verem:} A verem tartalma jelenik itt meg hozzáadás szerinti sorrendben. Az értékek futás közben szerkeszthetőek a felhasználó által.
+    \item \textbf{Változók:} A változók listája jelenik itt meg. Frissülés és törlés esetén a felület egy apró animációval jelzi a változást. Az érték itt is szerkeszthető.
+    \item \textbf{Hívási verem:} A meghívott függvények listáját jeleníti meg és azokat a címeket ahová a kód visszatéréskor fog lépni.
+    \item \textbf{Kimenet:} A program a “kiír” utasítás használatakor ide küldi az adott értéket.
+    \item \textbf{Példaprogramok:} A lista elemére kattintva egy tetszőleges teszt programot tölthetünk be.
+\end{itemize}

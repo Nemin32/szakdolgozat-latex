@@ -6,7 +6,9 @@ Ideális esetben a nyelv rögtön weben is futtatható állománnyá fordul, ám
 
 Alább szeretném kifejteni melyik nyelveket vettem fontolóra:
 
-5.1.1 C
+\newpage
+
+\subsection{C}
 
 Természetesen nem hagyhatjuk ki az egyik legöregebb és mégis széles körűen használatos nyelvet.
 
@@ -20,33 +22,25 @@ Cserébe  viszont a több évtizedes standard könyvtár és a nyelv pár furcsa
 
 Ezen kívül a teljesen manuális memóriakezelés bár nagyon hasznos tud lenni, de jelen problémához fölösleges plusz terhet jelent csak. Ezen kívül a nyelv nem támogatja az osztályokat, helyette struct-ok átadogatásával oldjuk meg az egybefüggő objektumok megváltoztatását. Ez sajnos nagyon könnyen tud átláthatatlansághoz vezetni, mely egy ilyen nem-triviális projektnél elfogadhatatlan.
 
-Bár a nyelv az egyik személyes kedvencem, számomra nem megfelelő a feladathoz. A nyelv értékelésének összefoglalója az 5.1-es táblázatban látható.
+Bár a nyelv az egyik személyes kedvencem, számomra nem megfelelő a feladathoz. A nyelv értékelésének összefoglalója az \ref{cnyelv} táblázatban látható.
 
-5.1. táblázat: A C nyelv értékelése.
+\begin{center}
+  \captionof{table}{A C nyelv értékelése.\label{cnyelv}}
+  \begin{tabularx}{\textwidth}{X X}
+    \hline
+    \multicolumn{1}{c}{\bfseries{Pozitívumok}} & \multicolumn{1}{c}{\bfseries{Negatívumok}} \\
+    \hline
+    Könnyen fordítható Wasm-be & Manuális memóriakezelés \\
+    Jól felszerelt eszköztár & Nincs OOP \\
+    Személyes ismeretség & Kényelmi funkciók hiánya (pl.: regex, for-each, map, adatszerkezetek, stb.) \\
+    Más nyelveket is ebben írtak (pl.: Python) & Nincs könnyű mód a hibakezelésre (segfault) \\
+    \hline
+  \end{tabularx}
+\end{center}
 
-Pozitívumok
+\newpage
 
-Negatívumok
-
-Könnyen fordítható Wasm-be
-
-Manuális memóriakezelés
-
-Jól felszerelt eszköztár
-
-Nincs OOP
-
-Személyes ismeretség
-
-Kényelmi funkciók hiánya (pl.: regex, for-each, map, adatszerkezetek, stb.)
-
-Más nyelveket is ebben írtak (pl.: Python)
-
-Nincs könnyű mód a hibakezelésre (segfault)
-
-
-
-5.1.2 C++
+\subsection{C++}
 
 A C++ kijavítja a C főbb hibáit a RAII-vel (Resource Aquisition Is Initialization[18], „az erőforrás lefoglalása egyben inicializáció is,” magyarul a különböző adattagok létrehozásakor a memória automatikusan lefoglalódik, megszűnésükkor pedig felszabadul) és egy sokkal kevésbé meglepő standard könyvtárral, viszont cserébe új negatívumokat ad az egyenlethez. 
 
@@ -56,31 +50,23 @@ Ezen kívül a szövegkezelése a lentebb tárgyalt nyelvekhez képest igen neh�
 
 Mivel a nyelv használhatósága ennyire kétséges, így nem felel meg számomra a feladathoz. A nyelv értékelésének összefoglalója az 5.2-es táblázatban látható.
 
-5.2. táblázat: A C++ nyelv értékelése.
+\begin{center}
+  \captionof{table}{A C++ nyelv értékelése.\label{cppnyelv}}
+  \begin{tabularx}{\textwidth}{X X}
+    \hline
+    \multicolumn{1}{c}{\bfseries{Pozitívumok}} & \multicolumn{1}{c}{\bfseries{Negatívumok}} \\
+    \hline
+    Van OOP & Bár van hibakezelés, de segfaultok itt is történhetnek \\
+    RAII (memóriakezelést leegyszerűsíti) & A szövegkezelés nehézkes (stream-ek, atoi és hasonló átalakító függvények furcsaságai) \\
+    Ésszerű, kiforrott standard könyvtár & A WebAssemblybe való fordítás lassú és több előkészületet igényel \\
+    Személyes tapasztalat (bár nem annyi mint a C-vel) & Nem minden külső könyvtár alkalmas a Wasm-ba való fordításra \\
+    \hline
+  \end{tabularx}
+\end{center}
 
-Pozitívum
+\newpage
 
-Negatívum
-
-Van OOP
-
-Bár van hibakezelés, de segfaultok itt is történhetnek
-
-RAII (memóriakezelést leegyszerűsíti)
-
-A szövegkezelés nehézkes (stream-ek, atoi és hasonló átalakító függvények furcsaságai)
-
-Ésszerű, kiforrott standard könyvtár
-
-A WebAssemblybe való fordítás lassú és több előkészületet igényel
-
-Személyes tapasztalat (bár nem annyi mint a C-vel)
-
-Nem minden külső könyvtár alkalmas a Wasm-ba való fordításra
-
-
-
-5.1.3 C\# 
+\subsection{C\#}
 
 „A Blazor a Microsoft új kísérletbeli framework-je, mely pluginok használata nélkül hozza el a C\#-ot bármely böngészőbe.”[11] Az előző két nyelvvel ellentétben a C\# teljesen automatikus memóriakezeléssel rendelkezik, ezen kívül a C++-hoz hasonlóan ugyanúgy lehet benne osztályokat és interfészeket használni, mely által a kód sokkal átláthatóbb.
 
@@ -116,11 +102,7 @@ Blazor framework kifejezetten webes alkalmazások fejlesztésére
 
 Jó szövegkezelés
 
-
-
-
-
-5.1.4 TypeScript
+\subsection{TypeScript}
 
 „A TypeScript egy erősen típusos programozási nyelv, mely a JavaScriptre épül és bármely kódméret esetén jobb eszközkészletet nyújt.”[10] Mivel nem igényel valódi fordítást, ezért nagyon gyorsan lehet vele prototípusokat gyártani és a program futtatása szinte semmi előfeltételt nem igényel egy böngészőn túl.
 
@@ -152,17 +134,13 @@ A nyelv OOP-je nem kifejezetten kiforrott
 
 Automatikus memóriakezelés, extra védelmek a böngészőben való futás miatt
 
-
-
-
-
-5.1.5 LiSP
+\subsection{LiSP}
 
 A LiSP[16] egy C-hez hasonló korú nyelv, mely lényege, hogy a kód és az adat ugyanolyan adatszerkezetben vannak tárolva. Ez nem más, mint a láncolt lista, mely lehetővé teszi, hogy bármilyen hosszúságú és bonyolultságú adatot el tudjunk tárolni aránylag egyszerű módon.
 
 Bár egyáltalán nem tartom megfelelő nyelvnek a projektemhez, nem hagyhattam ki a megemlítését, hisz a láncolt lista futtatása nagyon hasonlít a virtuális gépről szóló fejezetben tárgyalt működéséről.
 
-A Structure and Interpretation of Computer Programs[1] című könyv sokat segített a folyamat megértésében, mely a LiSP egyik átalakított változatát, a Scheme-t használja és egy fejezetében egy interpreter majd később egy fordító megírását mutatja be. A nyelv értékelésének összefoglalója az 5.5-ös táblázatban látható.
+A Structure and Interpretation of Computer Programs\cite{sicp} című könyv sokat segített a folyamat megértésében, mely a LiSP egyik átalakított változatát, a Scheme-t használja és egy fejezetében egy interpreter majd később egy fordító megírását mutatja be. A nyelv értékelésének összefoglalója az 5.5-ös táblázatban látható.
 
 5.5. táblázat: A LiSP nyelv értékelése.
 
@@ -186,9 +164,7 @@ Kiforrott standard könyvtárral rendelkezik
 
 Nem szeretném használni
 
-
-
-5.1.6 Rust
+\subsection{Rust}
 
 „A Rust programozási nyelv segít, hogy gyorsabb és megbízhatóbb szoftvert írjunk. A magas-szintű ergonómia és az alacsony-szintű irányítás gyakran összeegyeztethetetlen a programozási nyelvek dizájnjában; a Rust ezt az állítást kérdőjelezi meg.”[7]
 
@@ -218,11 +194,7 @@ Fordítás kicsit lassú
 
 Natív fordulás böngésző által is érthető formátumba
 
-
-
-
-
-5.1.7 JavaScript
+\subsection{JavaScript}
 
 Mivel a program követelményei közé tartozik, hogy internetről elérhető felületen lehessen használni és mivel az ANTLR natívan képes rá kódot generálni[14], így végül a JavaScriptre esett a választásom, mint a szakdolgozat megvalósításához választott programozási nyelv.
 

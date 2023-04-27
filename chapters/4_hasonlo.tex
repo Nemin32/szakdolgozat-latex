@@ -1,8 +1,8 @@
 Az alábbi fejezetben szeretném bemutatni azokat a nyelveket és implementációjukat, melyek segítettek a téma megértésében.
 
-4.1 Brainf**k
+\subsection{Brainf**k}
 
-4.1.1 A nyelvről röviden
+\subsubsection{A nyelvről röviden}
 
 A Brainf**ck (BF) egy úgynevezett „ezoterikus programozási nyelv,” mely annyit jelent, hogy nem valós használatra szánták, hanem szimplán viccből vagy valami érdekes megkötés vállalásával alkották. A nyelv érdekessége, hogy összesen nyolc utasítást tartalmaz, melyek mind egy-egy karakterből állnak, ennek ellenére a nyelv Turing-teljes és elméletileg bármely más Turing-teljes nyelven megoldott probléma átültethető bele, bár ez a nyelv különleges szintaxisa miatt felettébb nehéz.
 
@@ -12,27 +12,22 @@ A BF működési elve egy, a Turing-géphez hasonló, cellákra felosztott szala
 
 A nyelv a következő utasításokat érti:
 
-    • < - Egyel balra lépteti a fejet a szalagon.
+\begin{itemize}
+    \item \textbf{<} - Egyel balra lépteti a fejet a szalagon.
+    \item \textbf{>} - Egyel jobbra lépteti a fejet a szalagon.
+    \item \textbf{+} - Egyel megnöveli a jelenlegi cella értékét.
+    \item \textbf{-} - Egyel csökkenti a jelenlegi cella értékét.
+    \item \textbf{[} - Ha a fej alatti érték nulla előreugrik a következő ] karakterhez az utasításokban. Ellenkező esetben szimplán tovább lép a következő utasításra. 
+    \item \textbf{]} - Ha a fej alatti érték nem nulla, visszaugrik az előző [ karakterhez az utasításokban, különben tovább lép a következőre.
+    \item \textbf{,} - Beolvas egy bájtot a bemenetről és eltárolja a szalag jelenlegi cellájában.
+    \item \textbf{.} - Kiírja a fej alatti cella értékét a standard kimenetre karakterként értelmezve.
+\end{itemize}
 
-    • > - Egyel jobbra lépteti a fejet a szalagon.
-
-    • + - Egyel megnöveli a jelenlegi cella értékét.
-
-    • - - Egyel csökkenti a jelenlegi cella értékét.
-
-    • [ - Ha a fej alatti érték nulla előreugrik a következő ] karakterhez az utasításokban. Ellenkező esetben szimplán tovább lép a következő utasításra.
-
-    • ] - Ha a fej alatti érték nem nulla, visszaugrik az előző [ karakterhez az utasításokban, különben tovább lép a következőre.
-
-    • , - Beolvas egy bájtot a bemenetről és eltárolja a szalag jelenlegi cellájában.
-
-    • .  Kiírja a fej alatti cella értékét a standard kimenetre karakterként értelmezve.
-
-Egy egyszerű BF program, mely összead két számot: [->+<]
+Egy egyszerű BF program, mely összead két számot: \verb|[->+<]|
 
 Tehát addig hajtjuk végre ezeket az utasításokat, míg az első cellában lévő szám nullává nem válik úgy, hogy egyel csökkentjük az első cella értékét, majd jobbra lépünk, a jobboldalit egyel növeljük, majd visszalépünk az eredetire.
 
-4.1.2 Projekt bemutatása
+\subsubsection{Projekt bemutatása}
 
 A nyelvre írt interpreter bemutatásához egy C nyelvben írt egyszerű interpretert[9] szeretnék felhasználni, mely emellett egy API-t is elérhetővé tesz a felhasználó számára, mellyel más projektekbe is beépíthetővé válik az értelmező.
 
@@ -46,15 +41,15 @@ Ezután az így kapott fát behelyezzük az utasításokat tartalmazó listába 
 
 Végül pedig felszabadítjuk mind az utasítás, mind az adatok listájának memóriáját és sikerrel visszatérünk.
 
-4.2 Rockstar
+\subsection{Rockstar}
 
-4.2.1 A nyelvről röviden
+\subsubsection{A nyelvről röviden}
 
 A Rockstar[2] egy paródia programozási nyelv, mely különlegessége, hogy a nyelven írt kód az elmúlt évtizedek Rock és Metál szövegeire emlékeztet. A nyelv a BF-hez hasonlóan szintén Turing-teljes, bár annak ellenére, hogy nem általános programozásra alkották sokkal inkább használható. A nyelvet Dylan Beattie alkotta, akit egy Twitteren olvasott üzenet ihletett meg.
 
 A nyelv specifikációja megtalálható a Github tárolóján1, így én nem szeretnék erre külön kitérni, kivéve, ahol ez szükséges. Én a nyelv referencia implementációjára szeretnék most fókuszálni, mely egy JavaScriptben írt értelmező, mely a böngészőn belül és azon kívül is működik.
 
-4.2.2 Projekt bemutatása
+\subsubsection{Projekt bemutatása}
 
 A referencia implementáció, mely a Satriani névre hallgat egy PEG.js nevű könyvtárat használ a Parser legenerálására.
 

@@ -14,23 +14,30 @@ Az egyetlen hibakezelés, melyet ebben a szekcióban végzünk az értelmetlen t
 
 Feltéve, hogy a bemenetünk nem hibás a lexer a következő lépéseket hajtja végre:
 
-    1. Ellenőrzi, hogy a bemenet végére értünk-e. Ha igen, visszatér a tokenek listájával.
+\begin{enumerate}
 
-    2. Ha nem, akkor átugorja az úgynevezett triviákat, ezek a fentebb tárgyalt jelentéssel nem rendelkező elemek (kommentek, többszöri üres helyek, többszöri új sor nyitása.)
+    \item Ellenőrzi, hogy a bemenet végére értünk-e. Ha igen, visszatér a tokenek listájával.
 
-    3. Izolálja a következő tokent.
+    \item Ha nem, akkor átugorja az úgynevezett triviákat, ezek a fentebb tárgyalt jelentéssel nem rendelkező elemek (kommentek, többszöri üres helyek, többszöri új sor nyitása.)
 
-        1. Operátorok („+”, „-”, „/” „x”, „←”, „<=”, „>=”, „=”, „=/=”) esetén ez egy, kettő vagy három karaktert jelent. Ez nem okoz problémát, hisz az operátor első (vagy az utolsó operátor esetén az első és a második) karaktere egyértelművé teszi, milyen fajta is.
+    \item Izolálja a következő tokent, a következő módon:
+
+    \begin{enumerate}
+
+        \item Operátorok („+”, „-”, „/” „x”, „←”, „<=”, „>=”, „=”, „=/=”) esetén ez egy, kettő vagy három karaktert jelent. Ez nem okoz problémát, hisz az operátor első (vagy az utolsó operátor esetén az első és a második) karaktere egyértelművé teszi, milyen fajta is.
 
 A lexernek nem feladata, hogy az operátorok precedeniáját (tehát a számítások matematikai szabályok szerinti sorrendben történő kiszámítását) figyelembe vegye. Erről a parser felel.
 
-        2. Kulcsszavak esetén csak egyszerűen végigiterálunk egy listán, mely az összes kulcsszót tartalmazza és visszatérünk, ha bármikor egyezést találunk.
+        \item Kulcsszavak esetén csak egyszerűen végigiterálunk egy listán, mely az összes kulcsszót tartalmazza és visszatérünk, ha bármikor egyezést találunk.
 
-        3. Egyébként a token egy atom, mely szám esetén nem igényel egyéb módosítást, szöveg esetén viszont szükséges az idézőjelek levágása a végeiről.
+        \item Egyébként a token egy atom, mely szám esetén nem igényel egyéb módosítást, szöveg esetén viszont szükséges az idézőjelek levágása a végeiről.
+    \end{enumerate}
 
-    4. A lexer létrehoz egy új tokent, beállítja a fajtáját és ha rendelkezik egyéb adattal (például atomok esetén), akkor azt is beállítja az erre a célra kijelölt mezőben.
+    \item A lexer létrehoz egy új tokent, beállítja a fajtáját és ha rendelkezik egyéb adattal (például atomok esetén), akkor azt is beállítja az erre a célra kijelölt mezőben.
 
-    5. A lexer hozzáadja a listához a tokent, majd a visszalép az első lépésre.
+    \item A lexer hozzáadja a listához a tokent, majd a visszalép az első lépésre.
+
+\end{enumerate}
 
 Az így kapott lista ezután továbbításra kerül a következő egységhez, az értelmezőhöz.
 
