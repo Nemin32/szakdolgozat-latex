@@ -58,7 +58,9 @@ Tehát az '500' karakterlánc az ötszázas számnak felel meg, az 'igaz' az iga
 <arithm_mul_op> ::= '*' | '/' | 'mod'
 
 <arithm_add_binop> ::= <expression> <arithm_add_op> <expression>
-<arithm_mul_binop> ::= <expression> <arithm_mul_op> <expression> | <arithm_add_binop>
+<arithm_mul_binop> ::= 
+  | <expression> <arithm_mul_op> <expression> 
+  | <arithm_add_binop>
 \end{verbatim}
 \end{footnotesize}
 
@@ -67,7 +69,9 @@ Tehát az '500' karakterlánc az ötszázas számnak felel meg, az 'igaz' az iga
 \begin{footnotesize}
 \begin{verbatim}
 <comparison_op> ::= '<=' | '>=' | '<' | '>' | '=' | '=/='
-<comparsion_binop> ::= <expression> <comparison_op> <expression> | <arithm_mul_binop>
+<comparsion_binop> ::= 
+  | <expression> <comparison_op> <expression>
+  | <arithm_mul_binop>
 \end{verbatim}
 \end{footnotesize}
 
@@ -76,7 +80,9 @@ Tehát az '500' karakterlánc az ötszázas számnak felel meg, az 'igaz' az iga
 \begin{footnotesize}
 \begin{verbatim}
 <logic_op> ::= 'és' | 'vagy'
-<logic_binop> ::= <expression> <logic_op> <expression> | <comparsion_binop>
+<logic_binop> ::= 
+  | <expression> <logic_op> <expression> 
+  | <comparsion_binop>
 \end{verbatim}
 \end{footnotesize}
 
@@ -225,7 +231,9 @@ Függvényból értékkel visszatérni a 'vissza' kulcsszó segítségével tudu
 
 \begin{footnotesize}
 \begin{verbatim}
-<func_call_parameter_list> ::= '(' ')' | '(' <expression> (',' <expression>)* ')'
+<func_call_parameter_list> ::= 
+  | '(' ')' 
+  | '(' <expression> (',' <expression>)* ')'
 <function_call> ::= <function_name> <func_call_parameter_list>
 \end{verbatim}
 \end{footnotesize}
@@ -264,7 +272,19 @@ A kulcsszó használatakor az értelmező futtatása rögtön megszakad. Ezután
 
 \begin{footnotesize}
 \begin{verbatim}
-<statement> ::= <array_set> | <array_create> | <if> | <return> | <for> | <assignment> | <function_declaration> | <print> | <do_while> | <while> | <debug> | <function_call>
+<statement> ::= 
+  | <array_set> 
+  | <array_create> 
+  | <if> 
+  | <return> 
+  | <for> 
+  | <assignment> 
+  | <function_declaration> 
+  | <print> 
+  | <do_while> 
+  | <while> 
+  | <debug> 
+  | <function_call>
 <block> ::= <statement>*
 \end{verbatim}
 \end{footnotesize}
