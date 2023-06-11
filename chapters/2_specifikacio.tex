@@ -11,72 +11,9 @@ Mivel a Pszeudokód képes (elvben) tetszőleges hosszúságú tömbök létreho
 
 A Pszeudokód sokat merít a C-szerű nyelvekből, így sok hasonlóság is felfedezhető benne. A következőkben a Pszeudokód szemantikai elemei és értelmezésük kerül bemutatásra.
 
-\subsubsection{Üres helyek és sorkihagyások}
+\input{chapters/szemantika}
 
-A Python és egyéb behúzás-orientált nyelvekkel ellentétben a Pszeudokód értelmezésében a sorkihagyások és üres helyek külön jelentéssel nem bírnak és csak a kód áttekinthetőségét szolgálják.
-
-Viszont mivel a kód nem tartalmaz semmiféle sorlezáró jelet (például a C-hez hasonlatos nyelvekben használt „;”), így az egymás után következő utasításokat célszerűen sortöréssel választjuk el egymástól.
-
-A kód elemeit pedig egy soron belül legalább egy üres hellyel választhatjuk el.
-
-\subsubsection{Kommentek}
-A Pszeudokód eredeti leírása nem támogat kommenteket, viszont a hasznosságuk miatt ez az implementáció lehetővé teszi a C-szerű nyelvekben megszokott két perjellel jelölt komment sorok használatát.
-
-\subsubsection{Egyszerű értékek}
-A Pszeudokód három atomi (tehát önmagukra kiértékelődő) értéktípust ismer, plusz az ezekből készített tömbök. Ezek a számok, a szövegek, és a logikai értékek.
-
-A számok számjegyekből álló tetszőleges hosszúságú láncok. A szövegek idézőjelek közé zárt karakterláncok. A logikai értékek pedig vagy az “Igaz” vagy a “Hamis” különleges értékeket vehetik fel.
-
-A nyelv elfogadja a fentebbi két kulcsszót nagy és kisbetűs kezdőbetűvel is.
-
-\subsubsection{Változók}
-A változókat kisbetűs karakterláncokkal jelöljük. Típusukat külön nem jelöljük, ez az értékadásból válik egyértelművé. Változókat elődeklarálni nem lehet, létrehozásukhoz muszáj értéket is adnunk nekik. A programozó manuálisan nem törölhet változót, viszont, ha a változót tartalmazó scopeból kilépünk a változó is törlésre kerül.
-
-Értéket a nyíl (<-) operátor segítségével adhatunk. A változó értékének eléréséhez annak nevét használjuk.
-
-Konstans változó létrehozására nincs lehetőség, így a felhasználó felelőssége, hogy ne írjon felül olyan változókat, melyeknek az értékei nem változhatnak.
-
-\subsubsection{Folyamatvezérlési szerkezetek}
-
-A Pszeudokódban a legtöbb alapvető folyamatvezérlési szerkezet megtalálható. Az 2.1. táblázatban azt hasonlítom össze, hogy a C-szerű nyelvekben használt struktúrák hogy is jelennek meg a Pszeudokódban.
-
-2.1. táblázat: A Pszeudokód folyamatvezérlési szerkezetei összehasonlítva a C nyelvvel.
-
-C-szerű nyelvekben használt kulcsszó
-
-Pszeudokód megfelelő
-
-for ({inicializáció}; {feltétel}; {növelés})
-
-ciklus {inicializáció} ← {feltétel} … ciklus vége
-
-while
-
-ciklus amíg … ciklus vége
-
-if … else … 
-
-ha … különben … elágazás vége
-
-{típus} {változónév} = {inicializáló}
-
-{változónév} ← {inicializáló}
-
-{típus} {változónév}[{elemszám}]
-
-{változónév} ← Létrehoz[{típus}]({elemszám})
-
-return {változónév}
-
-vissza {változónév}
-
-\subsubsection{Tömbök}
-
-A Pszeudokód tömbjei 1-indexeltek, mely eltér a legtöbb programozási nyelvtől. Hosszuk létrehozáskor meghatározott és nem változhat.
-
-A tömbök értékeinek elérése és módosítása egydimenziós esetben a már megszokott módon működik. Több dimenzió esetében a C-szerű nyelvektől eltérően tömb[x][y][z] helyett a tömb[x, y, z] szintaxist használjuk.
-
-\subsubsection{Függvények és eljárások}
+\subsection{Függvények és eljárások}
 
 A Pszeudokód különbséget tesz a függvények és eljárások között. Az előbbi visszatér értékkel, az utóbbi nem. Mindkettő a 1. kódnál szereplő szignatúrát követi:
 
@@ -84,13 +21,13 @@ Az Óbudai Egyetemen használt Pszeudokódok része, hogy a sorok elején az olv
 
 Ezt pusztán az olvasó számára szolgál valós információval, a nyelv önmaga nem rendelkezik se GOTO utasítással, se más egyéb szerkezettel mellyel sorszámalapú ugrást tudnánk végrehajtani, így az én megvalósításomban is ezek figyelmen kívül lesznek hagyva.
 
-\subsubsection{Kimenet/Bemenet sorok}
+\subsection{Kimenet/Bemenet sorok}
 
 Minden Pszeudokód algoritmus első két sora arra való, hogy definiálja a be- és kimeneti változókat, mellyel az algoritmus dolgozik. Ez a 2.2-es forráskódban látható.
 
 Mivel mind a bemeneti, mind a kimeneti változók kiderülnek a függvény szignatúrájából és visszatérési értékéből, így az én megvalósításomban ezek figyelmen kívül lesznek hagyva.
 
-\subsubsection{Visszatérési értékek}
+\subsection{Visszatérési értékek}
 
 A Pszeudokód a C-szerű nyelvekkel ellentétben támogatja a több értékkel való visszatérést. Tehát egy érték helyett, akár kettővel, hárommal vagy elméletileg többel is visszatérhetünk a függvényekből.
 

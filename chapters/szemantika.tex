@@ -1,9 +1,8 @@
 \subsection{Üres helyek és sorkihagyások}
 
-A Pszeudokód nem értelmezi az üres helyeket, ezeket csupán a kód fordításánál használjuk fel a nyelvi elemek és utasítások elhatárolására, a végső szintaxisfából kiszűrésre kerülnek.
+A Pszeudokód nem értelmezi az üres helyeket, ezeket csupán az átláthatósághoz és a kód fordításánál használjuk fel, a nyelvi elemek és utasítások elhatárolására. A végső szintaxisfából kiszűrésre kerülnek.
 
-Viszont mivel a kód nem tartalmaz semmiféle sorlezáró jelet (például a C-hez hasonlatos nyelvekben használt ";"), így az egymás után következő utasításokat célszerűen sortöréssel választjuk el egymástól.
-A kód elemeit pedig egy soron belül legalább egy üres hellyel választhatjuk el.
+Mivel a kód nem tartalmaz semmiféle sorlezáró jelet (ilyen például a C-hez hasonlatos nyelvekben használt pontosvessző), így az egymás után következő utasításokat célszerűen sortöréssel választjuk el egymástól. A kód elemeit pedig egy soron belül legalább egy üres hellyel választhatjuk el.
 
 \subsection{Kommentek}
 
@@ -23,7 +22,7 @@ Bár a jegyzetben használt Pszeudokód nem definiálja a kommentelést, mint le
 \end{verbatim}
 \end{footnotesize}
 
-A Pszeudokód háromféle típust különböztet meg. Ezek az egész számok, a logikai értékek, és a karakterláncok. Ezen kívül a nyelv értelmezi még az ezen típusokból alkotott tömböket is.
+A Pszeudokód háromféle típust különböztet meg. Ezek az egész számok (a nyelv lebegőpontos értékeket nem támogat), a logikai értékek, és a karakterláncok. Ezen kívül a nyelv értelmezi még az ezen típusokból alkotott tömböket is, melyet a "tömb" kulcsszó hozzáillesztésével jelölünk.
 
 \subsection{Atomi értékek}
 
@@ -37,7 +36,7 @@ A Pszeudokód háromféle típust különböztet meg. Ezek az egész számok, a 
 \end{verbatim}
 \end{footnotesize}
 
-Az atom kifejezést a Scheme nyelvből vettem át. Olyan értékeket jelöl, melyek minden külső tényezőt figyelmen kívül hagyva, mindig önmagukra értékelődnek ki. A Pszeudokód három ilyen értéket ismer, ezek az egész számok, az idézőjelek közé zárt tetszőleges hosszúságú karakterláncok, és az igaz és hamis logikai értékek.
+Az atom kifejezést a Scheme nyelvből vettem át. Olyan értékeket jelöl, melyek minden külső tényezőt figyelmen kívül hagyva, mindig önmagukra értékelődnek ki. A Pszeudokód három ilyen értéket ismer, ezek az egész számok, az idézőjelek közé zárt tetszőleges hosszúságú karakterláncok, és az igaz és hamis logikai értékek. Az utóbbi esetén a kulcsszavak kis és nagybetűvel is értelmezve vannak.
 
 Tehát az '500' karakterlánc az ötszázas számnak felel meg, az 'igaz' az igaz logikai értéknek, a '"példa"' pedig a "példa" szövegnek.
 
@@ -109,9 +108,9 @@ Lehetőségünk van még egy logikai értéket negálni is, ez esetben az igaz �
 
 A változók nevei csupa kisbetűvel írt szavak. Típusuk értékadáskor dől el implicit módon, a jobboldalt álló érték típusa alapján. Egy változó típusa inicializálás után nem változhat. Konstans deklaráció nem lehetséges, a programozó feladata, hogy a változók értéke ne változhasson, ha az nem szándékos.
 
-A nyelv elődeklarációt nem támogat, a változók létrehozáskor kötelezően értéket is kapnak, ebből következően null-értékkel rendelkező vagy üres változó nem létezik.
+A nyelv elődeklarációt nem támogat, a változók létrehozáskor kötelezően értéket is kapnak, ebből következően null-értékkel rendelkező vagy üres változó nem létezhet.
 
-A változó értékét annak nevével érhetjük el. Nem létező változó értékének elérése futásközbeni hibához vezet.
+A változó értékét annak nevével érhetjük el. Nem létező változó értékének elérése típusellenörzési vagy futásközbeni hibához vezet.
 
 \subsubsection{Értékadás}
 
@@ -121,7 +120,7 @@ A változó értékét annak nevével érhetjük el. Nem létező változó ért
 \end{verbatim}
 \end{footnotesize}
 
-Egy változó bármely adattípust képes eltárolni. Ha egy változó értékét egy másikára állítjuk érték-alapú másolás történik, tehát az így keletkezett adat az eredetitől függetlenül módosítható.
+Egy változó bármely adattípust képes eltárolni, ám típusa nem változhat meg (példa: ha egy számot rendelünk egy változóhoz, onnantól nem rendelhetünk hozzá szöveget). Az értékadáshoz a '<-' (nyíl) operátort használjuk. Ha egy változó értékét egy másikára állítjuk érték-alapú másolás történik, tehát az így keletkezett adat az eredetitől függetlenül módosítható.
 
 \subsubsection{Tömbök}
 
@@ -134,7 +133,11 @@ Egy változó bármely adattípust képes eltárolni. Ha egy változó értéké
 \end{verbatim}
 \end{footnotesize}
 
-Tömböket kétféleképp deklarálhatunk a Pszeudokód nyelvben. Egyrészt készítetünk megadott típussal és hosszal rendelkező tömböt, mely ekkor a típusnak megfelelő üres értékekkel töltődik fel (0 szám, "" szöveg, és hamis logikai érték esetén). Másrészt lehetőségünk van kézzel megadni a tömb elemeit. Ezesetben a típusoknak nem feltétlen kell egyezniük. Tömbök értékeinek lekérése esetén nem a C-ből megszokott `tömb[x][y]` szintaxist használjuk, hanem ehelyett a C\#-ból ismert `tömb[x, y]`-t.
+Tömböket kétféleképp deklarálhatunk a Pszeudokód nyelvben.
+
+Egyrészt készítetünk megadott típussal és hosszal rendelkező tömböt, mely ekkor a típusnak megfelelő üres értékekkel töltődik fel (0 szám, "" szöveg, és hamis logikai érték esetén). 
+
+Másrészt lehetőségünk van kézzel megadni a tömb elemeit. Ezesetben a típusoknak nem feltétlen kell egyezniük. Tömbök értékeinek lekérése esetén nem a C-ből megszokott \verb|tömb[x][y]| szintaxist használjuk, hanem ehelyett a C\#-ból ismert \verb|tömb[x, y]|-t.
 
 \subsubsection{Cím lekérése}
 
@@ -146,7 +149,7 @@ Tömböket kétféleképp deklarálhatunk a Pszeudokód nyelvben. Egyrészt kés
 
 Lehetőségünk van még egy változó címének lekérésére is. Ez egy olyan számérték, mely a nyelvet futtató virtuális gép memóriájának a változó értékének megfelelő cellájára mutat. Ez a tömbök elemeinek címét is képes lekérni.
 
-A címszerint átadott paramétereknél kerül használatra. Tömbökkel egyszerű mutató-aritmetikát is végezhetünk (tömb + n = n. elem), viszont a futtatási környezet hibát dob, ha megpróbálunk a tömb határain kívülre indexelni ilyen módon.
+A függvények címszerint átadott paramétereinél kerül felhasználásra. Tömbökkel egyszerű mutató-aritmetikát is végezhetünk (tömb + n = n. elem), viszont a futtatási környezet hibát dob, ha megpróbálunk a tömb határain kívülre indexelni ilyen módon.
 
 \subsection{Folyamatvezérlési szerkezetek}
 
@@ -167,7 +170,7 @@ A nyelv háromféle elágazást támogat:
 \begin{itemize}
   \item Egyszerű predikátum-vizsgálat (if)
   \item Predikátum-vizsgálat és egy alternatív ág (if-else)
-  \item Predikátum-vizsgálat, több alternatív ág, és egy végleges ág (if-else if-else)
+  \item Predikátum-vizsgálat, egy/több alternatív ág, és egy végleges ág (if-egy/több else if-else)
 \end{itemize}
 
 \subsubsection{Ciklusok}
@@ -184,7 +187,7 @@ A nyelv háromféle elágazást támogat:
 \end{verbatim}
 \end{footnotesize}
 
-A Pszeudokód a C nyelvből ismert for, while, és do while ciklusszerkezetek megfelelőit támogatja. For-szerű ciklus esetén a változó az első értékkel inicializálódik és ciklusonként egyel nő, amíg el nem éri a második értéket. Az érték elérésekor még lefut a ciklus.
+A Pszeudokód a C nyelvből ismert for, while, és do while ciklusszerkezetek megfelelőit támogatja. For-szerű ciklus esetén a változó az első értékkel inicializálódik és ciklusonként egyel nő, amíg el nem éri a második értéket. Az érték elérésekor még lefut a ciklus. GOTO-nak megfelelő utasítás nincs, ahogy Assembly/C-szerű címkék meghatározására sincs lehetőség.
 
 \subsubsection{Függvények}
 
