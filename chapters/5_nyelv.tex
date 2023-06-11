@@ -28,12 +28,12 @@ Bár a nyelv az egyik személyes kedvencem, számomra nem megfelelő a feladatho
   \captionof{table}{A C nyelv értékelése.\label{cnyelv}}
   \begin{tabularx}{\textwidth}{X X}
     \hline
-    \multicolumn{1}{c}{\bfseries{Pozitívumok}} & \multicolumn{1}{c}{\bfseries{Negatívumok}} \\
+    \multicolumn{1}{c}{\bfseries{Pozitívumok}} & \multicolumn{1}{c}{\bfseries{Negatívumok}}                                  \\
     \hline
-    Könnyen fordítható Wasm-be & Manuális memóriakezelés \\
-    Jól felszerelt eszköztár & Nincs OOP \\
-    Személyes ismeretség & Kényelmi funkciók hiánya (pl.: regex, for-each, map, adatszerkezetek, stb.) \\
-    Más nyelveket is ebben írtak (pl.: Python) & Nincs könnyű mód a hibakezelésre (segfault) \\
+    Könnyen fordítható Wasm-be                 & Manuális memóriakezelés                                                     \\
+    Jól felszerelt eszköztár                   & Nincs OOP                                                                   \\
+    Személyes ismeretség                       & Kényelmi funkciók hiánya (pl.: regex, for-each, map, adatszerkezetek, stb.) \\
+    Más nyelveket is ebben írtak (pl.: Python) & Nincs könnyű mód a hibakezelésre (segfault)                                 \\
     \hline
   \end{tabularx}
 \end{center}
@@ -42,24 +42,24 @@ Bár a nyelv az egyik személyes kedvencem, számomra nem megfelelő a feladatho
 
 \subsection{C++}
 
-A C++ kijavítja a C főbb hibáit a RAII-vel (Resource Aquisition Is Initialization[18], „az erőforrás lefoglalása egyben inicializáció is,” magyarul a különböző adattagok létrehozásakor a memória automatikusan lefoglalódik, megszűnésükkor pedig felszabadul) és egy sokkal kevésbé meglepő standard könyvtárral, viszont cserébe új negatívumokat ad az egyenlethez. 
+A C++ kijavítja a C főbb hibáit a RAII-vel (Resource Aquisition Is Initialization[18], „az erőforrás lefoglalása egyben inicializáció is,” magyarul a különböző adattagok létrehozásakor a memória automatikusan lefoglalódik, megszűnésükkor pedig felszabadul) és egy sokkal kevésbé meglepő standard könyvtárral, viszont cserébe új negatívumokat ad az egyenlethez.
 
 Bár az Emscripten képes Wasm formátumba fordítani a nyelvet, a hibakezelése problematikus. Alapesetben a generált kód végzetes hibával lép ki bármilyen hiba esetén, beleértve az amúgy elkapható exception-öket. Ugyan egy kapcsoló segítségével engedélyezhetjük, hogy az utóbbi hibák újra elkaphatóak legyenek, ez súlyos lelassuláshoz vezet a programban.[5]
 
 Ezen kívül a szövegkezelése a lentebb tárgyalt nyelvekhez képest igen nehézkes. Bár vannak regex könyvtárak, de ezekkel kapcsolatban semmi ismeretségem nincs. A C++ rendelkezik hibakezeléssel, viszont ennek ellenére dobhat segfaultot1. A nyelv nem rendelkezik hivatalos csomagkezelővel sem, így a könyvtárak beimportálása nem feltétlen egyszerű és nem garantált, hogy ezek valóban át is fordulnának Wasm-ra.
 
-Mivel a nyelv használhatósága ennyire kétséges, így nem felel meg számomra a feladathoz. A nyelv értékelésének összefoglalója az 5.2-es táblázatban látható.
+Mivel a nyelv használhatósága ennyire kétséges, így nem felel meg számomra a feladathoz. A nyelv értékelésének összefoglalója az \ref{cppnyelv}-es táblázatban látható.
 
 \begin{center}
   \captionof{table}{A C++ nyelv értékelése.\label{cppnyelv}}
   \begin{tabularx}{\textwidth}{X X}
     \hline
-    \multicolumn{1}{c}{\bfseries{Pozitívumok}} & \multicolumn{1}{c}{\bfseries{Negatívumok}} \\
+    \multicolumn{1}{c}{\bfseries{Pozitívumok}}         & \multicolumn{1}{c}{\bfseries{Negatívumok}}                                             \\
     \hline
-    Van OOP & Bár van hibakezelés, de segfaultok itt is történhetnek \\
-    RAII (memóriakezelést leegyszerűsíti) & A szövegkezelés nehézkes (stream-ek, atoi és hasonló átalakító függvények furcsaságai) \\
-    Ésszerű, kiforrott standard könyvtár & A WebAssemblybe való fordítás lassú és több előkészületet igényel \\
-    Személyes tapasztalat (bár nem annyi mint a C-vel) & Nem minden külső könyvtár alkalmas a Wasm-ba való fordításra \\
+    Van OOP                                            & Bár van hibakezelés, de segfaultok itt is történhetnek                                 \\
+    RAII (memóriakezelést leegyszerűsíti)              & A szövegkezelés nehézkes (stream-ek, atoi és hasonló átalakító függvények furcsaságai) \\
+    Ésszerű, kiforrott standard könyvtár               & A WebAssemblybe való fordítás lassú és több előkészületet igényel                      \\
+    Személyes tapasztalat (bár nem annyi mint a C-vel) & Nem minden külső könyvtár alkalmas a Wasm-ba való fordításra                           \\
     \hline
   \end{tabularx}
 \end{center}
@@ -72,67 +72,25 @@ Mivel a nyelv használhatósága ennyire kétséges, így nem felel meg számomr
 
 Viszont míg a többi nyelvnél a kliens maga képes a kód teljes feldolgozására és lefuttatására, a Blazor használatánál szükséges egy szervergép is, melyet fel kell szerelnünk a szerver futtatásának minden szükséges elemével (megfelelő hardver, .NET Core telepítése.)
 
-Bár az egyetemi tanulmányaim miatt sok tapasztalattal rendelkezem már a nyelvvel kapcsolatban, nem szívesen kötném magam egy webes frameworkhöz, így a C\# sem megfelelő számomra a feladathoz. A nyelv értékelésének összefoglalója az 5.3-as táblázatban látható.
+Bár az egyetemi tanulmányaim miatt sok tapasztalattal rendelkezem már a nyelvvel kapcsolatban, nem szívesen kötném magam egy webes frameworkhöz, így a C\# sem megfelelő számomra a feladathoz. A nyelv értékelésének összefoglalója az \ref{csnyelv}-as táblázatban látható.
 
-5.3. táblázat: A C\# nyelv értékelése.
+\begin{center}
+  \captionof{table}{A C\# nyelv értékelése.\label{csnyelv}}
+  \begin{tabularx}{\textwidth}{X X}
+    \hline
+    \multicolumn{1}{c}{\bfseries{Pozitívumok}}                              & \multicolumn{1}{c}{\bfseries{Negatívumok}}                      \\
+    \hline
+    Sok személyes tapasztalat                                               & Terjengősebb mint a többi nyelv                                 \\
+    A memóriakezelést a rendszer intézi, nekünk nem kell foglalkoznunk vele & Semennyi tapasztalatom nincs a webes frameworkökkel             \\
+    Blazor framework kifejezetten webes alkalmazások fejlesztésére          & Futtatási környezetet igényel, nagyobb mint a fentebbi nyelvek. \\
+    Kiváló standard könyvtár                                                                                                                  \\
+    Erős OOP                                                                                                                                  \\
+    Jó szövegkezelés                                                                                                                          \\
+    \hline
+  \end{tabularx}
+\end{center}
 
-Pozitívum
-
-Negatívum
-
-Sok személyes tapasztalat
-
-Terjengősebb mint a többi nyelv
-
-Erős OOP
-
-Semennyi tapasztalatom nincs a webes frameworkökkel
-
-A memóriakezelést a rendszer intézi, nekünk nem kell foglalkoznunk vele
-
-Futtatási környezetet igényel, nagyobb mint a fentebbi nyelvek.
-
-Kiváló standard könyvtár
-
-
-
-Blazor framework kifejezetten webes alkalmazások fejlesztésére
-
-
-
-Jó szövegkezelés
-
-\subsection{TypeScript}
-
-„A TypeScript egy erősen típusos programozási nyelv, mely a JavaScriptre épül és bármely kódméret esetén jobb eszközkészletet nyújt.”[10] Mivel nem igényel valódi fordítást, ezért nagyon gyorsan lehet vele prototípusokat gyártani és a program futtatása szinte semmi előfeltételt nem igényel egy böngészőn túl.
-
-Viszont mivel a TypeScript alatt futó JavaScript dinamikus típusokkal rendelkezik és szinte semmi analízist nem futtat a kódon futtatás előtt, ezért könnyű hibákba futni. Ezen kívül bár rendelkezik pár OOP struktúrával, ezek nem annyira kiforrottak, mint a fentebb említett nyelvek.
-
-Bár a nyelv nagyon közel áll ahhoz, amit keresek, az általa nyújtott garanciák nem kifejezetten hasznosak a jelenlegi projekthez, így nem akarom magam az eszköztárához kötni. A nyelv értékelésének összefoglalója az 5.4-es táblázatban látható.
-
-5.4. táblázat: A TypeScript nyelv értékelése.
-
-Pozitívum
-
-Negatívum
-
-Natívan az interneten futó kód
-
-Gyengébb típusellenőrzés mint egy normálisan fordított nyelvben
-
-Sok személyes tapasztalat
-
-Lassabb mint a fentebbi nyelvek
-
-Nagyon gyorsan prototípizálható nyelv
-
-Mivel a TS alatt futó JS dinamikusan típusos emiatt könnyen lehet váratlan hibákba futni
-
-Jó szövegkezelés (beépített regex)
-
-A nyelv OOP-je nem kifejezetten kiforrott
-
-Automatikus memóriakezelés, extra védelmek a böngészőben való futás miatt
+\newpage
 
 \subsection{LiSP}
 
@@ -140,29 +98,23 @@ A LiSP[16] egy C-hez hasonló korú nyelv, mely lényege, hogy a kód és az ada
 
 Bár egyáltalán nem tartom megfelelő nyelvnek a projektemhez, nem hagyhattam ki a megemlítését, hisz a láncolt lista futtatása nagyon hasonlít a virtuális gépről szóló fejezetben tárgyalt működéséről.
 
-A Structure and Interpretation of Computer Programs\cite{sicp} című könyv sokat segített a folyamat megértésében, mely a LiSP egyik átalakított változatát, a Scheme-t használja és egy fejezetében egy interpreter majd később egy fordító megírását mutatja be. A nyelv értékelésének összefoglalója az 5.5-ös táblázatban látható.
+A Structure and Interpretation of Computer Programs\cite{sicp} című könyv sokat segített a folyamat megértésében, mely a LiSP egyik átalakított változatát, a Scheme-t használja és egy fejezetében egy interpreter majd később egy fordító megírását mutatja be. A nyelv értékelésének összefoglalója az \ref{lispnyelv}-ös táblázatban látható.
 
-5.5. táblázat: A LiSP nyelv értékelése.
+\begin{center}
+  \captionof{table}{A LiSP nyelv értékelése.\label{lispnyelv}}
+  \begin{tabularx}{\textwidth}{X X}
+    \hline
+    \multicolumn{1}{c}{\bfseries{Pozitívumok}}               & \multicolumn{1}{c}{\bfseries{Negatívumok}}              \\
+    \hline
+    A kód maga egyben adat is                                & Semmi reális tapasztalatom nincs a nyelvvel             \\
+    Nem igényel fordítást, gyorsan lehet prototípizálni vele & Idegen, nehezen átlátható szintaxissal rendelkezik      \\
+    Páratlan listafeldolgozási képességekkel rendelkezik     & Nem igazán interneten át való futtatásra kitalált nyelv \\
+    Kiforrott standard könyvtárral rendelkezik               & Nem szeretném használni                                 \\
+    \hline
+  \end{tabularx}
+\end{center}
 
-Pozitívum
-
-Negatívum
-
-A kód maga egyben adat is
-
-Semmi reális tapasztalatom nincs a nyelvvel
-
-Nem igényel fordítást, gyorsan lehet prototípizálni vele
-
-Idegen, nehezen átlátható szintaxissal rendelkezik
-
-Páratlan listafeldolgozási képességekkel rendelkezik
-
-Nem igazán interneten át való futtatásra kitalált nyelv
-
-Kiforrott standard könyvtárral rendelkezik
-
-Nem szeretném használni
+\newpage
 
 \subsection{Rust}
 
@@ -172,47 +124,65 @@ A Rust egy relatíve új programozási nyelv, mely céljának a teljes memória-
 
 Cserébe a nyelv írása nagyon nehézkes, a fordító ott ahol tud felhívja a figyelmét a programozónak az esetleges hibákra vagy kifelejtett ellenőrzésekre. Ez természetesen a program minőségére nézve abszolút pozitív, ám cserébe nagyon nehézkessé teszi a prototípusok létrehozását.
 
-Mivel a nyelv használata ilyen nehézkes és a prototípizálás lassú, így nem szeretném ezt a nyelvet választani. A nyelv értékelésének összefoglalója az 5.6-os táblázatban látható.
+Mivel a nyelv használata ilyen nehézkes és a prototípizálás lassú, így nem szeretném ezt a nyelvet választani. A nyelv értékelésének összefoglalója az \ref{rustnyelv}-os táblázatban látható.
 
-5.6. táblázat: A Rust nyelv értékelése.
+\begin{center}
+  \captionof{table}{A Rust nyelv értékelése.\label{rustnyelv}}
+  \begin{tabularx}{\textwidth}{X X}
+    \hline
+    \multicolumn{1}{c}{\bfseries{Pozitívumok}}         & \multicolumn{1}{c}{\bfseries{Negatívumok}} \\
+    \hline
+    Gazdag standard könyvtár                           & Nehézkes szintaxissal rendelkezik          \\
+    Jó hibakezelés, segfault átlagos kódban lehetetlen & Nincs vele elég tapasztalatom              \\
+    Remek könyvtárak, csomagkezelővel                  & Fordítás kicsit lassú                      \\
+    Natív fordulás böngésző által is érthető formátumba                                             \\
+    \hline
+  \end{tabularx}
+\end{center}
 
-Pozitívum
-
-Negatívum
-
-Gazdag standard könyvtár
-
-Nehézkes szintaxissal rendelkezik
-
-Jó hibakezelés, segfault átlagos kódban lehetetlen
-
-Nincs vele elég tapasztalatom
-
-Remek könyvtárak, csomagkezelővel
-
-Fordítás kicsit lassú
-
-Natív fordulás böngésző által is érthető formátumba
+\newpage
 
 \subsection{JavaScript}
 
-Mivel a program követelményei közé tartozik, hogy internetről elérhető felületen lehessen használni és mivel az ANTLR natívan képes rá kódot generálni[14], így végül a JavaScriptre esett a választásom, mint a szakdolgozat megvalósításához választott programozási nyelv.
+Mivel a program követelményei közé tartozik, hogy internetről elérhető felületen lehessen használni, így a böngészőkben natívan futó JavaScript kifejezetten alkalmas jelölt a szakdolgozat elkészítésére.
 
-Bár a JavaScript még a TypeScriptnél is kevesebb ígéretet tesz a típusok biztonságáról, ez nem jelent különösebb hátrányt, mivel az ANTLR által generált kód alapból se él ezekkel a típusossági garanciákkal. Habár létezik egy TypeScriptbe átültetett változata a programnak, néhány egyszerű teszt során azt tapasztaltam, hogy a kód sokkal kevésbé könnyen kezelhető, mint a sima JavaScript verzióval, így végül az utóbbi mellett döntöttem. A nyelv értékelésének összefoglalója az 5.7-es táblázatban látható.
+Ám, mivel nagyon kevés garanciát biztosít a rosszul használt típusok és egyéb programozói óvatlanságból eredő hibák elkerülésére, így mégse erre esett a választásom, hanem az egyel lentebbi szekcióban taglalt TypeScript-re. A nyelv értékelésének összefoglalója az \ref{jsnyelv}-es táblázatban látható.
 
-Pozitívum
+\begin{center}
+  \captionof{table}{A JavaScript nyelv értékelése.\label{jsnyelv}}
+  \begin{tabularx}{\textwidth}{X X}
+    \hline
+    \multicolumn{1}{c}{\bfseries{Pozitívumok}}             & \multicolumn{1}{c}{\bfseries{Negatívumok}}                    \\
+    \hline
+    A legegyszerűbb szerverről felszolgálható              & Lassabb mint egy fordított nyelv                              \\
+    A végfelhasználónak csak böngészővel kell rendelkeznie & A legtöbb rossz típusból eredő hiba csak futás során derül ki \\
+    Dinamikus tömbökkel és automatikus memóriakezeléssel rendelkezik                                                       \\
+    Kiforrott eszközökkel rendelkezik, melyek segítségével a hibák száma és a kód mérete minimalizálható                   \\
+    \hline
+  \end{tabularx}
+\end{center}
 
-Negatívum
+\newpage
 
-A legegyszerűbb szerverről felszolgálható
+\subsection{TypeScript}
 
-Lassabb mint egy fordított nyelv
+„A TypeScript egy erősen típusos programozási nyelv, mely a JavaScriptre épül és bármely kódméret esetén jobb eszközkészletet nyújt.”[10] Mivel nem igényel valódi fordítást, ezért nagyon gyorsan lehet vele prototípusokat gyártani és a program futtatása szinte semmi előfeltételt nem igényel egy böngészőn túl.
 
-A végfelhasználónak csak böngészővel kell rendelkeznie
+Viszont mivel a TypeScript alatt futó JavaScript dinamikus típusokkal rendelkezik és az általa futtatott analízis csak a deklarált típusok pontosságát ellenőrzi, így nem képes a futási hibák kiszűrésére. Ennek ellenére a vizsgált nyelvek közül ez bizonyult annak, amely egyrészt kevés eszközt igényel, másrészt pedig rögtön böngészőben is futtatható formátumot produkál, így a választásom erre a nyelvre esett.
 
-A legtöbb rossz típusból eredő hiba csak futás során derül ki
+A nyelv értékelésének összefoglalója az \ref{tsnyelv}-es táblázatban látható.
 
-Dinamikus tömbökkel és automatikus memóriakezeléssel rendelkezik
-
-Kiforrott eszközökkel rendelkezik, melyek segítségével a hibák száma és a kód mérete minimalizálható
-
+\begin{center}
+  \captionof{table}{A TypeScript nyelv értékelése.\label{tsnyelv}}
+  \begin{tabularx}{\textwidth}{X X}
+    \hline
+    \multicolumn{1}{c}{\bfseries{Pozitívumok}} & \multicolumn{1}{c}{\bfseries{Negatívumok}}                                               \\
+    \hline
+    Natívan az interneten futó kód             & Gyengébb típusellenőrzés mint egy normálisan fordított nyelvben                          \\
+    Sok személyes tapasztalat                  & Lassabb lehet mint a fentebbi nyelvek                                                    \\
+    Nagyon gyorsan prototípizálható nyelv      & Mivel a TS alatt futó JS dinamikusan típusos emiatt könnyen lehet váratlan hibákba futni \\
+    Jó szövegkezelés (beépített regex)         & A nyelv OOP-je nem kifejezetten kiforrott                                                \\
+    Automatikus memóriakezelés, extra védelmek a böngészőben való futás miatt                                                             \\
+    \hline
+  \end{tabularx}
+\end{center}
