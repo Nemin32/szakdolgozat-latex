@@ -1,0 +1,315 @@
+A felhasználó által begépelt bemeneti szöveg több átalakításon esik át míg futtatható állapotba nem kerül. Ez a szekció ezt mutatja be.
+
+\subsection{Formázás}
+
+Első lépésben a felhasználó szöveget gépel be a program által nyújtott szövegdobozba, majd rákattint a fordítás gombra. Mielőtt a program értelmezése elkezdődne, a fordító először is megnézi a bemenet egyes sorait és a következőket teszi:
+
+\begin{itemize}
+    \item Ha fölöslesges üres sorokat talál, azokat kitörli,
+    \item Ha új blokkot kezdeményező utasítással kezdődik a sor (például "ciklus", "függvény", "ha", stb.), akkor a jelenlegi sort követő kód behúzásra kerül,
+    \item Ha blokkot záró utasítással végződik egy sor ("[utasítás] vége"), akkor már a jelenlegi sort és az azokat követőket egy szinttel kevésbé húzzuk be.
+\end{itemize}
+
+Ennek eredménye, hogy a felhasználói bemenettől függetlenül konzisztens és jól tördelt kódot kapunk, melyet továbbadunk az értelmezőnek.
+
+\subsection{Tokenizálás}
+
+A nyers szöveg önmagában hiába van jól formázva, a számítógép számára nem értelmezhető. Épp ezért az első lépés, hogy a fordítóprogram által is értelmezett legkisebb blokkokba, úgynevezett "tokenekbe", bontsuk a kódot, ez a tokenizálás. Mivel ennek az algoritmusa a modern számítógépeken a felhasználó számára érzékelhetetlenül kevés időt vesz igénybe (körülbelül 20-25 millisecundum), így a felhasználótól kapott bemenet még gépelés közben át is esik a folyamaton. Minden egyes kulcsszó eltárolja saját fajtáját, eredeti szövegét (például "elágazás"), és sorát és oszlopát (melyeket a hibák kijelzésénél használunk).
+
+A tokenizáló egy egyszerű LL(1) parserrel van megvalósítva, mely rendelkezik a nyelv összes lehetséges tokenjére egy metódussal, mely vagy a hozzá tartozó tokennel tér vissza (a fentebb specifikált egyéb információkat beleértve) vagy null értékkel, ami a sikertelen tokenizálást jelképezi. Az algoritmus sorrendben végigpróbálja az összes lehetséges tokent és, ha érvényes mintát talál, akkor továbblépteti a bemeneti szöveget és hozzáfűzi a kimeneti tokenek listájához a találatot.
+
+Bár a tokenizálás folyamatát elég lenne csupán egyszer lefuttatnunk, amikor a felhasználó elindítja a fordítás folyamatát, a program egyben szintaktikai kiemelést is végez (tehát a különböző nyelvi elemeket különféle színekkel jelöljük, így egyszerűbbé téve a programozó számára, hogy eligazodjon a kódon). Ez egy egyszerű szótár adatszerkezettel van implementálva, minden kulcsszóhoz hozzápárosítunk egy színt, mely ezáltal beállításra kerül.
+
+Ha a tokenizálás hibába ütközik ezt kivétellel jelezzük és az első hibás tokentől kezdve vörös kiemeléssel tudatjuk vizuálisan, hogy gond van. Hiba lehet például egy le nem zárt szöveg, vagy olyan karakter ami semelyik kulcsszónak nem része (például ";").
+
+\subsection{Szintaxisfa generálás}
+
+Ha a tokenizálás közben nem futottunk hibába, az így kapott lista kész arra, hogy szintaxisfává dolgozzuk át. A folyamathoz itt egy úgynevezett monadikus kombinátor parsert használtam, melynek működési elvét egy Haskell nyelven írt programot bemutató papírból vettem át.
+
+A parser a következőképp működik: Olyan függvényeket specifikálunk, mely bemenetként megkapja a bemeneti szöveget és azt az indexet, ahol jelenleg tartunk a szövegben és mely egy felhasználó által specifikált értékkel és egy új (bemenet, index) párossal tér vissza, melyben az index annyival előrébb lett tolva, ahány elemet felhasználtunk. Az algoritmus használható lenne sima szövegeken is (az eredeti papír így is tesz), viszont a saját fordítómban a parser a tokenizálásból eredő listát használja fel bemenetként.
+
+A fentebb említett függvényeket "kombinátoroknak" nevezzük. A név onnan ered, hogy az egyes függvények egymással kombinálhatóak, így egyre bonyolultabb parsereket tudunk felépíteni. Ennek módja az úgynevezett \textit{bind} ("kötés") függvény, mely két kombinátort vár bemenetként és egy új kombinátorral tér vissza. Ez lefuttatja először az első függvényt, ha ez hiba, akkor visszatér ezzel a hibával. Ha nem, akkor az ebből kapott (bemenet, index) párost és a kapott értéket átadja a második függvénynek. Ezzel úgymond "egymásba tudjuk láncolni" a különböző kombinátorokat, melyek vagy a lánc összes elemének feldolgozott értékeivel térnek vissza, vagy ha a lánc során bárhol hibába futunk, akkor azzal.
+
+A papír definiál néhány alap függvényt, melyekből a nyelvi elemeket értelmezni tudó parsert építjük fel, ezek a következők egyike lehetnek:
+
+\begin{itemize}
+    \item \textbf{return} - Mindig egy bizonyos értékkel tér vissza,
+    \item \textbf{fail} - Mindig hibával tér vissza,
+    \item \textbf{item} - A bemenet első értékével tér vissza, ha az üres, akkor pedig hibával,
+    \item \textbf{sat} - Ha a bemenet első értékére igaz egy predikátum, akkor ezzel az értékkel tér vissza, különben hibával,
+    \item \textbf{many} - Egy másik kombinátort futtat le a bemeneten annyiszor, ameddig az érvényes értékkel tér vissza, majd visszatér ezen értékek listájával,
+    \item \textbf{many1} - A \textit{many} kombinátor feladatát látja el, de minimum egy értékkel kell visszatérnie, különben hibával tér vissza,
+    \item \textbf{or} - Megpróbál egy kombinátort, ha az hibával tér vissza, visszatér egy második értékével,
+    \item \textbf{sepBy} - Két kombinátort vár bemenetként, melyeket egymás után futtat le, oly módon, hogy a második értékét mindig elveti, az elsőből pedig a \textit{many} kombinátorhoz hasonlóan listát készít. Például egy felsorolás esetén, az első kombinátor a lista elemei, a második pedig az ezeket elválasztó vesszők és üres helyeket fogadó kombinátor,
+    \item \textbf{sepBy1} - A \textit{sepBy} kombinátor feladatát látja el, de minimum egy értékkel kell visszatérnie, különben hibával tér vissza,
+    \item \textbf{chain} - Két kombinátort vár bemenetként, mellyel műveleteket tudunk parsolni \verb_elem operátor elem_ alakban. Például \textit{elem} számokat fogadó kombinátor, az \textit{operátor} pedig az összeadás jelét fogadó kombinátor esetén, képesek vagyunk összeadásokat értelmezni.
+    
+    Ez a kombinátor balrekurzív, így nem csak egyszerű műveleteket, hanem \texttt{elem operátor (elem operátor (...))} alakban is képes értelmezni, tetszőleges mélységig.
+    \item \textbf{left} - Lefuttat egymás után két kombinátort, majd elveti a második értékét,
+    \item \textbf{right} - Lefuttat egymás után két kombinátort, majd elveti az első értékét.
+\end{itemize}
+
+Ezeket kiegészítettem még pár saját vagy más forrásból származó kombinátorral, melyek olyan mintákat rövidítenek le, amelyek a kódban nagyon gyakran fordultak elő:
+
+\begin{itemize}
+    \item \textbf{map} - Végrehajt egy kombinátort, majd az ebből kapott értéket átadja egy nem-kombinátor függvénynek. A kódban ezt az egyes parserek utolsó lépésének használtam, ennek segítségével változtattam a különféle kapott értékeket szintaxisfa elemmé,
+    \item \textbf{maybe} - Végrehajt egy kombinátort, mely ha értékkel tér vissza továbbengedi. Ha hibával tér vissza, a hibát elveti és helyette null értékkel, de sikeresen tér vissza,
+    \item \textbf{choice} - Tetszőleges számú kombinátort vár bemenetként, majd ezeket az \textit{or} kombinátor segítségével egyesével végigpróbálja, míg érvényes értéket nem kap, mellyel visszatér. Ha nincs érvényes érték, az utolsó hibával tér vissza,
+    \item \textbf{parens} / \textbf{brackets} - A bemenetet \verb_(kombinátor)_ vagy \verb_[kombinátor]_ alakban dolgozza fel, eldobva a zárójeleket. Listáknál hasznos, hisz a listák nyitó és záróelemei nem szükségesek.
+    \item \textbf{matchT} - Ellenőrzi hogy a bemenet következő elemének típusa megegyezik-e a felhasználó által megadott tokentípussal,
+    \item \textbf{mapChoice} - Paraméterként egy szótárat vár, melyből a bemenet következő eleme alapján választja ki, melyik kombinátor fusson le következőleg.
+    
+    Hozzárendelésnél hasznos, hisz a például \texttt{változó <- érték} és a \texttt{változó <- Függvényhívás()} első két tagja minden esetben megegyezik, így ha idáig eljutottunk, biztosak lehetünk benne, hogy csak ez a két lehetőség következhet (a valódi értelmezőben ennél több ág is lehetséges, itt a példa kedvéért egyszerűsítettem).
+\end{itemize}
+
+Végezetül mivel néhány parser igen hosszúra tud nyúlni, így ez elkerülhetetlenül ahhoz vezet, hogy több egymásba ágyazott \textit{bind} híváson kéne kiigazodnunk. Az ilyen kódon hírhedten nehéz kiigazodni, olyannira hogy a JavaScriptben fejlesztő programozók frusztrációjukban a "callback hell" vagyis "visszahívó (függvény) pokol" fantázianévvel illeték a jelenséget.
+
+Ezt elkerülvén a parserek mellé még egy osztályt implementáltam, mely a Haskell nyelv úgynevezett \textit{"do"} szintaxisát imitálja. Ennek lényege, hogy az egymásba ágyazást lineáris kóddá tudjuk alakítani úgy, hogy ugyanazt a végeredményt produkálja.
+
+Ehhez egy listában tároljuk az egymás után meghívott parsereket és hogy ezeket milyen névhez szeretnénk kötni, majd egy végső függvényhívással a program rekurzió segítségével "visszajátssza" számunkra a manuális \textit{bind} hívásokat. Tegyük fel, hogy van három parserünk, \texttt{parserA}, \texttt{parserB}, és \texttt{parserC}, melyeket sorban szeretnénk lefuttatni, majd egy \texttt{fn} függvénynek szeretnénk átadni.
+
+Manuális \textit{bind} függvény hívással ez a következőképp néz ki:
+
+\begin{verbatim}
+parserA.bind(A => parserB.bind(B => parserC.map(C => fn(A,B,C))))
+\end{verbatim}
+
+Rövidsége ellenére itt is háromszoros beágyazással kell már dolgoznunk. "Do" alakba írva ez a következően néz ki (a következő példában a \texttt{Parser} a parser ősosztály, melyen a \texttt{do()} egy statikus metódus):
+
+\begin{verbatim}
+Parser.do()
+    .bind("A", parserA)
+    .bind("B", parserB)
+    .bind("C", parserC)
+    .result(({A,B,C}) => fn(A,B,C))
+\end{verbatim}
+
+Ahogy látható, a kód sokkal átláthatóbb és könnyebben kezelhető, hisz, ha tegyük fel egy új parsert kell hozzáadnunk vagy kivennünk, elég csupán egy sort módosítanunk, nem kell zárójelek után vadásznunk vagy észben tartanunk hány szint mélyen is jár a beágyazás. Ez önmagában sokkal kezelhetőbbé teszi a kódot, ám hozzáadtam még pár extra kulcsszót, mely még inkább megkönnyítheti az egyes parserek megírását. Névszerint ezek:
+
+\begin{itemize}
+    \item \textbf{bindT} - A \textit{matchT} parser segítségével egy tokent köt a névhez,
+    \item \textbf{ignore} - Ha a parser sikeres, figyelmen kívül hagyja az eredményét, ha hibával tér vissza, akkor megszakítja az értelmezést,
+    \item \textbf{ignoreT} - Az \textit{ignore} és a \textit{matchT} összeépítése,
+    \item \textbf{maybeT} - Működése megegyezik a \textit{bindT}-vel, viszont ha nem találunk megfelelő tokent, null értékkel tér vissza.
+\end{itemize}
+
+Ezen eszközök segítségével a 2.1-es fejezetben látható szintaxis szinte egy az egyben átültethető, elhanyagolhatóan lassabb futásidő mellett. Különbségeik ellenére itt is a  tokenizáláshoz hasonló alapötlet alapján dolgozunk: Sorra próbáljuk az egyes mintákat és, ha megfelelőt találunk szintaxisfa-elemet alkotunk, melyet beleillesztünk a készülő fába.
+
+Fontos megjegyezni, hogy egy érvényes tokenekből álló lista nem feltétlen eredményez érvényes szintaxisfát. Hiába képes a tokenizáló értelmezni a "ha ha ha ha" vagy "ciklus elágazás" bemenetet, ezek értelemszerűen nem alkotnak szintaktikailag érvényes kódot. Ha bárhol nem vagyunk képesek egy illő mintát se találni, a folyamat hibával tér vissza és megszakad.
+
+\subsection{Típusellenőrzés}
+
+A típusellenőrzés feladata, hogy megbizonyosodjon afelől, hogy egy szintaktikailag helyes szintaxisfa szemantikailag is érvényes kódból készült. Ez alatt azt értjük, hogy például a függvények megfelelő típusú paramétereket kapnak, műveleteket csak olyan értékeken végzünk melyekre ezek értelmezve vannak (nem adhatunk számhoz szöveget például), ezen kívül azt is ellenőrizzük, hogy a függvények megfelelő típusú értékkel térnek-e vissza.
+
+Ehhez egy rekurzív függvényt használunk fel, mely két bemenettel rendelkezik. Az első egy szintaxisfa-elem (kezdetben értelemszerűen a program gyökéreleme), a második pedig egy úgy nevezett típus-szótár, melyet rögtön definiálunk. A függvény kimenete sikeres típusellenőrzés esetén az adott szintaxisfa-elem típusa és egy opcionálisan módosított típus-szótár. Működése, hogy minden lehetséges szintaxisfa-elem típusra megadunk szabályokat, melyek segítségével ki tudjuk számolni annak típusát és, hogy gyermekelemei szintén megfelelőek-e. Például, ha az összeadás műveletét ellenőrizzük, akkor meg kell néznünk, hogy a bal és jobb oldali elem számok-e (melyeket a függvény rekurzív meghívásával érünk el) és, ha azok, akkor a művelet eredménye is szám lesz (mely tényt esetleg egy másik típusellenörzésnél is felhasználhatunk). Ha valamely szabály meghiúsul, akkor kivételt dobunk, mely által az egész folyamat megszakad.
+
+A típus-szótár olyan adatszerkezet, mely nevekhez köt olyan típusokat, melyekre késöbb még szükségünk lehet. Eltárolja tehát a változókat és a függvények paramétereit és visszatérési típusait. Mivel nem globális változó, hanem paraméterként van átadva a típusellenörzési függvénynek, ezért külön kód nélkül támogatja, hogy azok a változók melyek felszabadulásra kerülnek a függvény visszatértével szintén elérhetetlenné válnak.
+
+\begin{verbatim}
+// Típus-szótár itt üres
+ha Predikátum() akkor
+    // Típus-szótár: {x = SZÁM}
+    x <- 5
+függvény vége
+// Típus-szótár újra üres, a fentebbi scope végéhez értünk.
+kiír x
+// Hiba! 'x' értéke nincs definiálva
+\end{verbatim}
+
+A típusellenörzés szabályai röviden a következőek:
+
+\begin{itemize}
+    \item Atom esetén annak értéke alapján meg tudjuk határozni a típust,
+    \item Értékadáshoz esetén eltároljuk a változót és annak típusát a jelenlegi típus-szótárba,
+    \item Változó esetén lekérjük annak típusát név alapján. Ha nem találjuk kivételt dobunk,
+    \item Függvénydeklaráció esetén eltároljuk annak visszatérési értékét a függvénytörzs utasításai alapján és a paramétereinek számát és azok elvárt típusait,
+    \item Függvényhívás esetén lekérjük a fentebb eltárolt értékeket és megnézzük, hogy megfelelő számú és típusú paramétert adtunk át, majd visszatérünk az eltárolt típussal (kivétel ez alól a generikus függvények, melyet lejjebb tárgyalunk),
+    \item Aritmetikai, logikai, és összehasonlító műveletek esetén ellenőrizzük a tagokat és a végeredmény típusával térünk vissza,
+    \item Elágazás esetén ellenőrizzük, hogy a predikátum logikai érték és hogy az ágak ugyanolyan típusú értékkel térnek vissza (mely lehet üres is),
+    \item Ciklusok esetén a ciklusváltozó értékét eltároljuk a típus-szótárba, majd a ciklus törzsének típusával térünk vissza,
+    \item Egyéb utasítások esetén a visszatérési típus üres. 
+\end{itemize}
+
+Egy esetben azonban a típus nem dönthető el rögtön, ez az eset pedig a generikus függvények definiálása. Ilyenkor a \texttt{T} (vagy bármely más egy, nagybetűs karakter) ideiglenes értékkel hivatkozunk egy olyan típusra, melyet csak a függvény meghívásakor vagyunk képesek kiszámolni. Ekkor segít nekünk ismét a típus-szótár, mely a sima névhez kötésen túl képes típusokat behelyettesíteni is. Ha meghívunk egy generikus paraméterrel rendelkező függvényt egzakt típussal, akkor a típusellenörző ismét lefut a függvény törzsén. Ekkor azomban, a szótár behelyettesíti ezt az egzakt típust az összes olyan generikus típushoz kötött névhez, ahol a típus ideiglenes egy-karakteres értéke megegyezik a behelyettesített típus értékével, tehát, ha például T-re helyettesítünk 'egész' típussal, akkor a T, T tömb, T referencia típusok mind megfelelő egzakt típussá változnak (egész, egész tömb, egész referencia).
+
+Ez a lépés nem végez átalakítást a szintaxisfán, csupán az esetleges kivételei miatt érdekes számunkra.
+
+\subsection{Szekvenciális program generálása}
+
+Az így kapott szintaxisfa ekkor garantáltan helyes szinaktika, típusok, és szemantika szempontjából. Ekkor lehetőségünk volna önmagában lefuttatni egy interpreter segítségével, ám két okból mégse ezt tesszük.
+
+Először is, bár a program futtatható, de mivel a szintaxisfákat feldolgozó algoritmusok definíció szerint rekurzívak, így a folyamatot nem lehet megállítani futás közben threading használata nélkül. Ám mivel JavaScriptes környezetben fut a kódunk, így ez nem elérhető szánunkra és mivel a projekt egyik előírása, hogy a kódnak megállíthatónak és léptethetőnek kell lennie, így szükséges még egy extra feldolgozási lépés.
+
+Másodszor pedig az ilyen átalakítás betekintést nyújthat egy kezdő programozó számára, hogy hogy nagy vonalakban hogy is működik egy számítógép, hiszen a szekvenciális kódba fejtett program egy leegyszerűsített Assembly-szerű nyelv gépi kódjává válik, melyet a végső lépésben egy apró virtuális gép képes lefuttatni.
+
+Ebben a lépésben egy előre meghatározott sorrend szerint bejárjuk a szintaxisfát és az elemek alapján olyan utasításokat fűzünk egy listába, melyeket a gép egymástól függetlenül képes elvégezni.
+
+\subsubsection{A virtuális gép által értelmezett utasítások listája}
+\label{sec:vminsts}
+
+Alább olvasható a virtuális gép által értelmezett összes utasítás. Bármely más érték vagy hibás argumentummal meghívott utasítás esetén a gép kivételt dob és a futtatás megszakad.
+
+\newcommand{\codetable}[3]{
+    \begin{center}
+        \captionof{table}{#1\label{#2}}
+        \begin{tabularx}{\textwidth}{ l l X }
+            \hline
+            \multicolumn{1}{c}{\bfseries{Utasítás}} &
+            \multicolumn{1}{c}{\bfseries{Paraméter}} &
+            \multicolumn{1}{c}{\bfseries{Leírás}} \\
+            \hline
+            #3
+            \hline
+        \end{tabularx}
+    \end{center}
+}
+
+% \textbf{Utasítás} & \textbf{Paraméter} & \textbf{Leírás} \\
+
+\codetable{Hibakeresés}{code_debug}{
+    PRINT & - & Kiveszi a verem legfelső elemét és kiírja a konzolra. \\
+    DEBUG & - & Megállítja a virtuális gép futását hibakeresési célból. \\
+}
+
+\codetable{Ugrások}{code_jump}{
+    LABEL & név & Létrehoz egy \textit{név} nevű cimkét, melyre az ugrások hivatkozhatnak. \\
+    JMP & cimke & Feltétel nélkül ugrik a \textit{cimke} nevű cimkéhez. \\
+    FJMP &cimke & Ugrik a \textit{cimke} nevű cimkéhez, ha a verem tetején lévő elem hamis. \\
+}
+
+\codetable{Veremműveletek}{code_stack}{
+    NOT  & - & A verem tetején lévő logikai értéket megfordítja. \\
+    PUSH & érték & A verem tetejére helyezi az \textit{érték} értéket. \\
+    VOID & - & Elveti a verem tetején lévő elemet. \\
+}
+
+\codetable{Függvényhívás és visszatérés}{code_func}{
+    CALL & függvény & Meghívja a \textit{függvény} függvényt. A jelenlegi PC elmentésre kerül egy külön veremben, majd ugrunk a \textit{függvény} cimkéhez. \\
+    RETURN & exp & Ha az \textit{exp} értéke 'exp' föltakarítjuk a jelenlegi változótartományt, különben változatlanul hagyjuk. Levesszük a PC verem legfelső elemét és betöltjük a PC regiszterbe. \\
+}
+
+A következő három táblában rendre a \texttt{BINOP} kulcsszót alkalmazzuk, mely működését a megadott paraméter (operátor) határozza meg. Az utasítás leveszi a verem első két elemét (\textit{első} és \textit{második}), majd ezeken elvégzi a műveletet és az eredményt a veremre helyezi vissza.
+
+Fontos megjegyezni, hogy bár a verem miatt \textit{első} és \textit{második} fordított sorrendben kerülnek levételre a veremről, a virtuális gép mégis helyes sorrendben adja át őket a műveleteknek.
+
+\codetable{Aritmetikai műveletek}{code_arithm}{
+    BINOP & + & Összeadja \textit{első}-t és \textit{második}-t. \\
+    BINOP & - & Kivonja \textit{első}-t és \textit{második}-t. \\
+    BINOP & * & Összeszorozza \textit{első}-t és \textit{második}-t. \\
+    BINOP & / & Elosztja \textit{első}-t \textit{második}-al és a kapott értéket lefelé kerekíti. \\
+    BINOP & mod & Az \textit{első} és \textit{második} érték hányadosának maradékát adja. \\
+}
+
+A \ref{code_arithm} végeredményei mind szám típusú értékek.
+
+\codetable{Összehasonlító műveletek}{code_comp}{
+    BINOP & < & Igaz, ha \textit{első} kisebb, mint \textit{második}. \\
+    BINOP & > & Igaz, ha \textit{első} nagyobb, mint \textit{második}. \\
+    BINOP & <= & Igaz, ha \textit{első} kisebb vagy egyenlő, mint \textit{második}. \\
+    BINOP & >= & Igaz, ha \textit{első} nagyobb vagy egyenlő, mint \textit{második}. \\
+    BINOP & = & Igaz, ha \textit{első} egyenlő \textit{második}-al. \\
+    BINOP & =/= & Igaz, ha \textit{első} nem egyenlő \textit{második}-al. \\
+}
+
+A \ref{code_comp} végeredményei mind logikai értékek.
+
+\codetable{Összehasonlító műveletek}{code_logic}{
+    BINOP & és & Igaz, ha \textit{első} és \textit{második} értéke is igaz. \\ 
+    BINOP & vagy & Igaz, ha \textit{első} vagy \textit{második} értéke igaz. \\ 
+}
+
+A \ref{code_logic} végeredményei szintén mind logikai értékek.
+
+\codetable{Tartományműveletek}{code_scope}{
+    ESCOPE & func & Új változótartományt generál. Ha \textit{func} értéke 'func', az új tartomány függvénytartományként jön létre, így, ha egy változó értékét keressük, a keresés ennek a tartománynak a szélénél megáll. Ellenkező esetben függvényen belüli tartományt hozunk létre, melyen a kereső képes áthaladni. \\
+    LSCOPE & - & Feltakarítja az utolsó változótartományt. Az összes benne lévő változó memóriája felszabadul. \\
+}
+    
+\codetable{Címlekérő műveletek}{code_addr}{
+    ADDRESS & változó & Lekéri a \textit{változó} címét és a veremre helyezi.  \\
+    ARRADDR & tömb & Lekéri a \textit{tömb} címét, majd a verem tetején lévő \textit{érték} alapján kiszámolja a tömb \textit{érték}-edik elemének címét és a veremre helyezi. \\
+}
+
+Értékek lehívása:
+\codetable{Értékek lehívása}{code_getvar}{
+    GETARR & változó & Lekéri a \textit{változó} értékét, majd ezt a veremre helyezi.  \\
+    GETVAR & tömb & A verem tetején lévő \textit{érték} alapján lekéri a \textit{tömb} \textit{érték}-edik elemét, majd ezt a veremre helyezi. \\
+}
+
+\codetable{Tömb-kreáló műveletek}{code_MKARR}{
+    MKARR & változó & Lekéri a verem tetején található \textit{érték}-et, majd készít egy \textit{érték} hosszú tömböt, melyet elment \textit{változó}-ba. \\
+    VALARR & változó & Lekéri a verem legfelső \textit{darab} elemét, majd lekéri a következő \textit{darab} mennyiségű elemet. Ezekből tömböt alkot, melyet elment \textit{változó}-ba. \\
+}
+
+\codetable{Változó-kreáló műveletek}{code_mkvar}{
+    SETARR & tömb & Lekéri a verem legfelső két elemét, \textit{index} és \textit{érték}-et. A \textit{tömb} \textit{index}-edik elemét beállítja \textit{érték}-re. \\
+    SETVAR & változó & Lekéri a verem tetején lévő elemet és elmenti \textit{változó}-ba. \\
+    MKREF & változó & Lekéri a verem tetején lévő \textit{elem}-et. Ha az szöveg, megkeresi annak az \textit{elem} nevű változó memóriacellájának címét, majd erre referenciát készít \textit{változó} néven. Ha \textit{érték} szám, akkor memóriacella-címként értelmezzük és erre készítünk referenciát.   \\
+}
+
+\subsubsection{Példa a generálás demonstrálásához}
+
+Vegyük egy egyszerű ciklus átalakítását példaképp:
+
+\begin{verbatim}
+i <- 1
+
+ciklus amíg i < 5
+  kiír i
+  i <- i + 1
+ciklus vége
+\end{verbatim}
+
+\begin{samepage}
+A fentebbi Pszeudokód a következő szekvenciális kódra fordul:
+
+\begin{verbatim}
+ESCOPE false
+
+ PUSH   1 (1)
+ SETVAR i
+
+ LABEL  while_0_pred (2)
+ GETVAR i
+ PUSH   5
+ BINOP  <
+ FJMP   while_0_end
+ LABEL  while_0_body
+
+ ESCOPE false
+  GETVAR i (3)
+  PRINT
+
+  GETVAR i (4)
+  PUSH   1
+  BINOP  +
+  SETVAR i
+ LSCOPE
+
+ JMP   while_0_pred (5)
+ LABEL while_0_end
+
+LSCOPE
+\end{verbatim}
+\end{samepage}
+
+A kód megőrzi az utasítások sorrendjét. Először az i változó kap értéket (1), majd következik a ciklus első fele, ahol ellenőrizzük, hogy egyáltalán be kell-e lépnünk a ciklus törzsébe (2). Ha nem, az \verb|FJMP| utasítás hatására a ciklus utánra ugrunk. Ha viszont be kell lépnünk, akkor kiírjuk i-t (3) majd pedig megnöveljük értékét 1-el (4). Végül pedig visszaugrunk a ciklus feltételének ellenőrzéséhez (5).
+
+\subsection{Végrehajtás}
+
+A létrehozott szekvenciális kód egy egyszerű verem-alapú virtuális gépen kerül lefuttatásra. A virtuális gép a következő elemekből épül fel:
+
+\begin{itemize}
+        \item \textbf{Programkód} (tape) - A szekvenciális kód egy (csak olvasható) tömbként kerül átadásra. A tömb egyes elemei két adattagból állnak:
+        \begin{itemize}
+            \item \textit{OpCode} - Tartalmazza melyik utasítást is szeretnénk végrehajtani. Az érvényes kódok listája a \ref{sec:vminsts} szekcióban olvasható.
+            \item \textit{Payload} - Egy konstans, fordítási időben ismert atomi értéket tartalmazó extra adattag, amelyet az utasítás veremműveletek nélkül képes elérni. 
+        \end{itemize}
+        \item \textbf{Utasítás-számláló} (PC) - Egy kód által csak indirekt módon változtatható regiszter, mellyel számontartjuk a jelenleg végrehajtott utasítást (tehát jelenlegi utasítás = \verb|tape[PC]|). Értéke 1-el nő minden végrehajtási lépés után.
+        \item \textbf{Számláló-verem} (PC stack) - A függvéynhívások esetén ide mentjük és innent töltjük be az utasítás-számláló értékét.
+        \item \textbf{Verem} (stack) - Egy atomi értékeket tárolni képes verem, melynek a tetejére pakolhatunk értékeket és onnan értékeket vehetünk le.
+        \item \textbf{Allokátor} (store) - Egy memória-allokátor, mely atomi értékeket és tömböket képes eltárolni egy lineáris memóriatartományon. Az egyes memóriacellákat azok sorszáma alapján azonosítjuk. Az allokátor számontartja hány referencia tartozik az egyes cellákhoz és, ha ez az érték nullára vált, felszabadítja a cellát (garbage collection).
+        \item \textbf{Változók} (variables) - Egy tartományokra bontott asszociatív tömb. Elemei szövegeket párosítanak számokkal (a változóhoz tartozó memóriacella sorszáma). Az egyes tartományok őr-elemekkel vannak elválasztva egymástól, melyek tartalmazzák, hogy függvényhatárt képviselnek-e vagy függvényen belüli határt. Keresés esetén a fgv.-en belüli határokon át tudunk lépni, a függvényhatárokon viszont nem.
+        \item \textbf{Megállás-indikátor} (stopped) - Egy logikai érték, mely azt jelzi hogy a következő lépés végrehajtása előtt meg kell-e állítanunk a virtuális gépet vagy sem.
+        \item \textbf{Jelenlegi sor} (line) - Számláló, mely nyilvántartja hogy a jelenlegi szövegbemenet melyik sorát dolgozzuk fel. Hibakezelésnél használjuk. 
+\end{itemize}

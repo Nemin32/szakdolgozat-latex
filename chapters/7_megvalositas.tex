@@ -68,7 +68,7 @@ A második adattag opcionális (hiánya esetén null értéket tartalmaz) neve p
 
 A harmadik adattag az eredeti kód sorszámát tartalmazza, ezt hibakeresés esetén és a felhasználói felületen használjuk fel.
 
-7.2.1 Eredeti megközelítés
+\subsubsection{Eredeti megközelítés}
 
 A fejlesztés kezdetekor magát az absztrakt szintaxisfát használtam fel a program lefuttatására. Ennek pozitívuma, hogy a kód csupán egy átalakítást igényel (egyszerű szövegből szintaxisfává) majd ezután egy rekurzív eljárás segítségével (melyet a Visitor osztály szekciójában részletezek) könnyedén lefuttatható.
 
@@ -78,7 +78,7 @@ Ez nem jelent gondot amíg csupán a végeredményre vagyunk kíváncsiak, ám m
 
 Ennek ellenére, az így elvetett kód több részben is inspirálta a végleges megoldást implementáció és folyamatvezérlési logika szempontjából, így hasznos prototípusnak bizonyult.
 
-7.2.2 A PseudoVisitor osztály
+\subsubsection{A PseudoVisitor osztály}
 
 A PseudoVisitor osztály az ANTLR által nyújtott, az absztrakt szintaxisfa bejárására szolgáló osztály kiterjesztése, mely a visitor vagyis „látogató” programozási minta alapján képes a fát bejárni és feldolgozni.
 
@@ -88,7 +88,7 @@ Egyszerű példa, ha egy számértéket szeretnénk feldolgozni: Az osztály din
 
 Mivel a legtöbb elem értékét nem akarjuk rögtön kiértékelni, hanem ehelyett hozzá szeretnénk fűzni a szekvenciális utasítások listájához és mivel a legtöbb ilyen utasítás több egyszerűbb műveletre lebontható, a folyamatot egy segédfüggvény segítségével könnyítettem meg és tettem átláthatóbbá:
 
-7.2.2.1 Az „assemble” függvény
+\paragraph{Az „assemble” függvény}
 
 Ahogy a neve is sugallja, a függvény egy messzemenően leegyszerűsített verziója a több programozási nyelvben is megtalálható asm kulcsszónak, mellyel a programozó kézzel írt Assembly utasításokat helyezhet el a kódjában.
 
@@ -100,7 +100,7 @@ Mivel felülírjuk a rekurzív folyamatot és így nem minden ág minden eleme k
 
 Ennek kiküszöbölésére az NL (New Line, vagyis „új sor”) kulcsszót implementáltam, mely nem illeszt utasítást a listába, hanem manuálisan növeli a sorokat számláló változó értékét.
 
-7.2.2.2 Példák
+\paragraph{Példák}
 
 Az alábbiakban szeretnék bemutatni három példát a generált lineáris kódokra:
 
@@ -128,13 +128,13 @@ Fontos még megjegyezni, hogy a ciklusok rendelkeznek egy számmal, mely egyért
 
 \subsection{Végrehajtás}
 
-7.3.1 Futtatási környezet
+\subsubsection{Futtatási környezet}
 
 A futtatási környezet lényegében egy egyszerűsített virtuális gépként funkcionál. A szekvenciális utasítások listáját és a kigyűjtött funkció-szignatúrákat a konstruktorban adjuk át.
 
 Az utasításokon és függvény paraméter típusokon kívül az osztályban tároljuk még a jelenlegi utasításra mutató számlálót, a rögtön felhasznált értékeket tartalmazó vermet, a változókat tartalmazó asszociatív tömböt, és azt a vermet mely a visszatéréskor elmentett utasítás-számláló értékeket tartalmazza.
 
-7.3.2 A létrehozott program végrehajtása
+\subsubsection{A létrehozott program végrehajtása}
 
 A létrehozott szekvenciális kód egy egyszerű verem-alapú modell alapján működik. Minden utasítás vagy kifejezés vagy a veremről vesz ki értékeket vagy oda helyez el. Hibát nem generáló program esetén a verem garantáltan üres a végrehajtás végeztével.
 
@@ -142,7 +142,7 @@ Ezen felül az osztály rendelkezik még egy asszociatív tömbbel, mely a kül�
 
 Mivel a környezetnek aktívan kommunikálnia kell a felhasználónak futtatás közben, így létrehozáskor elfogad egy objektumot, mely függvényeket tartalmaz, amelyek bizonyos esetekben meghívásra kerülnek. Ilyen események egy érték veremre kerülése vagy levétele, egy változó értékének módosítása, de akár egy utasítás végrehajtásának befejezése. Ezáltal az értelmező megfelelő függvényekkel ellátva nem csupán böngészőben, de bármilyen környezetben képes működni.
 
-7.3.3 Felhasználói felület
+\subsubsection{Felhasználói felület}
 
 A felhasználói felület egy egyszerű HTML5 weboldal, mely tetszőleges webszerverrel szolgálható fel. A képernyő bal oldalán egy kódszerkesztő található, ahová a Pszeudokód írható be. Fordítás után (melyet az imént taglaltunk) az elkészült kód futtatható állapotban van és felhasználói parancsra indítható. Lehetőségünk van vagy soronként léptetni a kódot vagy a program végéig futtatni. Ez a 7.2-es ábrán van bemutatva.
 

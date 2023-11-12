@@ -69,9 +69,9 @@ A virtuális gép lényegében egy minden érvényes utasítást értelmezni ké
 
 A virtuális gép működésének egyik megközelítése a rekurzió, hisz a szintaxisfánk egy fa, melynek minden ága is egy értelmes szintaxisfának felel meg. Így alkalmas stratégia, hogy egészen addig osztogatjuk fel részproblémákra a futtatást, míg a levelekig nem érünk, melyek nem igényelnek semmiféle feldolgozást. Innentől pedig a rekurzió elkezd visszafejleni és a levelek fölötti ágak eredményei válnak az új levelekké.
 
-Az 3.1. ábra bemutatja a 10 / 2 * 15 + 5 egyenlet kiszámolását egy egyszerű szintaxisfa segítségével.
+Az \ref{fig:aritmast} ábra bemutatja a 10 / 2 * 15 + 5 egyenlet kiszámolását egy egyszerű szintaxisfa segítségével.
 
-
+\addimage{ast.png}{Példa egy absztrakt szintaxisfára.}{aritmast}
 
 A futtatás akkor ér véget, ha vagy a szintaxisfa legvégére értünk vagy hibába ütköztünk. 
 

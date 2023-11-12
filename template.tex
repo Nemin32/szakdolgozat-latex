@@ -26,6 +26,10 @@
 \usepackage{tabularx}
 \usepackage[format=plain, font=normalfont]{caption}
 
+
+% times new roman betűtípus
+\usepackage{times}
+
 % lista elemek közti hely, és vonal mint lista elem előtti jel beállítása
 % \setlist{nosep, label={--}}
 
@@ -59,8 +63,6 @@
 % sorköz
 \linespread{1.15}
 
-% times new roman betűtípus
-\usepackage{times}
 
 % ábra és táblázat számozás beállítása fejezetenként
 \setcounter{figure}{0}
@@ -89,6 +91,15 @@
 
 % bekezdés térköz
 \setlength{\parskip}{8pt}
+
+\newcommand{\addimage}[3]{
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\linewidth]{img/#1}
+    \caption{#2}
+    \label{fig:#3}
+  \end{figure}
+}
 
 % ábra és táblajegyzék formázása
 \makeatletter
