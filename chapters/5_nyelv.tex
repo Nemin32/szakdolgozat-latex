@@ -18,7 +18,7 @@ A C pozitívumai közé sorolandó, hogy nagyon könnyen lehet más platformokra
 
 A nyelv pozitívumai közé sorolandó még, hogy nem túl „meglepő” (kevés szintaxissal és aránylag átlátható szabályokkal rendelkezik), kifejezetten gyors és kis állományokká fordul, és szinte páratlan szabadságot ad a fejlesztőnek a rendszer erőforrásainak felhasználásához.
 
-Cserébe  viszont a több évtizedes standard könyvtár és a nyelv pár furcsasága miatt könnyen futhat a programozó furcsa hibákba, mint például a szövegeknél esetlegesen hiányzó null byteok esetén történő túlcsordulások, vagy a hibásan lefoglalt / korábban felszabadított memóriaterületekre való írás/olvasás esetén előforduló végzetes hibák.
+Cserébe a több évtizedes standard könyvtár és a nyelv pár furcsasága miatt könnyen futhat a programozó furcsa hibákba, mint például a szövegeknél esetlegesen hiányzó null byteok esetén történő túlcsordulások, vagy a hibásan lefoglalt / korábban felszabadított memóriaterületekre való írás/olvasás esetén előforduló végzetes hibák.
 
 Ezen kívül a teljesen manuális memóriakezelés bár nagyon hasznos tud lenni, de jelen problémához fölösleges plusz terhet jelent csak. Ezen kívül a nyelv nem támogatja az osztályokat, helyette struct-ok átadogatásával oldjuk meg az egybefüggő objektumok megváltoztatását. Ez sajnos nagyon könnyen tud átláthatatlansághoz vezetni, mely egy ilyen nem-triviális projektnél elfogadhatatlan.
 
@@ -136,6 +136,31 @@ Mivel a nyelv használata ilyen nehézkes és a prototípizálás lassú, így n
     Jó hibakezelés, segfault átlagos kódban lehetetlen & Nincs vele elég tapasztalatom              \\
     Remek könyvtárak, csomagkezelővel                  & Fordítás kicsit lassú                      \\
     Natív fordulás böngésző által is érthető formátumba                                             \\
+    \hline
+  \end{tabularx}
+\end{center}
+
+\newpage
+
+\subsection{Java}
+\label{sec:java}
+
+A szakdolgozat megvalósításának elején először a Java nyelvre esett a választásom, hisz egyrészt sokat használtam már, másrészt natívan támogatja a nagyszerű ANTLR4 könyvtárat, melyet kifejezetten programozási nyelvek értelmezésére és feldolgozására alkottak meg.
+
+Sajnos azonban a fejlesztés során hamar rájöttem, hogy mivel a nyelv nem képes WASM formátumba fordulni, egy kliens-szerver architektúra megvalósítása pedig túlságosan eltért volna a szakdolgozat témájától, így végül elvetettem használatát.
+
+Ennek ellenére a jelenlegi megvalósítás alapjait fektette le a nyelv használata, erről a \ref{sec:previous} fejezetben beszélek részletesebben. A nyelv értékelésének összefoglalója az \ref{javanyelv}-es táblázatban látható.
+
+\begin{center}
+  \captionof{table}{A Java nyelv értékelése.\label{javanyelv}}
+  \begin{tabularx}{\textwidth}{X X}
+    \hline
+    \multicolumn{1}{c}{\bfseries{Pozitívumok}}         & \multicolumn{1}{c}{\bfseries{Negatívumok}} \\
+    \hline
+    Ismerős szintaxis & Webes kommunikáció csak API-k segítségével \\
+    ANTLR4 könyvtár & Nem fordul webes formátumba \\
+    Dinamikus memóriakezeléssel rendelkezik \\
+    Erősen típusos nyelv \\
     \hline
   \end{tabularx}
 \end{center}
