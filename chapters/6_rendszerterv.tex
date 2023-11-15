@@ -1,21 +1,27 @@
 \subsection{Összeállítás}
 
-A diplomamunka egyes elemei külön egységekként lesznek lekódolva, melyek interfészekkel lesznek képesek egymással kommunikálni. Ez azért ideális, mert a végeredmény egy nagyon kevés fájlból álló, egyszerűen mozgatható és felállítható csomag, viszont az eredeti forrásállományok egymással való nem függése miatt könnyű bármelyik részt lecserélni, ha ez esetleg szükségessé válna.
+A diplomamunka egyes elemei külön egységekként lesznek lekódolva, melyek interfészekkel lesznek képesek egymással kommunikálni. Ez azért ideális, mert a végeredmény egy kevés fájlból álló, egyszerűen mozgatható és összeállítható csomag. Emellett mivel az eredeti forrásállományok egymással nincsenek szoros függésben, így  bármelyik részt könnyű lecserélni, ha ez esetleg szükségessé válna.
 
-Mivel a fent felsorolt nyelvek majdnem mind képesek natív formátumba is fordulni, ezért amíg el nem érünk a felhasználó interfész kialakításához, a kód helyileg is tesztelhető, akár egy nyelvre specifikus unit teszt frameworkkel, akár valamely automatizált módszer segítségével.
+Eredeti elképzelésem szerint a fordítóprogram egy szerverként működött volna, melyhez a felhasználó egy webes kliensen keresztül fért volna hozzá. Ezen szerver feladata az lett volna, hogy a felhasználó által átadott szövegeket feldolgozza, majd olyan formában küldje vissza a kliens számára, melyet az le képes futtatni.
 
-A külső könyvtár által generált szintaxisfát egy általam írt átalakító osztályban használom fel, mely képes rekurzív adatstruktúrából tömbszerűt alkotni. Ez utána egy futtató osztályba kerül, mely a felhasználói felülettel kapcsolatban áll oly módon, hogy annak információkat küld és attól parancsokat fogad. Ennek folyamatát a 6.1-es ábra mutatja be.
+Azonban, mivel a kliens-szerver architektúra ötletét elvetettem és a TypeScript nyelv mellett döntöttem, így a program egy egyfájlos JS formátumú egységgé fog fordulni, mely egymagában képes a kód értelmezésére, futtatható állományba fordítására, és a webes interfész meghajtására is.
 
 Mivel a program egyszerű JavaScriptből és HTML+CSS fájlokból áll és letöltés után a végfelhasználó számítógépén fut, így szinte bármilyen interneteléréssel és statikus fájlokat elérhetővé tenni képes szerverrel felszerelt gépről felszolgálható.
 
+Tesztelés szempontjából a fordító egyes lépéseit (ezek részletes bemutatása a \ref{sec:execution}. fejezetben található) a Pszeudokód PDF kilencvenhat algoritmusának mindegyikén le fogom futtatni és ellenőrizni, hogy a fordító hiba nélkül végre képes-e hajtani őket.
+
+Ezen felül tervezek unit tesztként néhány algoritmust lefuttattni, majd az általuk adott végeredményt ellenőrizni, hogy valóban a várt értékeket adják-e vissza.
+
 \subsection{Felhasználói interfész}
 
-Mivel a projekt célja, hogy a Pszeudokód megértéséhez és megtanulásához nyújtson segítséget, így a felhasználói interfésznek ehhez minél több és hasznosabb eszközt kell nyújtania. Szeretném, hogy a képernyő egyik oldalán a felhasználó folyamatosan láthassa milyen értékeket vettek fel a változók, amik a program során létrejönnek. Ezen kívül szeretnék egy szekciót, mely a hibákat sorolja fel. A program vizuális felosztása a 6.2-es ábrán látható.
+Mivel a projekt célja, hogy a Pszeudokód megértéséhez és megtanulásához nyújtson segítséget, így a felhasználói interfésznek ehhez minél több és hasznosabb eszközt kell nyújtania.
+
+Szeretném, hogy a képernyő egyik oldalán a felhasználó folyamatosan láthassa milyen értékeket vettek fel a változók, amik a program során létrejönnek. Ezen kívül szeretnék egy szekciót, mely a hibákat sorolja fel. A program vizuális felosztása a 6.2-es ábrán látható.
 
 Ezen kívül természetesen egy szövegszerkesztő részlegre is szükség van, ahová a bemenetet írhatjuk. Alapvetően szöveges bemenetet képzeltem el, viszont ha az időm engedi esetleg valamiféle képről történő szövegfelismerést (OCR) is felhasználhatnék a felhasználótól való adatbekérésre. A kód megjelenítésénél hasznos volna, ha szintaxiskiemelést alkalmazhatnánk, erre remek külső könyvtárak állnak rendelkezésre (pl.: highlight.js), de szükség szerint kézzel is megírható.
 
-Futás közben pedig a kód leggyakrabban lefutó részeit valamilyen látványos módon ki szeretném emelni (például azzal, hogy elsötétedik a sor.) Szükség van még egy eszköztárra is, ahol a léptetésre, futtatásra, megállításra és betöltésre/mentésre szolgáló gombok vannak.
+Futás közben pedig a kód leggyakrabban lefutó részeit valamilyen látványos módon ki szeretném emelni (például azzal, hogy elsötétedik a sor.) Szükség van még egy eszköztárra is, ahol az előre- és visszaléptetésre, a futtatásra, a megállításra és a kód formázásra szolgáló gombok vannak.
 
-Az oldal dizájnjához a Twitternél kifejlesztett Bootstrap[3] nevű frontend könyvtárat szeretném használni. Segítségével egyszerűen lehet konzisztens felhasználói felületeket létrehozni. Ezen túl természetesen az oldal sima HTML+CSS+JS+Backend-ből állna össze. A dizájn a 6.2-es ábrán látható.
+Az oldalt egy letisztult, a szürke különböző árnyalatait felhasználó felületként szeretném megvalósítani széles és kisképernyőn is jól olvasható elrendezéssel, a webfejlesztésben megszokott HTML+CSS+JS párosításból állna össze. A dizájn a 6.2-es ábrán látható.
 
-Ha van idő a fejlesztés során szeretnék egy extra oldalsó sávot is az oldalra helyezni, mely felsorolja a Pszeudokód PDF-ében található algoritmusokat és kattintásra be is tölti ezeket. Ezek tárolása egyszerű, szöveges statikus fájlokként megoldható.
+Ha van idő a fejlesztés során szeretnék egy extra oldalsó sávot is az oldalra helyezni, mely felsorolja a Pszeudokód PDF-ében található algoritmusokat és kattintásra be is tölti ezeket. Ezek tárolása akár egy akár több egyszerű, szöveges statikus fájlként oldható meg.
