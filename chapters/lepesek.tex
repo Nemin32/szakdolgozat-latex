@@ -76,14 +76,14 @@ Ennek hasznosságát egy példával demonstrálnám. Tegyük fel, hogy van háro
 
 Manuális \textit{bind} függvény hívással ez a következőképp néz ki:
 
-\begin{verbatim}
+\begin{code}{Egymásba ágyazott \textit{bind} hívások.}{nested_bind}
 parserA.bind(A => 
     parserB.bind(B => 
         parserC.map(C => 
             fn(A,B,C))))
-\end{verbatim}
+\end{code}
 
-Annak ellenére, hogy rövid és egyszerű példát választottam, már most háromszoros beágyazással kell dolgoznunk. A valós Pszeudokód egyes elemeinek értelmezéséhez öt-hat különféle parserre és esetleg több ignorált elemre is (mely külön feldolgozást nem igényel, csupán a nyelvi elem típusának eldöntéséhez kell) is szükség van, melyhez így legalább hatszoros beágyazást kéne alkalmaznunk, mely nyilvánvalóan teljesen átláthatatlan és szerkeszthetetlen.
+Annak ellenére, hogy rövid és egyszerű példát választottam, a \ref{nested_bind}-es forráskód által bemutatott esetben már most háromszoros beágyazással kell dolgoznunk. A valós Pszeudokód egyes elemeinek értelmezéséhez öt-hat különféle parserre és esetleg több ignorált elemre is (mely külön feldolgozást nem igényel, csupán a nyelvi elem típusának eldöntéséhez kell) is szükség van, melyhez így legalább hatszoros beágyazást kéne alkalmaznunk, mely nyilvánvalóan teljesen átláthatatlan és szerkeszthetetlen.
 
 A következő példában "Do" alakba írva láthatjuk ugyanezt. Az itt látható \texttt{Parser} osztály a parserek ősosztálya, melyen a \texttt{do()} egy statikus metódus, mely a inicializál egy \texttt{Do} osztályú elemet, amire parsereket köthetünk:
 
@@ -149,7 +149,7 @@ Egy esetben azonban a típus nem dönthető el rögtön, ez az eset pedig a gene
 
 Ha meghívunk egy generikus paraméterrel rendelkező függvényt egzakt típussal, akkor a típusellenörző ismét lefut a függvény törzsén. Ekkor azomban, a szótár behelyettesíti ezt az egzakt típust az összes olyan generikus típushoz kötött névhez, ahol a típus ideiglenes egy-karakteres értéke megegyezik a behelyettesített típus értékével.
 
-Ez alapján, ha például T-re helyettesítünk 'egész' típussal, akkor a \texttt{T, T tömb, T referencia} típusok mind megfelelő egzakt típussá változnak (\texttt{egész, egész tömb, egész referencia}).
+Ez alapján, ha például \texttt{T}-re helyettesítünk \texttt{egész} típussal, akkor a \texttt{T, T tömb,} és \texttt{T referencia} típusok mind megfelelő egzakt típussá változnak (\texttt{egész}, \texttt{egész} \texttt{tömb}, és \texttt{egész} \texttt{referencia}).
 
 Ez a lépés nem végez átalakítást a szintaxisfán, csupán az esetleges kivételei miatt érdekes számunkra.
 
@@ -163,10 +163,87 @@ Másodszor pedig az ilyen átalakítás betekintést nyújthat egy kezdő progra
 
 Ebben a lépésben egy előre meghatározott sorrend szerint bejárjuk a szintaxisfát és az elemek alapján olyan utasításokat fűzünk egy listába, melyeket a gép egymástól függetlenül képes elvégezni.
 
-\subsubsection{A virtuális gép által értelmezett utasítások listája}
+\subsubsection{Példa a generálás demonstrálásához}
+
+Vegyük egy egyszerű ciklus átalakítását példaképp:
+
+\begin{verbatim}
+i <- 1 (1)
+
+ciklus amíg i < 5 (2)
+  kiír i (3)
+  i <- i + 1 (4)
+ciklus vége (5)
+\end{verbatim}
+
+\begin{samepage}
+A fentebbi Pszeudokód a következő szekvenciális kódra fordul:
+
+\begin{verbatim}
+ESCOPE false
+
+ PUSH   1 (1)
+ SETVAR i
+
+ LABEL  while_0_pred (2)
+ GETVAR i
+ PUSH   5
+ BINOP  <
+ FJMP   while_0_end
+ LABEL  while_0_body
+
+ ESCOPE false
+  GETVAR i (3)
+  PRINT
+
+  GETVAR i (4)
+  PUSH   1
+  BINOP  +
+  SETVAR i
+ LSCOPE
+
+ JMP   while_0_pred (5)
+ LABEL while_0_end
+
+LSCOPE
+\end{verbatim}
+\end{samepage}
+
+A virtuális gép által végrehajtható utasítások részletes listája és leírása a \ref{sec:vminsts} alfejezetben olvasható, itt csupán nagy vonalakban közlöm az utasítások kis csoportjai milyen hatást váltanak ki.
+
+A szekvenciális kód megőrzi az eredeti utasítások sorrendjét, mégpedig:
+
+\begin{enumerate}
+    \item Az \texttt{i} változó értéket kap,
+    \item A ciklus predikátuma során ellenőrizzük, hogy be kell-e lépnünk egyátalán a ciklusba és ha nem, akkor ugrunk a ciklus utánra,
+    \item Ha viszont igen, akkor először kiírjuk az \texttt{i} változó értékét,
+    \item Majd megnöveljük azt eggyel,
+    \item Végül a ciklus végére érünk, ahonnan a predikátumellenőrzés ismét lezajlik.
+\end{enumerate}
+
+\subsection{Végrehajtás}
+
+A létrehozott szekvenciális kód egy egyszerű verem-alapú virtuális gépen kerül lefuttatásra. A virtuális gép a következő elemekből épül fel:
+
+\begin{itemize}
+        \item \textbf{Programkód} (tape) - A szekvenciális kód egy (csak olvasható) tömbként kerül átadásra. A tömb egyes elemei két adattagból állnak:
+        \begin{itemize}
+            \item \textit{OpCode} - Tartalmazza melyik utasítást is szeretnénk végrehajtani. Az érvényes kódok listája a \ref{sec:vminsts} alfejezetben olvasható. Bármely más érték vagy hibás argumentummal meghívott utasítás esetén a gép kivételt dob és a futtatás megszakad.
+            \item \textit{Payload} - Egy konstans, fordítási időben ismert atomi értéket tartalmazó extra adattag, amelyet az utasítás veremműveletek nélkül képes elérni. Feladata olyan extra információk kódolása, amely fordítás közben elveszik a program kódjából.
+        \end{itemize}
+        \item \textbf{Utasítás-számláló} (PC) - Egy kód által csak indirekt módon változtatható regiszter, mellyel számontartjuk a jelenleg végrehajtott utasítást (tehát jelenlegi utasítás = \verb|tape[PC]|). Értéke 1-el nő minden végrehajtási lépés után.
+        \item \textbf{Számláló-verem} (PC stack) - A függvéynhívások esetén ide mentjük és innent töltjük be az utasítás-számláló értékét.
+        \item \textbf{Verem} (stack) - Egy atomi értékeket tárolni képes verem, melynek a tetejére pakolhatunk értékeket és onnan értékeket vehetünk le.
+        \item \textbf{Allokátor} (store) - Egy memória-allokátor, mely atomi értékeket és tömböket képes eltárolni egy lineáris memóriatartományon. Az egyes memóriacellákat azok sorszáma alapján azonosítjuk. Az allokátor számontartja hány referencia tartozik az egyes cellákhoz és, ha ez az érték nullára vált, felszabadítja a cellát (garbage collection).
+        \item \textbf{Változók} (variables) - Egy tartományokra bontott asszociatív tömb. Elemei szövegeket párosítanak számokkal (a változóhoz tartozó memóriacella sorszáma). Az egyes tartományok őr-elemekkel vannak elválasztva egymástól, melyek tartalmazzák, hogy függvényhatárt képviselnek-e vagy függvényen belüli határt. Keresés esetén a fgv.-en belüli határokon át tudunk lépni, a függvényhatárokon viszont nem.
+        \item \textbf{Megállás-indikátor} (stopped) - Egy logikai érték, mely azt jelzi hogy a következő lépés végrehajtása előtt meg kell-e állítanunk a virtuális gépet vagy sem.
+        \item \textbf{Jelenlegi sor} (line) - Számláló, mely nyilvántartja hogy a jelenlegi szövegbemenet melyik sorát dolgozzuk fel. Hibakezelésnél használjuk. 
+\end{itemize}
+
+\subsection{A virtuális gép által értelmezett utasítások listája}
 \label{sec:vminsts}
 
-Alább olvasható a virtuális gép által értelmezett összes utasítás. Bármely más érték vagy hibás argumentummal meghívott utasítás esetén a gép kivételt dob és a futtatás megszakad.
+Alább olvasható a szekvenciális kódba fejtés után kapott, a virtuális gép által értelmezett összes utasítás.
 
 \newcommand{\codetable}[3]{
     \begin{center}
@@ -358,14 +435,21 @@ kiír x // 10
 
 \codetable{Címlekérő műveletek}{code_addr}{
     ADDRESS & változó & Lekéri a \textit{változó} címét és a veremre helyezi.  \\
-    ARRADDR & tömb & Lekéri a \textit{tömb} címét, majd a verem tetején lévő \textit{érték} alapján kiszámolja a tömb \textit{érték}-edik elemének címét és a veremre helyezi. \\
+    ARRADDR & tömb, dimenzióSzám & Levesz a veremről \textit{dimenzióSzám} elemet, majd ezeket indexképp felhasználva a veremre helyezi a \textit{tömb} megfelelő elemének címét. \\
 }
 
-Értékek lehívása:
-\codetable{Értékek lehívása}{code_getvar}{
+A \ref{code_addr} táblában látható műveletekkel kérhetjük le az egyes változók és tömb elemek címeit mutatók formájában. A mutató egy egyszerű adatszerkezet, mely csupán egy címből és egy extra adattagból áll, aminek feladata, hogy jelezze, hogy nem egyszerű számmal, hanem egy címmel van dolgunk.
+
+A mutatók ideiglenes elemek, melyek csak a veremben jelennek meg és minden esetben egy változóhoz kell kötnünk őket, mielőtt az általuk mutatott értékkel tudnnánk dolgozni. Mivel a Pszeudokód nem igényel mutató-aritmetikát (tehát kifejezetten memória-címeken való műveletvégzést, amely például a C nyelvben igencsak megszokott), így nincs szükségünk külön cím- és értéklehívó utasításokra.
+
+\codetable{Változók  lehívása}{code_getvar}{
     GETARR & változó & Lekéri a \textit{változó} értékét, majd ezt a veremre helyezi.  \\
-    GETVAR & tömb & A verem tetején lévő \textit{érték} alapján lekéri a \textit{tömb} \textit{érték}-edik elemét, majd ezt a veremre helyezi. \\
+    GETVAR & változó, dimenzióSzám & A verem tetején lévő \textit{dimenzióSzám} darab elem alapján lekéri a \textit{változó} tömb megfelelő indexén található elemét, majd ezt a veremre helyezi. \\
 }
+
+Az értelmező egy korábbi változatában két extra kulcsszóval is rendelkezett, melyek a \ref{code_getvar} táblában láthatók. Ezek feladata lényegében az volt, amit a virutális gép jelenlegi változata automatikusan elvégez, vagyis az egyes változók értékének lehívása azok címének alapján.
+
+Mivel a programok ezen kulcsszavak többé-kevésbé ugyanazt tették mint a címlekérő műveletek és a programok nélkülük se váltak különösképp bonyolultabbá, így a végső értelmezőből kihagyásra kerültek.
 
 \codetable{Tömb-kreáló műveletek}{code_MKARR}{
     MKARR & változó & Lekéri a verem tetején található \textit{érték}-et, majd készít egy \textit{érték} hosszú tömböt, melyet elment \textit{változó}-ba. \\
@@ -377,70 +461,3 @@ kiír x // 10
     SETVAR & változó & Lekéri a verem tetején lévő elemet és elmenti \textit{változó}-ba. \\
     MKREF & változó & Lekéri a verem tetején lévő \textit{elem}-et. Ha az szöveg, megkeresi annak az \textit{elem} nevű változó memóriacellájának címét, majd erre referenciát készít \textit{változó} néven. Ha \textit{érték} szám, akkor memóriacella-címként értelmezzük és erre készítünk referenciát.   \\
 }
-
-\subsubsection{Példa a generálás demonstrálásához}
-
-Vegyük egy egyszerű ciklus átalakítását példaképp:
-
-\begin{verbatim}
-i <- 1
-
-ciklus amíg i < 5
-  kiír i
-  i <- i + 1
-ciklus vége
-\end{verbatim}
-
-\begin{samepage}
-A fentebbi Pszeudokód a következő szekvenciális kódra fordul:
-
-\begin{verbatim}
-ESCOPE false
-
- PUSH   1 (1)
- SETVAR i
-
- LABEL  while_0_pred (2)
- GETVAR i
- PUSH   5
- BINOP  <
- FJMP   while_0_end
- LABEL  while_0_body
-
- ESCOPE false
-  GETVAR i (3)
-  PRINT
-
-  GETVAR i (4)
-  PUSH   1
-  BINOP  +
-  SETVAR i
- LSCOPE
-
- JMP   while_0_pred (5)
- LABEL while_0_end
-
-LSCOPE
-\end{verbatim}
-\end{samepage}
-
-A kód megőrzi az utasítások sorrendjét. Először az i változó kap értéket (1), majd következik a ciklus első fele, ahol ellenőrizzük, hogy egyáltalán be kell-e lépnünk a ciklus törzsébe (2). Ha nem, az \verb|FJMP| utasítás hatására a ciklus utánra ugrunk. Ha viszont be kell lépnünk, akkor kiírjuk i-t (3) majd pedig megnöveljük értékét 1-el (4). Végül pedig visszaugrunk a ciklus feltételének ellenőrzéséhez (5).
-
-\subsection{Végrehajtás}
-
-A létrehozott szekvenciális kód egy egyszerű verem-alapú virtuális gépen kerül lefuttatásra. A virtuális gép a következő elemekből épül fel:
-
-\begin{itemize}
-        \item \textbf{Programkód} (tape) - A szekvenciális kód egy (csak olvasható) tömbként kerül átadásra. A tömb egyes elemei két adattagból állnak:
-        \begin{itemize}
-            \item \textit{OpCode} - Tartalmazza melyik utasítást is szeretnénk végrehajtani. Az érvényes kódok listája a \ref{sec:vminsts} szekcióban olvasható.
-            \item \textit{Payload} - Egy konstans, fordítási időben ismert atomi értéket tartalmazó extra adattag, amelyet az utasítás veremműveletek nélkül képes elérni. 
-        \end{itemize}
-        \item \textbf{Utasítás-számláló} (PC) - Egy kód által csak indirekt módon változtatható regiszter, mellyel számontartjuk a jelenleg végrehajtott utasítást (tehát jelenlegi utasítás = \verb|tape[PC]|). Értéke 1-el nő minden végrehajtási lépés után.
-        \item \textbf{Számláló-verem} (PC stack) - A függvéynhívások esetén ide mentjük és innent töltjük be az utasítás-számláló értékét.
-        \item \textbf{Verem} (stack) - Egy atomi értékeket tárolni képes verem, melynek a tetejére pakolhatunk értékeket és onnan értékeket vehetünk le.
-        \item \textbf{Allokátor} (store) - Egy memória-allokátor, mely atomi értékeket és tömböket képes eltárolni egy lineáris memóriatartományon. Az egyes memóriacellákat azok sorszáma alapján azonosítjuk. Az allokátor számontartja hány referencia tartozik az egyes cellákhoz és, ha ez az érték nullára vált, felszabadítja a cellát (garbage collection).
-        \item \textbf{Változók} (variables) - Egy tartományokra bontott asszociatív tömb. Elemei szövegeket párosítanak számokkal (a változóhoz tartozó memóriacella sorszáma). Az egyes tartományok őr-elemekkel vannak elválasztva egymástól, melyek tartalmazzák, hogy függvényhatárt képviselnek-e vagy függvényen belüli határt. Keresés esetén a fgv.-en belüli határokon át tudunk lépni, a függvényhatárokon viszont nem.
-        \item \textbf{Megállás-indikátor} (stopped) - Egy logikai érték, mely azt jelzi hogy a következő lépés végrehajtása előtt meg kell-e állítanunk a virtuális gépet vagy sem.
-        \item \textbf{Jelenlegi sor} (line) - Számláló, mely nyilvántartja hogy a jelenlegi szövegbemenet melyik sorát dolgozzuk fel. Hibakezelésnél használjuk. 
-\end{itemize}

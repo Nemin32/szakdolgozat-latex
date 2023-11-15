@@ -25,6 +25,28 @@
 \usepackage{parskip}
 \usepackage{tabularx}
 \usepackage[format=plain, font=normalfont]{caption}
+\usepackage{listings}
+
+\lstdefinestyle{mystyle}{
+  firstnumber=1,
+  numbers=left,
+  numbersep=5pt,
+  basicstyle=\ttfamily,
+  keepspaces=true,
+  xleftmargin=1em
+}
+
+\lstset{style=mystyle}
+
+\AtBeginDocument{
+\renewcommand{\thelstlisting}{\arabic{section}.\arabic{lstlisting}}
+\renewcommand{\lstlistingname}{Forráskód}
+\captionsetup[lstlisting]{labelsep=colon}
+}
+
+\lstnewenvironment{code}[2]
+  {\lstset{caption=#1 \label{#2}}}
+  {}
 
 
 % times new roman betűtípus
