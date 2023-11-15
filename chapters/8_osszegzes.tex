@@ -1,3 +1,5 @@
-A program jelenlegi állapotában képes érvényes kódokat futtatható állapotba fordítani, végrehajtani, és futás közben a verem és változók értékeit a felhasználó számára kiírni és általa módosítani. A nyelv specifikációjának nagyja implementálásra került. Ez alól kivétel a típusosság (mely jelenleg figyelembe van véve a lexer és parser által, de a futtatási környezet figyelmen kívül hagyja) és néhány olyan adatszerkezet (például halmazok), mely néhány algoritmusban használatra kerül.
+A program jelenlegi állapotában képes érvényes kódokat futtatható állapotba fordítani, végrehajtani, és futás közben a futtatási környezet belső állapotát a felhasználó számára megjeleníteni. A nyelv specifikációja legjobb képességeim szerint teljesen implementálásra került.
+
+A program hiba esetén egy üzenettel figyelmezteti a felhasználót, mely röviden összegzi mi is a hiba és hol található.
 
 Ezen kívül a program jelenleg minden hibát a böngésző konzoljába ír és semmiféle hibakezelést nem végez. A szintaxishibák szintén fordításkor kerülnek csak jelentésre. A fentebb említett hiányosságokon túl a következő félév során ezzel is szeretnék foglalkozni. A kód körülbelül harminc unit teszttel van jelenleg tesztelve, jövőre ezen is bővítenék. A felhasználói felülethez egy felugró leírást szeretnék készíteni, mely elmagyarázza a program használatát.

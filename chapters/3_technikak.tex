@@ -6,7 +6,7 @@ A program egy egyszerű interpreter, így az ilyen alkalmazásoknál megszokott 
 
 A tokenek közé tartoznak például az operátorok, a változónevek, a különböző utasítások és kifejezések nevei, és az úgynevezett „atomok,” melyek olyan értékek, amik például számokat vagy szövegeket tartalmaznak.
 
-A Lexer feladata ezen kívül még az úgynevezett „triviák”, avagy jelentéssel nem bíró elemek megszüntetése is. Ezek közé tartoznak a kommentek (hisz ezeket az értelmező figyelmen kívül hagyja) és az jelentést nem módosító üres helyek (mivel a program szempontjából nem jelent semmiféle különbséget, hogy valaki „5 + 3”-t ír vagy „5          +3”-t vagy mindhárom karaktert különböző sorba írja).
+A Lexer feladata ezen kívül még az úgynevezett „triviák”, avagy jelentéssel nem bíró elemek megszüntetése is. Ezek közé tartoznak a kommentek (hisz ezeket az értelmező figyelmen kívül hagyja) és az jelentést nem módosító üres helyek (mivel a program szempontjából nem jelent semmiféle különbséget, hogy valaki \verb|5 + 3|-t ír vagy \verb|5          +3|-t vagy mindhárom karaktert különböző sorba írja).
 
 Mivel a lexikai analízis egy elég szimpla és túl sok változatosságot nem mutató folyamat, így kevés hozzá kapcsolódó, néven nevezett algoritmus létezik. A fő befolyásoló elem az a nyelv maga, amelyben az interpreter van írva. Ha rendelkezünk reguláris kifejezésekkel2, az nagyban megkönnyítheti a munkát, hisz a legtöbb lexikai szabály egy-az-egyben kifejezhető ilyenek segítségével.
 

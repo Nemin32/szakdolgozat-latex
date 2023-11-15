@@ -14,21 +14,41 @@ Ennek eredménye, hogy a felhasználói bemenettől függetlenül konzisztens é
 
 \subsection{Tokenizálás}
 
-A nyers szöveg hiába van jól formázva, önmagában a számítógép számára nem értelmezhető. Épp ezért az első lépés, hogy a fordítóprogram által is értelmezett legkisebb egységekre, úgynevezett "tokenekbe", bontsuk a kódot, ez a tokenizálás. Mivel ennek a folyamatnak az algoritmusa a modern számítógépeken a felhasználó számára érzékelhetetlenül kevés időt vesz igénybe (körülbelül 20-25 millisecundum), így a felhasználótól kapott bemenet még gépelés közben át is esik a folyamaton.
+Robert Nystrom a \textit{Crafting Interpreters} című könyvének tokenizálásról szóló fejezetét\cite{crafting} a következővel nyitja:
 
-Kód szempontjából a tokenek olyan adatszerkezetek, melyek tartalmazzák saját fajtájuk, az eredeti szöveg hozzájuk tartozó részét (például "elágazás"), és ezen szöveg kezdetének sorát és oszlopát. Ez utobbit akkor használjuk fel, ha itt vagy a későbbi lépések során hibába ütközünk és a felhasználóval tudatni szeretnénk hol is keresse a hibát a kódjában.
+\say{Az első lépés bármely értelmező vagy fordító létrehozásában a szkennelés. A szkenner a nyers bemeneti forráskódot karakterek sorozataként fogadja, majd ezeket tokeneknek nevezett csoportokba gyűjti. Ezek a nyelv értelmes \say{szavai} és \say{írásjelei} melyek kialakítják annak nyelvtanát.}
+
+Ahogy az fentebb is olvasható, a nyers szöveg hiába van jól formázva, önmagában a számítógép számára nem értelmezhető. Épp ezért az első lépés, hogy a fordítóprogram által is értelmezett legkisebb egységekre, úgynevezett "tokenekbe", bontsuk a kódot, ez a tokenizálás.\footnote{A szakirodalmat böngészve több különböző kifejezéssel is találkozhatunk erre a folyamatra. A fentebb idézett szövegben az író a "szkennelés" szót alkalmazta, én a "tokenizálást", megint más szövegek pedig a "lexer" vagy "lexing" szóval hivatkoznak a forrásszövegek egységekre való bontására. Szigorúan véve van különbség a fogalmak között (a tokenizáló csupán elemekre bontja a szöveget, míg egy lexer egyéb információkat is fűz az elemekhez), ám általánosságban szinonímaként használjuk őket.}
+
+Ugyanígy ebben a lépésben szűrjük ki a jelentéssel nem rendelkező elemeket (úgynevezett \textit{triviákat}). Ezek közé tartoznak a kommentek (hisz ezeket az értelmező figyelmen kívül hagyja) és az jelentést nem módosító üres helyek (mivel a program szempontjából nem jelent semmiféle különbséget, hogy valaki \verb|5 + 3|-t ír vagy \verb|5     +3|-t vagy mindhárom karaktert különböző sorba írja).
+
+A tokenek közé tartoznak például az operátorok, a változónevek, a különböző utasítások és kifejezések nevei, és a már tovább nem bontható, önmagukban is értelmes értékek, az úgynevezett "atomok," melyek olyan értékek, amik a Pszeudokód nyelvben számokat, szövegeket, vagy logikai értékeket tartalmaznak.
+
+Kód szempontjából a tokenek olyan adatszerkezetek, melyek tartalmazzák saját fajtájuk (mely megmondja, hogy például a token egy atomi értéket vagy kulcsszót tartalmaz), az eredeti szöveg hozzájuk tartozó részét (például "elágazás"), és ezen szöveg kezdetének sorát és oszlopát. Ez utobbit akkor használjuk fel, ha itt vagy a későbbi lépések során hibába ütközünk és a felhasználóval tudatni szeretnénk hol is keresse a hibát a kódjában.
 
 A tokenizálás egy egyszerű, a szöveget balról-jobbra feldolgozó algoritmussal van megvalósítva. A feldolgozásért felelős osztály rendelkezik a nyelv összes lehetséges tokenjére egy metódussal, mely sikeres feldolgozás esetén a hozzá tartozó tokennel tér vissza (a fentebb specifikált egyéb információkat beleértve) és a bemenetetet annyi karakterrel lépteti előrébb, ahány a tokenhez szükséges. Sikertelen feldolgozás esetén null értékkel térünk vissza és az esetleges előreléptetést visszacsináljuk.
 
 Az algoritmus sorrendben végigpróbálja az összes lehetséges token mintáját és, ha olyat talál amely ráillik a jelenlegi bemenetre, akkor továbblépteti a bemeneti szöveget és a kapott tokent hozzáfűzi a kimeneti tokenek listájához.
 
-Bár a tokenizálás folyamatát elég lenne csupán egyszer akkor lefuttatnunk, amikor a felhasználó elindítja a fordítás folyamatát, a program egyben szintaktikai kiemelést is végez a tokenek alapján (tehát a különböző nyelvi elemeket különféle színekkel jelöljük, így egyszerűbbé téve a programozó számára, hogy eligazodjon a kódon). Ez egy egyszerű szótár adatszerkezettel van implementálva, minden token típushoz hozzápárosítunk egy színt, melyet a felhasználói felületen beállítunk a megfelelő szövegrészletekhez.
+Mivel ennek a folyamatnak az algoritmusa a modern számítógépeken a felhasználó számára érzékelhetetlenül kevés időt vesz igénybe (körülbelül 20-25 millisecundum), így a felhasználótól kapott bemenet még gépelés közben át is esik a folyamaton. 
 
-Ha a tokenizálás hibába ütközik, az első hibás tokentől kezdve vörös kiemeléssel tudatjuk vizuálisan, hogy gond van. Hiba lehet például egy le nem zárt szöveg, vagy olyan karakter ami semelyik kulcsszónak nem része (például ";").
+Fölmerülhet bennünk, hogy erre mi szükség van, hisz a tokenizálás folyamatát elég lenne csupán egyszer a fordítás folyamatának elején lefuttatnunk. A válasz, hogy a program egyben szintaktikai kiemelést is végez a tokenek segítségével (tehát a különböző nyelvi elemeket különféle színekkel jelöljük, így egyszerűbbé téve a programozó számára, hogy eligazodjon a kódon). Ez egy egyszerű szótár adatszerkezettel van implementálva, minden token típushoz hozzápárosítunk egy színt, melyet a felhasználói felületen beállítunk a megfelelő szövegrészletekhez.
+
+Az egyetlen hibakezelés, melyet ebben a szekcióban tudunk végezni az az értelmetlen vagy nem megfelelő tokenek szűrése. Mivel a tokenizáló algoritmusnak nincs tudása arról, hogy a különböző tokeneknek milyen sorrendben is kell követniük egymást (ez a következő lépés feladata), ezért hiba nélkül fel fog dolgozni olyan kódokat is, mely hibás szintaxissal rendelkezik.
+
+Tehát például egy olyan kód, mely a következőképp szól „ha amíg x+5” hiba nélkül tokenizálható, hisz az összes benne található nyelvi elem érvényes tokennek felel meg annak ellenére, hogy a kód maga nyilvánvalóan hibás.
+
+Viszont hiba lehet például egy le nem zárt szöveg, vagy olyan karakter vagy karakterkombináció ami semelyik kulcsszónak nem része (például ";" vagy "\verb|--|").
+
+Ha a tokenizálás hibás tokenbe ütközik, a folyamat rögtön megáll és a hibás tokentől kezdve vörös kiemeléssel tudatjuk vizuálisan, hogy a feldolgozás sikertelen.
 
 \subsection{Szintaxisfa generálás}
 
-Ha a tokenizálás közben nem futottunk hibába, az így kapott lista kész arra, hogy szintaxisfává dolgozzuk át. A folyamathoz itt egy úgynevezett monadikus kombinátor parsert\footnote{A "parser" szót a "nyelvi értelmező" kifejezéssel lehetne a legpontosabban magyarra fordítani. Ám, mivel a külföldi szakirodalomban is mindig a "parsing" / "parser" kifejezésekkel hivatkoznak a folyamatra és algoritmus-családra és mivel a magyar név kissé körülményes, ebben a szövegben én is az angol szóval fogom ezeket a fogalmakat illetni.} használtam, melynek működési elvét egy Haskell nyelven írt programot bemutató papírból vettem át.
+Ha a tokenizálás közben nem futottunk hibába, az így kapott lista kész arra, hogy egy "absztrakt szintaxisfának" nevezett adatszerkezetté dolgozzuk át.
+
+Az "absztrakt szintaxisfa" (angolul \textit{abstract syntax tree}, gyakran rövidítve 'AST') egy olyan fa-szerkezet, melynek levélelemei atomok, ágai pedig egy vagy több értéket fogadó operátorok és kulcsszavak. A kód olyan reprezentációja, mely annak hierarchiájára fókuszál, elvetve minden olyan információt, mely nem szükséges annak értelmezéséhez.
+
+A folyamathoz itt egy úgynevezett monadikus kombinátor parsert\footnote{A "parser" szót a "nyelvi értelmező" kifejezéssel lehetne a legpontosabban magyarra fordítani. Ám, mivel a külföldi szakirodalomban is mindig a "parsing" / "parser" kifejezésekkel hivatkoznak a folyamatra és algoritmus-családra és mivel a magyar név kissé körülményes, ebben a szövegben én is az angol szóval fogom ezeket a fogalmakat illetni.} használtam, melynek működési elvét egy Haskell nyelven írt programot bemutató papírból\cite{monadic} vettem át.
 
 A parser a következőképp működik: Olyan függvényeket specifikálunk, mely bemenetként megkapja a bemeneti szöveget és azt az indexet, ahol jelenleg tartunk a szövegben és mely egy felhasználó által specifikált értékkel és egy új (bemenet, index) párossal tér vissza, melyben az index annyival előrébb lett tolva, ahány elemet felhasználtunk. Az algoritmus használható lenne sima szövegeken is (az eredeti papír így is tesz), viszont a saját fordítómban a parser a tokenizálásból eredő listát használja fel bemenetként.
 
@@ -76,26 +96,26 @@ Ennek hasznosságát egy példával demonstrálnám. Tegyük fel, hogy van háro
 
 Manuális \textit{bind} függvény hívással ez a következőképp néz ki:
 
-\begin{code}{Egymásba ágyazott \textit{bind} hívások.}{nested_bind}
+\begin{code}{Egymásba ágyazott \textit{bind} hívások.}{src_nested_bind}
 parserA.bind(A => 
     parserB.bind(B => 
         parserC.map(C => 
             fn(A,B,C))))
 \end{code}
 
-Annak ellenére, hogy rövid és egyszerű példát választottam, a \ref{nested_bind}-es forráskód által bemutatott esetben már most háromszoros beágyazással kell dolgoznunk. A valós Pszeudokód egyes elemeinek értelmezéséhez öt-hat különféle parserre és esetleg több ignorált elemre is (mely külön feldolgozást nem igényel, csupán a nyelvi elem típusának eldöntéséhez kell) is szükség van, melyhez így legalább hatszoros beágyazást kéne alkalmaznunk, mely nyilvánvalóan teljesen átláthatatlan és szerkeszthetetlen.
+Annak ellenére, hogy rövid és egyszerű példát választottam, a \ref{src_nested_bind}-es forráskód által bemutatott esetben már most háromszoros beágyazással kell dolgoznunk. A valós Pszeudokód egyes elemeinek értelmezéséhez öt-hat különféle parserre és esetleg több ignorált elemre is (mely külön feldolgozást nem igényel, csupán a nyelvi elem típusának eldöntéséhez kell) is szükség van, melyhez így legalább hatszoros beágyazást kéne alkalmaznunk, mely nyilvánvalóan teljesen átláthatatlan és szerkeszthetetlen.
 
 A következő példában "Do" alakba írva láthatjuk ugyanezt. Az itt látható \texttt{Parser} osztály a parserek ősosztálya, melyen a \texttt{do()} egy statikus metódus, mely a inicializál egy \texttt{Do} osztályú elemet, amire parsereket köthetünk:
 
-\begin{verbatim}
+\begin{code}{Lineáris alakba bontott parserek.}{src_linear_bind}
 Parser.do()
     .bind("A", parserA)
     .bind("B", parserB)
     .bind("C", parserC)
     .result(({A,B,C}) => fn(A,B,C))
-\end{verbatim}
+\end{code}
 
-Ahogy látható, a kód sokkal átláthatóbb és könnyebben kezelhető, hisz, ha például egy új parsert kell hozzáadnunk, módosítanunk, vagy kivennünk, elég csupán egy sort átírnunk, nem kell zárójelek után vadásznunk vagy észben tartanunk hány szint mélyen is jár a beágyazás. 
+Ahogy az a \ref{src_linear_bind} forráskódban látható, a kód sokkal átláthatóbb és könnyebben kezelhető, hisz, ha például egy új parsert kell hozzáadnunk, módosítanunk, vagy kivennünk, elég csupán egy sort átírnunk, nem kell zárójelek után vadásznunk vagy észben tartanunk hány szint mélyen is jár a beágyazás. 
 
 Ez önmagában sokkal kezelhetőbbé teszi a kódot, ám hozzáadtam még pár extra kulcsszót, mely még inkább megkönnyítheti az egyes parserek megírását. Névszerint ezek:
 
@@ -118,18 +138,19 @@ Ehhez egy rekurzív függvényt használunk fel, mely két bemenettel rendelkezi
 
 Például, ha az összeadás műveletét ellenőrizzük, akkor meg kell néznünk, hogy a bal és jobb oldali elem szám típusú értékek-e (melyeket a függvény rekurzív meghívásával érünk el) és, ha azok, akkor a művelet eredménye is szám lesz (mely tényt esetleg egy másik típusellenörzésnél is felhasználhatunk). Ha valamely szabály meghiúsul, akkor kivételt dobunk, mely által az egész folyamat megszakad.
 
-A típus-szótár olyan adatszerkezet, mely nevekhez köt olyan típusokat, melyekre késöbb még szükségünk lehet. Eltárolja tehát a változókat és a függvények paramétereit és visszatérési típusait. Mivel nem globális változó, hanem paraméterként van átadva a típusellenörzési függvénynek, ezért külön kód nélkül támogatja, hogy azok a változók melyek felszabadulásra kerülnek a függvény visszatértével szintén elérhetetlenné válnak.
+A típus-szótár olyan adatszerkezet, mely nevekhez köt olyan típusokat, melyekre késöbb még szükségünk lehet. Eltárolja tehát a változókat és a függvények paramétereit és visszatérési típusait. Mivel nem globális változó, hanem paraméterként van átadva a típusellenörzési függvénynek, ezért külön kód nélkül támogatja, hogy azok a változók melyek felszabadulásra kerülnek a függvény visszatértével szintén elérhetetlenné válnak. Erre a következő, \ref{src_typemap} forráskód szolgál példaképp.
 
-\begin{verbatim}
+\begin{code}{Példa a típus-szótár működésére}{src_typemap}
 // Típus-szótár itt üres
 ha Predikátum() akkor
     // Típus-szótár: {x = SZÁM}
     x <- 5
 függvény vége
-// Típus-szótár újra üres, a fentebbi scope végéhez értünk.
+// Típus-szótár újra üres, hisz a fentebbi 
+// változótartomány végéhez értünk.
 kiír x
 // Hiba! 'x' értéke nincs definiálva
-\end{verbatim}
+\end{code}
 
 A típusellenörzés szabályai röviden a következőek:
 
@@ -165,21 +186,20 @@ Ebben a lépésben egy előre meghatározott sorrend szerint bejárjuk a szintax
 
 \subsubsection{Példa a generálás demonstrálásához}
 
-Vegyük egy egyszerű ciklus átalakítását példaképp:
+Az alábbiakban vegyük egy egyszerű ciklus átalakítását példaképp. Kiinduló kódunk a \ref{src_counter} forráskód, mely elszámol egytől ötig, kiírva az egyes számokat a kimenetre.
 
-\begin{verbatim}
+\begin{code}{Egy egyszerű ciklus, mely elszámol ötig.}{src_counter}
 i <- 1 (1)
 
 ciklus amíg i < 5 (2)
   kiír i (3)
   i <- i + 1 (4)
 ciklus vége (5)
-\end{verbatim}
+\end{code}
 
-\begin{samepage}
 A fentebbi Pszeudokód a következő szekvenciális kódra fordul:
 
-\begin{verbatim}
+\begin{code}{Az előbbi kód szekvenciális kódra fordítva.}{src_counter_vm}
 ESCOPE false
 
  PUSH   1 (1)
@@ -206,12 +226,11 @@ ESCOPE false
  LABEL while_0_end
 
 LSCOPE
-\end{verbatim}
-\end{samepage}
+\end{code}
 
 A virtuális gép által végrehajtható utasítások részletes listája és leírása a \ref{sec:vminsts} alfejezetben olvasható, itt csupán nagy vonalakban közlöm az utasítások kis csoportjai milyen hatást váltanak ki.
 
-A szekvenciális kód megőrzi az eredeti utasítások sorrendjét, mégpedig:
+A \ref{src_counter_vm} forráskódban látható szekvenciális kód megőrzi az eredeti utasítások sorrendjét, mégpedig:
 
 \begin{enumerate}
     \item Az \texttt{i} változó értéket kap,
@@ -226,18 +245,17 @@ A szekvenciális kód megőrzi az eredeti utasítások sorrendjét, mégpedig:
 A létrehozott szekvenciális kód egy egyszerű verem-alapú virtuális gépen kerül lefuttatásra. A virtuális gép a következő elemekből épül fel:
 
 \begin{itemize}
-        \item \textbf{Programkód} (tape) - A szekvenciális kód egy (csak olvasható) tömbként kerül átadásra. A tömb egyes elemei két adattagból állnak:
+        \item \textbf{Programkód} (tape) - A szekvenciális kód egy (csak olvasható) tömbként kerül átadásra. A tömb egyes elemei a következő alakban vannak tárolva:
         \begin{itemize}
-            \item \textit{OpCode} - Tartalmazza melyik utasítást is szeretnénk végrehajtani. Az érvényes kódok listája a \ref{sec:vminsts} alfejezetben olvasható. Bármely más érték vagy hibás argumentummal meghívott utasítás esetén a gép kivételt dob és a futtatás megszakad.
-            \item \textit{Payload} - Egy konstans, fordítási időben ismert atomi értéket tartalmazó extra adattag, amelyet az utasítás veremműveletek nélkül képes elérni. Feladata olyan extra információk kódolása, amely fordítás közben elveszik a program kódjából.
+            \item \textit{code} - Tartalmazza melyik utasítást is szeretnénk végrehajtani. Az érvényes kódok listája a \ref{sec:vminsts} alfejezetben olvasható. Bármely más érték vagy hibás argumentummal meghívott utasítás esetén a gép kivételt dob és a futtatás megszakad.
+            \item \textit{egyéb adattagok} - Az utasításkód mellett az utasítástól függően eltárolhatunk még nullától háromig konstans, fordítási időben ismert egy vagy több atomi értéket tartalmazó extra adattagot, amelyeket az utasítás veremműveletek nélkül képes elérni. Feladatuk olyan extra információk kódolása, amely vagy fordítás közben elveszik a program kódjából (például, hogy a jelenlegi utasítás függvényen belül lett-e hívva, vagy azon kívül) vagy (mivel már fordítás közben ismerjük ezeket az értékeket) fölöslegesen tennék zajosabbá a vermet.
         \end{itemize}
-        \item \textbf{Utasítás-számláló} (PC) - Egy kód által csak indirekt módon változtatható regiszter, mellyel számontartjuk a jelenleg végrehajtott utasítást (tehát jelenlegi utasítás = \verb|tape[PC]|). Értéke 1-el nő minden végrehajtási lépés után.
+        \item \textbf{Utasítás-számláló} (PC) - Egy kód által csak indirekt módon változtatható regiszter, mellyel számontartjuk a jelenleg végrehajtott utasítás indexét, tehát a jelenlegi utasítás mindig \texttt{tape[PC]}. Értéke 1-el nő minden végrehajtási lépés után, beleértve az ugrásokat is, hisz a \texttt{LABEL} utasítás amit így átugrunk amúgy se végez egyéb feladatot.
         \item \textbf{Számláló-verem} (PC stack) - A függvéynhívások esetén ide mentjük és innent töltjük be az utasítás-számláló értékét.
         \item \textbf{Verem} (stack) - Egy atomi értékeket tárolni képes verem, melynek a tetejére pakolhatunk értékeket és onnan értékeket vehetünk le.
         \item \textbf{Allokátor} (store) - Egy memória-allokátor, mely atomi értékeket és tömböket képes eltárolni egy lineáris memóriatartományon. Az egyes memóriacellákat azok sorszáma alapján azonosítjuk. Az allokátor számontartja hány referencia tartozik az egyes cellákhoz és, ha ez az érték nullára vált, felszabadítja a cellát (garbage collection).
-        \item \textbf{Változók} (variables) - Egy tartományokra bontott asszociatív tömb. Elemei szövegeket párosítanak számokkal (a változóhoz tartozó memóriacella sorszáma). Az egyes tartományok őr-elemekkel vannak elválasztva egymástól, melyek tartalmazzák, hogy függvényhatárt képviselnek-e vagy függvényen belüli határt. Keresés esetén a fgv.-en belüli határokon át tudunk lépni, a függvényhatárokon viszont nem.
-        \item \textbf{Megállás-indikátor} (stopped) - Egy logikai érték, mely azt jelzi hogy a következő lépés végrehajtása előtt meg kell-e állítanunk a virtuális gépet vagy sem.
-        \item \textbf{Jelenlegi sor} (line) - Számláló, mely nyilvántartja hogy a jelenlegi szövegbemenet melyik sorát dolgozzuk fel. Hibakezelésnél használjuk. 
+        \item \textbf{Változók} (variables) - Egy változótartományokra (ezek működését részletesebben a \ref{code_scope} szekcióban tárgyaljuk) bontott asszociatív tömb. Elemei szöveges neveket párosítanak mutatókkal (melyek a változóhoz tartozó memóriacella címének számszerű értéke).
+        \item \textbf{Futás-indikátor} (running) - Egy logikai érték, mely hamis érték esetén azt jelzi hogy a következő lépés végrehajtása előtt meg kell állítanunk a virtuális gépet.
 \end{itemize}
 
 \subsection{A virtuális gép által értelmezett utasítások listája}
@@ -260,14 +278,18 @@ Alább olvasható a szekvenciális kódba fejtés után kapott, a virtuális gé
     \end{center}
 }
 
-\codetable{Hibakeresés}{code_debug}{
+\subsubsection{Hibakeresés}
+
+\codetable{Hibakeresési utasítások}{code_debug}{
     PRINT & - & Kiveszi a verem legfelső elemét és kiírja a kimenetre. \\
     DEBUG & - & Megállítja a virtuális gép futását hibakeresési célból. \\
 }
 
 Bár \ref{code_debug} táblában látható két kulcsszó nem része a nyelv specifikációjának, a program hasznossága érdekében fontosnak tartottam, hogy elérhetőek legyenek. A \texttt{PRINT} kulcsszó lehetővé teszi, hogy a lefuttatott algoritmusok a végfelhasználó számára is látható kimenettel rendelkezzenek, míg a \texttt{DEBUG} sokkal kényelmesebbé teszi annak folyamatát, hogy a hibakeresés során a programot a megfelelő utasítás előtt állítsuk meg. 
 
-\codetable{Ugrások}{code_jump}{
+\subsubsection{Ugrások}
+
+\codetable{Ugrásokra vonatkozó utasítások}{code_jump}{
     LABEL & név & Létrehoz egy \textit{név} nevű cimkét, melyre az ugrások hivatkozhatnak. \\
     JMP & cimke & Feltétel nélkül ugrik a \textit{cimke} nevű cimkéhez. \\
     FJMP &cimke & Ugrik a \textit{cimke} nevű cimkéhez, ha a verem tetején lévő elem hamis. \\
@@ -277,7 +299,9 @@ A \ref{code_jump} tábla mutatja be a nyelv által támogatott két elágazási 
 
 Fontos még megjegyezni, hogy a nyelv csak abszolút címekre való ugrást engedélyez, mivel relatív ugrásra (tehát a jelenlegi vagy felhasználó által megadott címtől bizonyos meghatározott távolságra lévő címre lépni) nincs szükségünk és csak nehezebbé tenné az egymást követő utasítások menetét.
 
-\codetable{Függvényhívás és visszatérés}{code_func}{
+\subsubsection{Függvényhívás és függvényekből való visszatérés}
+
+\codetable{Függvényhívás és visszatérési utasítások}{code_func}{
     CALL & függvény & Meghívja a \textit{függvény} függvényt. A jelenlegi program számláló (PC) elmentésre kerül a számláló-verembe, majd ugrunk a \textit{függvény} cimkéhez. \\
     RETURN & - & Az \texttt{LSCOPE} művelethez hasonlóan megszünteti a jelenlegi változótartományt, majd leveszi a számláló-verem legfelső elemét és betölti a PC regiszterbe. \\
     RETCMP & hossz & \textit{hossz} hosszúságú tömböt készít a veremben lévő elemekből, majd egy erre mutató címet helyez el a tömbön. \\
@@ -287,7 +311,9 @@ Mivel a Pszeudokód lehetőséget biztosít függvények és eljárások létreh
 
 A \texttt{CALL} utasítás lebontható volna egy egyszerű feltétel nélküli ugrásra és a program számláló jelenlegi értékének a számláló-veremre helyezéséért felelős utasításokra, ám mivel a számláló-veremben tárolt értékek csak függvényhívás és azokból való visszatérés esetén módosulnak, így egybe vettem a kettőt.
 
-\codetable{Veremműveletek}{code_stack}{
+\subsubsection{Veremműveletek}
+
+\codetable{Veremműveletek utasításai}{code_stack}{
     NOT  & - & A verem tetején lévő logikai értéket megfordítja. \\
     PUSH & érték & A verem tetejére helyezi az \textit{érték} értéket. \\
     VOID & - & Elveti a verem tetején lévő elemet. \\
@@ -298,6 +324,8 @@ A \ref{code_stack} táblából a \texttt{VOID} kulcsszó az egyetlen, mely némi
 Ez jobb esetben csupán nehezebbé teheti a folyamat átláthatóságát (hisz értelmetlen értékek maradnak a veremben), rosszabban viszont hozzájárulhat a programozó önhibáján kívüli hibás működéshez, ha a veremben ottmaradt fölösleges érték egy másik utasítás által kerül felhasználásra.
 
 Épp emiatt a fordító a kifejezésként meghívott függvények esetén egy extra \texttt{VOID} utasítást is a kódba iktat, mely egyszerűen megszabadul ettől az értéktől majd továbblép.
+
+\subsubsection{Műveletek}
 
 A következő három táblában rendre a \texttt{BINOP} kulcsszót alkalmazzuk, mely működését a megadott paraméter (operátor) határozza meg. Az utasítás leveszi a verem első két elemét (\textit{első} és \textit{második}), majd ezeken elvégzi a műveletet és az eredményt a veremre helyezi vissza.
 
@@ -331,47 +359,57 @@ A \ref{code_comp} végeredményei mind logikai értékek.
 
 A \ref{code_logic} végeredményei szintén mind logikai értékek.
 
+\subsubsection{Változótartományok létrehozása és megszüntetése}
+\label{sec:scope}
+
+A változótartomány (angol nevén \textit{"scope"}) alatt egy olyan régiót értünk, ahol az azon belül létrehozott változóknak elérhetőknek kell lenniük és a tartomány végeztével pedig fel kell szabadulniuk. Ezen tartományok létrehozására és megszüntetésére a \ref{code_scope} táblázatban látható utasításokat használhatjuk. 
+
 \codetable{Tartományműveletek}{code_scope}{
     ESCOPE & függvény & Új változótartományt generál. Ha \textit{függvény} értéke igaz, az új tartomány függvényhatárként jön létre.\\
     LSCOPE & - & Feltakarítja az utolsó változótartományt. \\
 }
 
-A változótartomány (angol nevén \textit{"scope"}) alatt egy olyan régiót értünk, ahol az azon belül létrehozott változóknak elérhetőknek kell lenniük. 
+Az alapszabály, hogy az egymásba ágyazott tartományokon belülről kifelé mindig elérhetőek a változók, de kivülről befelé nem. Ha van egy függvénytörzsünk például, amiben létrehozunk egy változót, akkor ez a változó a függvénytörzsön belül nyitott egyéb változótartományokban is elérhető lesz, viszont az ezekben a tartományokban létrehozott változók a függvénytörzsben nem lesznek elérhetőek.
 
-Ha van egy függvénytörzsünk például, akkor az ebben létrehozott változóknak az egész törzsön belül elérhetőknek kell lenniük, beleértve az itt létrehozott egyéb változótartományokat is:
+Ez alól az egyetlen kivétel a függvényeket elhatároló változótartományok, melyeknél a változók értékének keresése megáll.
 
-\begin{samepage}
-\begin{verbatim}
-// A tartomány itt üres
+\begin{code}{Példa a függvények tartományainak elhatárolására.}{src_scope}
+// (1) A tartomány üres
+
+eljárás PéldaBelső(z : egész)
+    // (5) A tartomány értéke {z = 2}
+    kiír z
+eljárás vége
 
 függvény Példa()
-    // A tartomány itt üres
+    // (2) A tartomány üres
 
     x <- 1
 
-    // A tartomány értéke {x = 1}
+    // (3) A tartomány értéke {x = 1}
 
     ha x < 5 akkor
         y <- x * 2
-        // A tartomány értéke {x = 1, y = 2}
+        // (4) A tartomány értéke {x = 1, y = 2}
+
+        PéldaBelső(y)
     elágazás vége
 
-    // A tartomány ismét értéke {x = 1}
+    // (6) A tartomány ismét értéke {x = 1}
     vissza x
 függvény vége
 
-// A tartomány itt üres
-\end{verbatim}
-\end{samepage}
+// (7) A tartomány itt üres
+kiír Példa()
+\end{code}
 
-Ennek célja, hogy a programozó számára egyértelmű legyen mely értékek mely függvényhez is tartoznak. Ha tegyük fel egy programban a második sorban definiálnánk egy változót egy függvényben, melyet legközelebb a századik sorban, egy teljesen más függvényben próbálunk használni, az bármely más programozó számára (de akár az írónak is pár hónap elteltével) teljesen átláthatatlan kódot eredményezne.
+Ahogy az a \ref{src_scope} forráskódban látható, az 5. lépésnél, bár a \texttt{z} értéke valóban szintén kettőre lett állítva, ahogy az az \texttt{y} változóban is történt, se az \texttt{y}, se az \texttt{x} változó nem elérhető annak ellenére, hogy a \texttt{PéldaBelső} függvény tartománya a \texttt{Példa} függvény törzsén belül található.
+
+Ennek a kivételnek célja, hogy a programozó számára egyértelmű legyen mely változók és értékek mely függvényhez is tartoznak. Ha tegyük fel egy programban a második sorban definiálnánk egy változót egy függvényben, melyet legközelebb a századik sorban, egy teljesen más függvényben módosítanánk, az bármely más programozó számára (de akár az írónak is pár hónap elteltével) teljesen átláthatatlan kódot eredményezne.
 
 Egyes programozási nyelvekben lehetőségünk van a változók úgynevezett árnyékolásra is (angolul \textit{"variable shadowing"}), mely annyit jelent, hogy ha egy változótartományon belül módosítjuk egy változó értékét, akkor a módosult érték csupán a tartományon belül érvényes, annak elhagyásakor visszaáll az eredetire.
 
-\begin{samepage}
-Íme egy példa a C nyelvből:
-
-\begin{verbatim}
+\begin{code}{C nyelven írt példa a változók árnyékolására.}{src_c_shadowing}
 void shadowing() {
     int y = 3;
     int x = 5;
@@ -388,13 +426,11 @@ void shadowing() {
     printf("%d\n", x); // Kimenet: 5
     printf("%d\n", y); // Kimenet: 8
 }
-\end{verbatim}
-\end{samepage}
+\end{code}
 
-Mivel a Pszeudokód nem rendelkezik külön szintaxissal változók deklarálására (ahogy az például a C-ben a típus kiírása a változó elé), így normális esetben nincs lehetőségünk változók árnéykolására. Ez alól az egyetlen kivétel a függvényparaméterek, melyek neve egyezhet a függvényt tartalmazó tartományban már létező változó nevével, mely esetben árnyékolás lép fel:
+Mivel a Pszeudokód nem rendelkezik külön szintaxissal változók deklarálására (mint például a C-ben a típus kiírása a változó elé, ahogy az a \ref{src_c_shadowing} forráskódban látható), így normális esetben nincs lehetőségünk változók árnéykolására. Ez alól az egyetlen kivétel a függvényparaméterek, melyek neve egyezhet a függvényt tartalmazó tartományban már létező változó nevével, mely esetben árnyékolás lép fel:
 
-\begin{samepage}
-\begin{verbatim}
+\begin{code}{Példa az egyező nevű változók függetlenségére Pszeudokódban.}{src_pseudo_no_shadowing}
 x <- 5
 kiír x // 5
 
@@ -408,15 +444,13 @@ eljárás vége
 
 Teszt(x)
 kiír x // 5
-\end{verbatim}
-\end{samepage}
+\end{code}
 
-Ahogy látható hiába található meg az \texttt{x} változó mind a külső, mind a belső változótartományban, az értékük egymástól független.
+Ahogy az a \ref{src_pseudo_no_shadowing} forráskódban látható, hiába található meg az \texttt{x} változó mind a külső, mind a belső változótartományban, az értékük egymástól független.
 
-Ha mindenféleképp szeretnénk, hogy egy külső változó egy függvényen belül is elérhető legyen, oly módon, hogy a függvényben végzett változtatások kívülről is láthatóak legyenek, akkor a változót \texttt{címszerint} kell átadnunk:
+Ha mindenféleképp szeretnénk, hogy egy külső változó egy függvényen belül is elérhető legyen, oly módon, hogy a függvényben végzett változtatások kívülről is láthatóak legyenek, akkor a változót \texttt{címszerint} kell átadnunk. Erre a \ref{src_pseudo_shadowing} forráskódban láthatunk példát.
 
-\begin{samepage}
-\begin{verbatim}
+\begin{code}{Példa a változók árnyékolására Pszeudokódban.}{src_pseudo_shadowing}
 x <- 5
 kiír x // 5
 
@@ -430,8 +464,9 @@ eljárás vége
 
 Teszt(&x)
 kiír x // 10
-\end{verbatim}
-\end{samepage}
+\end{code}
+
+\subsubsection{Változók címének lekérése és értékeik beállítása}
 
 \codetable{Címlekérő műveletek}{code_addr}{
     ADDRESS & változó & Lekéri a \textit{változó} címét és a veremre helyezi.  \\
@@ -442,7 +477,7 @@ A \ref{code_addr} táblában látható műveletekkel kérhetjük le az egyes vá
 
 A mutatók ideiglenes elemek, melyek csak a veremben jelennek meg és minden esetben egy változóhoz kell kötnünk őket, mielőtt az általuk mutatott értékkel tudnnánk dolgozni. Mivel a Pszeudokód nem igényel mutató-aritmetikát (tehát kifejezetten memória-címeken való műveletvégzést, amely például a C nyelvben igencsak megszokott), így nincs szükségünk külön cím- és értéklehívó utasításokra.
 
-\codetable{Változók  lehívása}{code_getvar}{
+\codetable{Korábbi utasítások a változók értékének lehívására}{code_getvar}{
     GETARR & változó & Lekéri a \textit{változó} értékét, majd ezt a veremre helyezi.  \\
     GETVAR & változó, dimenzióSzám & A verem tetején lévő \textit{dimenzióSzám} darab elem alapján lekéri a \textit{változó} tömb megfelelő indexén található elemét, majd ezt a veremre helyezi. \\
 }
@@ -451,13 +486,17 @@ Az értelmező egy korábbi változatában két extra kulcsszóval is rendelkeze
 
 Mivel a programok ezen kulcsszavak többé-kevésbé ugyanazt tették mint a címlekérő műveletek és a programok nélkülük se váltak különösképp bonyolultabbá, így a végső értelmezőből kihagyásra kerültek.
 
-\codetable{Tömb-kreáló műveletek}{code_MKARR}{
-    MKARR & változó & Lekéri a verem tetején található \textit{érték}-et, majd készít egy \textit{érték} hosszú tömböt, melyet elment \textit{változó}-ba. \\
-    VALARR & változó & Lekéri a verem legfelső \textit{darab} elemét, majd lekéri a következő \textit{darab} mennyiségű elemet. Ezekből tömböt alkot, melyet elment \textit{változó}-ba. \\
+\codetable{Változó-kreáló műveletek}{code_mkvar}{
+    SETARR & tömb, dimenzióSzám & A verem legfelső \textit{dimenzióSzám} darab eleme alapján beállítja a \textit{tömb} megfelelő indexét a veremben található következő értékre. \\
+    SETVAR & változó & Lekéri a verem tetején lévő elemet és elmenti \textit{változó}-ba. \\
+    MKREF & változó & Lekéri a verem tetején lévő elemet, melynek mutatónak kell lennie (egyéb esetben hibát dobunk). A \textit{változó} nevű változó címét ezen mutató címére állítjuk be. \\
 }
 
-\codetable{Változó-kreáló műveletek}{code_mkvar}{
-    SETARR & tömb & Lekéri a verem legfelső két elemét, \textit{index} és \textit{érték}-et. A \textit{tömb} \textit{index}-edik elemét beállítja \textit{érték}-re. \\
-    SETVAR & változó & Lekéri a verem tetején lévő elemet és elmenti \textit{változó}-ba. \\
-    MKREF & változó & Lekéri a verem tetején lévő \textit{elem}-et. Ha az szöveg, megkeresi annak az \textit{elem} nevű változó memóriacellájának címét, majd erre referenciát készít \textit{változó} néven. Ha \textit{érték} szám, akkor memóriacella-címként értelmezzük és erre készítünk referenciát.   \\
+Míg a \ref{code_getvar} tábla felelt a változók értékének lekéréséről, a \ref{code_mkvar} dolga, hogy egyáltalán értéket tudjunk adni ezeknek a változóknak. Mint azt feljebb tárgyaltuk, a változók maguk valójában nem többek, mint szöveges névvel rendelkező "álnevek" címek számára, így az egyes változók értékének beállítása valójában az általuk mutatott memória cella (vagy tömb esetében cellák) manipulálása.
+
+A Pszeudokód támogat mind érték alapú, mind pedig referencia alapú átadást függvények esetében. Az előbbit a \texttt{SETVAR} és \texttt{SETARR} utasítások biztosítják, melyek a megadott memóriacímen lévő értéket lemásolják és a másolat memóriacímét kötik az új változóhoz. Az utóbbit pedig az \texttt{MKREF} utasítással valósítjuk meg, mely lehetővé teszi, hogy ugyanarra a címre több változóval is hivatkozzunk.
+
+\codetable{Tömb-kreáló műveletek}{code_mkarr}{
+    MKARR & változó & Lekéri a verem tetején található \textit{érték}-et, majd készít egy \textit{érték} hosszú tömböt, melyet elment \textit{változó}-ba. \\
+    COMPRE & változó & Lekéri a verem legfelső \textit{darab} elemét, majd lekéri a következő \textit{darab} mennyiségű elemet. Ezekből tömböt alkot, melyet elment \textit{változó}-ba. \\
 }

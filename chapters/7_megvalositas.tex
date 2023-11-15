@@ -1,3 +1,11 @@
+\subsection{Bevezetés}
+
+Az ezen fejezetben taglalt megvalósítást a fejlesztés második évében elvetettem, mivel, ahogy azt a \ref{sec:java} alejezetben említettem, rájöttem a kliens-szerver architektúra nagyban megbonyolítaná a szakdolgozatom.
+
+Ennek ellenére viszont az ezen verzió megírása során elkövetett hibáim és kutatásom nagyban befolyásolták a végleges verziót, így összehasonlításképp ennek leírását a dolgozat részeként hagyom.
+
+\subsection{Az eredeti, Java nyelven íródott megvalósítás bemutatása}
+
 A felhasználó által begépelt kód több átalakítási lépésen esik át, melyet most sorra veszek. A lépések demonstrálásához a fentebb említett könyv egyik algoritmusát, az Euklideszi algoritmust használom fel példának, mely két szám legnagyobb közös osztóját számolja ki. A jegyzetben prezentált kód a 7.1-es ábrán látható, melynek átirata a 7.1-es forráskódban szerepel.
 
 \subsection{Absztrakt szintaxisfa létrehozása}
@@ -16,33 +24,9 @@ A tokenek a lexer által értelmezett legkisebb egységek. Ide tartoznak a konkr
 
 A nyelv által használt összes token a 7.2. forráskódban látható.
 
-\subsubsection{Utasítások és Kifejezések}
-
-Mint a legtöbb más imperatív programozási nyelv, a Pszeudokód is különbséget tesz az utasítások és a kifejezések között. Az előbbi az utóbbival ellentétben nem produkálhat értéket, míg a kifejezéseknek kötelező valamilyen értékké válniuk kiértékelés után.
-
-\paragraph{Kifejezések}
-
-A legegyszerűbb kifejezések az úgynevezett atomok, melyek olyan értékek, amik saját magukká válnak kiértékelés után. Ilyenek például a számok. Az „5” szám atom, hisz az értéke önmaga, vagyis az ötös szám. A szövegek és a logikai értékek is ide tartoznak.
-
-Ezen alap építőkövekre épülnek a komplexebb kifejezések, például a számítások és logikai műveletek, melyek rekurzívan egymásra is épülhetnek (például többszörös összeadás.) 
-
-Ide tartozik még a függvényhívás is, viszont mivel eljárások esetében nem térünk vissza értékekkel, így csak a kód egyszerűbbé tétele miatt soroljuk a kifejezésekhez.
-
-A kifejezések és precedenciáik a 7.3-es forráskódban vannak felsorolva.
-
-\paragraph{Utasítások}
-
-Míg a kifejezések magukat az elvégzett számolásokat és műveleteket definiálják, az utasítások a program folyamatvezérlését, a változók elérését és módosítását, a standard kimenetre történő írást, és a hibakereső töréspontjait határozzák meg.
-
-Bár az utasítások definíció szerint nem térhetnek vissza értékekkel, ez alól kivételt képez a „vissza” utasítás, mely annak ellenére, hogy ehhez a kategóriához van sorolva, képes egy függvényt megszakítani és egy értékkel visszatérni.
-
-A nyelv utasításait a 7.4-as forráskód sorolja fel. Az ábrán ezen kívül megfigyelhető még, hogy minden utasítást új sorral zárunk le.
-
 \subsubsection{Fa generálás}
 
 Az ANTLR könyvtár a grammar fájlt bemenetként felhasználva képes egy komplett lexer és parser osztályt generálni számunkra. A felhasználó kódja először is a lexeren fut keresztül, mely egy tokenekből álló listával tér vissza, melyet a parser kifejezésekké és utasításokká alakít, majd egy szintaxisfába rendezi.
-
-
 
 A fába rendezett, de még lineáris kóddá nem alakított Euklideszi algoritmust a 7.5-es forráskód mutatja be. Ez a fa önmagában semmiféle logikát nem tartalmaz, csupán egy hierarchikus reprezentációja a kódnak.
 

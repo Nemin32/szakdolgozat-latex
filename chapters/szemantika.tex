@@ -1,8 +1,8 @@
 \subsection{Üres helyek és sorkihagyások}
 
-A Pszeudokód nem értelmezi az üres helyeket, ezeket csupán az átláthatósághoz és a kód fordításánál használjuk fel, a nyelvi elemek és utasítások elhatárolására. A végső szintaxisfából kiszűrésre kerülnek.
+A Pythonhoz hasonló nyelvekkel ellentétben, a Pszeudokód nem veszi figyelembe az üres helyeket, ezeket csupán az átláthatósághoz és a kód fordításánál használjuk fel, a nyelvi elemek és utasítások elhatárolására. A végső szintaxisfából kiszűrésre kerülnek.
 
-Mivel a kód nem tartalmaz semmiféle sorlezáró jelet (ilyen például a C-hez hasonlatos nyelvekben használt pontosvessző), így az egymás után következő utasításokat célszerűen sortöréssel választjuk el egymástól. A kód elemeit pedig egy soron belül legalább egy üres hellyel választhatjuk el.
+Mivel a kód nem tartalmaz semmiféle sorlezáró jelet (ilyen például a C-hez hasonlatos nyelvekben használt pontosvessző), így az egymás után következő utasításokat célszerűen sortöréssel választjuk el egymástól. A kód elemeit pedig egy soron belül tetszőleges számú, de legalább egy üres hellyel választhatjuk el.
 
 \subsection{Kommentek}
 
@@ -22,7 +22,7 @@ Bár a jegyzetben használt Pszeudokód nem definiálja a kommentelést, mint le
 \end{verbatim}
 \end{footnotesize}
 
-A Pszeudokód háromféle típust különböztet meg. Ezek az egész számok (a nyelv lebegőpontos értékeket nem támogat), a logikai értékek, és a karakterláncok. Ezen kívül a nyelv értelmezi még az ezen típusokból alkotott tömböket is, melyet a "tömb" kulcsszó hozzáillesztésével jelölünk.
+A Pszeudokód háromféle típust különböztet meg. Ezek az egész számok (az értelmező lebegőpontos értékeket nem támogat), a logikai értékek, és a karakterláncok. Ezen kívül a nyelv értelmezi még az ezen típusokból alkotott tömböket is, melyet a "tömb" kulcsszó hozzáillesztésével jelölünk.
 
 \subsection{Atomi értékek}
 
@@ -271,6 +271,12 @@ A kulcsszó használatakor az értelmező futtatása rögtön megszakad. Ezután
 \end{verbatim}
 \end{footnotesize}
 
+A legegyszerűbb kifejezések az úgynevezett atomok, melyek olyan értékek, amik saját magukká válnak kiértékelés után. Ilyenek például a számok. Az „5” szám atom, hisz az értéke önmaga, vagyis az ötös szám. A szövegek és a logikai értékek is ide tartoznak.
+
+Ezen alap építőkövekre épülnek a komplexebb kifejezések, például a számítások és logikai műveletek, melyek rekurzívan egymásra is épülhetnek (például többszörös összeadás.) 
+
+Ide tartozik még a függvényhívás is, viszont mivel eljárások esetében nem térünk vissza értékekkel, így csak a kód egyszerűbbé tétele miatt soroljuk a kifejezésekhez.
+
 \subsection{Utasítások}
 
 \begin{footnotesize}
@@ -292,4 +298,8 @@ A kulcsszó használatakor az értelmező futtatása rögtön megszakad. Ezután
 \end{verbatim}
 \end{footnotesize}
 
-A kifejezések és utasítások közötti különbségeket később tárgyaljuk. A program szintaxisfájának gyökere egy <block> elem.
+Míg a kifejezések magukat az elvégzett számolásokat és műveleteket definiálják, az utasítások a program folyamatvezérlését, a változók elérését és módosítását, a standard kimenetre történő írást, és a hibakereső töréspontjait határozzák meg.
+
+Bár az utasítások definíció szerint nem térhetnek vissza értékekkel, ez alól kivételt képez a „vissza” utasítás, mely annak ellenére, hogy ehhez a kategóriához van sorolva, képes egy függvényt megszakítani és egy értékkel visszatérni.
+
+A program szintaxisfájának gyökere egy darab \texttt{<block>} elem.
