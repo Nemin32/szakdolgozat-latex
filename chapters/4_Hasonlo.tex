@@ -1,0 +1,101 @@
+Az alábbi fejezetben szeretném bemutatni azokat a nyelveket és implementációjukat, melyek segítettek a téma megértésében.
+
+\subsection{Brainflakes}
+
+\subsubsection{A nyelvről röviden}
+
+Az első nyelv amit bemutatnék a Brainflakes\footnote{Általában kevésbé nyomdafestéket tűrő névvel illetik a nyelvet, ám a dolgozatomban az eredeti szerző által ajánlott kevésbé obszcén verziót alkalmazom.}, mely a leghíresebb ezoterikus programozási nyelv. Ezzel a jelzővel olyan nyelveket szoktak illetni, melyeket ahelyett hogy valamiféle valós probléma megoldására készítettek, inkább viccből vagy valami különleges megkötés betartásával alkottak.
+
+A Brainflakes különlegessége, hogy összesen nyolc utasítással rendelkezik, ennek ellenére a nyelv Turing teljes. Ennek bizonyítása, hogy a nyelv egy elődjének a \verb|P''| programozási nyelvnek minimális kiterjesztése, melyet Corrado Böhm még 1964-ben bizonyított\cite{plang}, hogy Turing teljes. Mivel ha egy már Turing teljes nyelvet még erősebbé teszünk, a tulajdonság így is fennmarad, tehát a Brainflakes maga is Turing teljes nyelv.
+
+Azért választottam ennek a nyelvnek a bemutatását, mivel közismert, nagyon egyszerűen és röviden implementálható\footnote{Az alkotó egyik eredeti célja az is volt, hogy a legrövidebb fordítóprogrammal rendelkező nyelvet készítse el.\cite{bf}}, viszont mivel Turing-teljes, így elméletileg bármely problémát megvalósíthatnánk benne.
+
+A Brainflakes működési elve egy, a Turing-géphez hasonló, cellákra felosztott szalag, mely a program által feldolgozott adatokat tartalmazza számok formájában. A rendes számítógépektől eltérően, a memóriára vonatkozó Neumann-elvet megszegve, a programot alkotó utasításokat egy külön listában tároljuk.
+
+Működésének alapja egy képzeletbeli "fej", mely az adatok szalagján valamely cella fölött áll és képes adatokat kiolvasni vagy új értéket írni rá. A nyelv utasításai ezen fejet irányítják.
+
+Programozási analógiával élve az adatok szalagja egy hosszú, számokat tartalmazó tömb, a fej pedig a tömb egyik elemére mutató pointer. A nyelvet megvalósító értelmezők általába valóban ezekkel az eszközökkel is modellezik őket.
+
+A nyelv a következő utasításokat definiálja:
+
+\begin{itemize}
+    \item \textbf{<} - Egyel balra lépteti a fejet a szalagon.
+    \item \textbf{>} - Egyel jobbra lépteti a fejet a szalagon.
+    \item \textbf{+} - Egyel megnöveli a jelenlegi cella értékét.
+    \item \textbf{-} - Egyel csökkenti a jelenlegi cella értékét.
+    \item \textbf{[} - Ha a fej alatti érték nulla előreugrik a következő ] karakterhez az utasításokban. Ellenkező esetben továbblép a következő utasításra. 
+    \item \textbf{]} - Ha a fej alatti érték nem nulla, visszaugrik az előző [ karakterhez az utasításokban, különben továbblép a következőre.
+    \item \textbf{,} - Beolvas egy bájtot a bemenetről és eltárolja a szalag jelenlegi cellájában.
+    \item \textbf{.} - Kiírja a fej alatti cella értékét a standard kimenetre karakterként értelmezve.
+    \item Minden egyéb karaktert figylelmen kívü hagyunk és értelmezés nélkül átugrunk.
+\end{itemize}
+
+Ahogy az látható a nyelvet extrém minimalizmus jellemzi. A más nyelvekben általában egy utasítással végrehajtott "Hello World!" program Brainflakesben leírva a \ref{code:helloworld} forráskódban látható.
+
+\begin{code}{"Hello World!" program Brainflakes nyelven.}{code:helloworld}
+++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++.
+\end{code}
+
+\subsubsection{Egy megvalósítás bemutatása}
+
+A Brainflakes nyelv értelmezésének bemutatására Fabian Mastenbroek GitHubon elérhető C-alapú interpreterét\cite{bfimpl} használom fel. Az értelmező a futtatandó kódot képes a standard bemenetről, egy fájlból, vagy egy API-n keresztül más programba építve tetszőleges módon átadva fogadni.
+
+A program belépés után ellenőrzi milyen közegben is lett meghívva és ennek alapján tölti be a kódot vagy egy fájlból vagy a standard bemenetről. Az értelmező nem megfelelő meghívása esetén (ha például nem adunk át futtatandó kódot vagy fájlt), a program hibát dob. 
+
+Az egyszerűség kedvéért én a standard bemenetről történő beolvasást fogom végigvezetni, hisz a program többi funkcionalitása (fájlkezelés, szövegbeolvasás közben történő hibakezelés) számunkra nem releváns.
+
+Az értelmező a következő lépéseket végzi el:
+
+\begin{enumerate}
+    \item Inicializál egy 30.000 elem hosszú tömböt (a Brainflakes adatszalag hossza megegyezés alapján legalább ekkora) tartalmazó kontextust,
+    \item A bemeneti szöveget átadja egy értelmezőnek, mely egy utasításokból álló láncolt listát generál, oly módon, hogy az ismételt utasítások egy lépésben fejtik ki hatásuk (tehát például \texttt{+++} kód esetén nem háromszor növeljük a jelenlegi számot egyel, hanem egyszer hárommal),
+    \item Az így kapott lista átadásra kerül a kontextus számára, melyen az ezután végiglépked és a fent leírt szabályok alapján lefuttatja,
+    \item Ezután az értelmező feltakarítja mind a listát, mind a tömböt és kilép.
+\end{enumerate}
+
+\subsection{SimPL}
+
+\subsubsection{A nyelvről röviden}
+
+A SimPL egy oktatási céllal készült programozási nyelv, melyet Michael R. Clarkson az \textit{OCaml Programming: Correct + Efficient + Beautiful} című könyvében\cite{ocaml} vázol fel. Egy egyszerű, az ML-családba tartozó nyelv, mely képes az egyes kifejezések és utasítások típusának fölismerésére programozói segítség nélkül.
+
+A nyelv a következő utasításokat támogatja:
+
+\begin{itemize}
+    \item Összeadás, szorzás, és kisebb vagy egyenlő művelet atomi értékeken, melyek számok vagy igaz-hamis logikai értékek lehetnek,
+    \item Ha-akkor-különben elágazások,
+    \item Egy-paraméteres függvények deklarálása és ezek meghívása, 
+    \item \textit{let}-kötések, melyek olyan változó-hozzárendelések, ahol a változó érvényes tartománya a kötésben második felében található egy darab kifejezés. Ez ellentétbe állítható a legtöbb gyakran használt programozási nyelvvel, ahol a változók tartományának deklarálása általában külön szintaxissal történik (behúzás Pythonban vagy kapcsos-zárójelek a C-szerű nyelvekben) és a változók egy kifejezés helyett több utasításból álló tartományon át érvényesek.
+\end{itemize}
+
+\subsubsection{Implementáció bemutatása}
+
+A SimPL értelmezője OCaml nyelvben íródott. A szerző a nyelv szintaxisát Bachus-Naur alakban definiálta (ez a \ref{code:simpl} forráskódban látható), majd ezen definíciókat az \textit{ocamllex} és \textit{Menhir} (mely az OCaml fordítójával együtt csomagolt \textit{ocamlyacc} parser generátor továbbfejlesztése) programoknak átadva egy tokenizáló osztályt és egy parsert kapott.
+
+\begin{code}{A SimPL nyelv szintaktikája Bachus-Naur alakban}{code:simpl}
+e ::= n | i | b
+    | if e1 then e2 else e3
+    | fun x -> e
+    | e1 e2
+    | let x = e1 in e2 
+
+n ::= x | bop
+
+bop ::= ( + ) | ( * ) | ( <= )
+
+t ::= int | bool | t1 -> t2
+
+x ::= <identifiers>
+
+i ::= <integers>
+
+b ::= true | false
+\end{code}
+
+Az így kapott szintaxisfát bájtkóddá alakítás nélkül adja át egy rekurzív típusellenörzőnek, mely egyszerre képes meghatározni azt is, hogy az egyes kifejezések milyen típussal rendelkeznek és, hogy az így kapott értékek megfelelnek-e a nyelv szemantikai szabályainak.
+
+Ehhez a lépéshez egy \textit{statikus környezetnek} nevezett adatszerkezetet használ fel az író, mely feladata az egyes változók és függvények típusának eltárolása. Függvények és \textit{let}-kötések esetén innen kérjük le az egyes változók típusát.
+
+Sikeres típusellenőrzés esetén az értelmező lefuttatja a szintaxisfát egy rekurzív mélységi-bejárás segítségével. A folyamat végén egy darab számértéket kapunk eredménynek, mely a kimenetre kerül kiírásra.
+
+A SimPL nyelv nagyban informálta a saját fordítóprogramom típusellenörzésének dizájnját. Habár a Pszeudokód generikus típusai és más módon kezelt változótartományai miatt a kód jelentősen eltér a SimPL nyelv típusellenőrző algoritmusától, az alapötlet (rekurzívan kiszámolt típusellenörzős és statikus környezetben tárolt változó/függvény típusok) megegyezik.

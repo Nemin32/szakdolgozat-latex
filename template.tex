@@ -35,7 +35,10 @@
   basicstyle=\ttfamily\small,
   numberstyle=\footnotesize,
   keepspaces=true,
-  xleftmargin=1.5em
+  xleftmargin=1.5em,
+  breaklines=true,
+  breakindent=1em,
+  linewidth=\textwidth,
 }
 
 \lstset{style=mystyle}
@@ -51,6 +54,7 @@
     inputencoding = utf8,  % Input encoding
     extendedchars = true,  % Extended ASCII
     caption={#1} \label{#2},
+    alsoletter={()[].=},
     % Graciously taken from: https://tex.stackexchange.com/a/574950
     literate      =        % Support additional characters
     {á}{{\'a}}1  {é}{{\'e}}1  {í}{{\'i}}1 {ó}{{\'o}}1  {ú}{{\'u}}1
