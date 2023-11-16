@@ -1,0 +1,103 @@
+Közel minden magyar, programozást tanító egyetemen, így az Óbudai Egyetemen is megtalálható egy Pszeudokódnak nevezett, legtöbbször C-re hasonlító képzeletbeli programozási nyelv. 
+
+Lényegük, hogy az informálisan definiált algoritmusokat, mint például az "adjuk össze az első tíz páros számot" a \ref{code:firstten} forráskódhoz hasonló egységes, a számítógép által is értelmezhető utasításokra fordítható alakra hozza:
+
+\begin{code}{Az első tíz páros szám összege}{code:firstten}
+i <- 1
+számláló <- 0
+összeg <- 0
+
+ciklus amíg számláló < 10
+    ha i mod 2 = 0 akkor
+        számláló <- számláló + 1
+        összeg <- i
+    elágazás vége
+
+    i <- i + 1
+ciklus vége
+
+kiír összeg
+\end{code}
+
+Ennek célja az algoritmikus gondolkodás elsajátításának megkönnyebbítése, ezen kívül az olyan fogalmak bemutatása és megtanítása is, mint hogy mit jelent és miből áll a szintaxis, mik a típusok, az alapvető alkotóelemek, melyek minden programban megtalálhatóak, és egyéb, hasonlóképp kihagyhatatlan részei a programozó eszköztárának.
+
+Ebben a fejezetben specifikálni szeretném pontosan milyen elemekből is áll a Pszeudokód, milyen szintaxissal rendelkezik és milyen egyéb igényeket támaszt, melyet a dolgozatomnak el kell tudnia látni.
+
+\subsection{Bevezetés}
+
+A Pszuedokód egy imperatív, Turing-teljes programozási nyelv, mely a C-szerű nyelvek családjába tartozik.
+
+Az imperatív nyelvek esetében a programozó egy bizonyos szintű abszrtraktció mellett a "Hogyan?" kérdésre válaszolva alkotja meg a programját. Ez alatt azt értjük, hogy a gép számára egzakt utasításokat adunk, mint például "töltsd be a \texttt{3} értéket az \texttt{i} változóba" vagy "ha \texttt{x} érték igaz, ugorj az \texttt{igaz\_ág} elágazásba". A legtöbb C-szerű nyelv, beleértve a Pszeudokódot is, imperatív.
+
+Velük ellentétben állnak az úgynevezett deklaratív nyelvek, melyeknél a programozó a "Mit?" kérdésre ad választ. Ilyen például az SQL nyelv, ahol nem feladtunk meghatázorzni pontosan hogyan is érjük el az egyes elemeket egy adatbázisból, csupán annak deklarálása hogy melyik elemeket szeretnénk lekérni.
+
+A Turing-teljesség definícióját Stephan Kepser cikkéből kölcsönöztem, melyben XSLT nyelvre bizonyítja a tulajdonság fennállását:
+
+\say{A Turing-teljesség egy programozási- vagy lekérési nyelv vagy bármely más számítási modell erejéről szóló állítás, mely kijelenti, hogy bármit, amit egy Turing-géppel kiszámoltathatunk ezzel a nyelvvel vagy számítási modellel is ki lehet. Mivel a Turing-gépek a legerősebb eddig ismert számítási modell, így a Turing teljesség azt jelenti, hogy bármi ami egyáltalán kiszámítható, kiszámítható a nyelv használatával is. Ez a programozási nyelvek számára igencsak kívánatos tulajdonság, mivel ez azt jelenti, hogy a nyelv nem korlátozza a felhasználót abban, milyen problémát is oldhat meg vagy számítást fejezhet ki benne.}\cite{turing}
+
+Ahhoz, hogy a teljességet bizonyítsuk, meg kell mutatnunk, hogy a nyelv képes egy univerzális Turing-gépet szimulálni. Ez a képzeletbeli gép egy végtelen hosszú tekerccsel rendelkező olvasó/író fej, mely egy véges hosszúságú utasítási lista alapján képes a tekercsről adatokat beolvasni, majd ezeket értelmezve új adatokat írni arra (vagy a meglévőket felülírni.)
+
+Mivel a Pszeudokód képes (elvben) tetszőleges hosszúságú tömbök létrehozására, ezekben a tömbökben véletlenszerű adatelérésre és módosításra, és rendelkezik folyamatvezérlő szerkezetekkel, így kimondhatjuk, hogy a nyelv Turing-teljes és ezáltal bármely más tetszőleges ennek megfelelő nyelv kódját átfordíthatjuk rá vagy bármely Pszeudokódban írt program átfordítható egy másik ilyen nyelvre.
+
+\subsection{Szintaktikai elemek és szemantikájuk}
+
+A Pszeudokód sokat merít a C-szerű nyelvekből, így sok hasonlóság is felfedezhető benne, ám bizonyos részeiben eltér. A következőkben a Pszeudokód szemantikai elemei és értelmezésük kerül bemutatásra.
+
+[szemantika]
+
+\subsection{Eltérések a jegyzettől}
+
+Mivel a szakdolgozat célja a Szoftvertervezés és Fejlesztés I. hallgatóinak megsegítése, így igyekeztem amennyire csak lehet hűen adaptálni az órán használt jegyzetet\cite{jegyzet}.
+
+Ennek ellenére van egy-két részlet, amiben célszerűnek láttam eltérni a jegyzetben látottaktól. Most ezeket szeretném felsorolni:
+
+\subsubsection{Sorszámozás}
+
+Az jegyzetben használt Pszeudokód algoritmusainak része, hogy a sorok elején az olvasás és idézés egyszerűbbé tételének kedvéért sorszámokat helyezett el az író. Ez a \ref{fig:line_number} képen látható.
+
+\addimage{sorszam.png}{Példa az algoritmusok sorszámozására}{line_number}
+
+Ezt pusztán az olvasó számára szolgál valós információval, a nyelv önmaga nem rendelkezik se GOTO utasítással, se más egyéb szerkezettel mellyel sorszám alapú ugrást tudnánk végrehajtani, így az én megvalósításomban ezek nem kerültek felhasználásra.
+
+\subsubsection{Függvények szignatúrája}
+
+Az egyes algoritmusok a lentebb tárgyalt Kimenet sor miatt nem nyilatkoznak arról milyen típusú értékkel is térnek vissza. Ez az esetek nagy többségében nem jelent problémát, hisz az értelmező a függvénytörzsben felhasznált értékek típusait követve ki tudja következtetni a visszatérési érték típusát is.
+
+Azonban olyan esetben amikor a függvény rekurzívan meghívja önmagát, erre nincs lehetőségünk, így ilyenkor a függvény deklaráció sorában azt is expliciten meg kell mondanunk, a függvény milyen értékkel is tér majd vissza:
+
+\begin{code}{Példa a rekurzív függvények szignatúrájára}{code:signature}
+függvény FibonacciRekurzív(n : egész): egész
+  ha n <= 1 akkor
+    vissza 1
+  különben
+    vissza FibonacciRekurzív(n - 2) + FibonacciRekurzív(n - 1)
+
+  elágazás vége
+függvény vége
+
+kiír FibonacciRekurzív(5)
+\end{code}
+
+Ahogy az a \ref{code:signature} forráskódban látható, a függvény paramétereinek listája után a kettőspont, majd "\texttt{egész}" típus szignatúrával jelöljük, hogy a függvény végeredménye egy szám érték lesz.
+
+\subsubsection{Kimenet/Bemenet sorok}
+
+Minden Pszeudokód algoritmus első két sora arra való, hogy definiálja a be- és kimeneti változókat, mellyel az algoritmus dolgozik. Ez a \ref{fig:inputoutput} képen látható.
+
+\addimage{bemkim.png}{Példa a Bemenet és Kimenet sorokra}{inputoutput}
+
+Mivel mind a bemeneti változók, mind a kimeneti érték vagy értékek kiderülnek a függvény szignatúrájából és visszatérési értékéből, így az én megvalósításomban ezek nem kerültek felhasználásra.
+
+\subsubsection{Változó számú visszatérési érték}
+
+A Pszeudokód a C-szerű nyelvekkel ellentétben támogatja a több értékkel való visszatérést. Tehát egy érték helyett, akár kettővel, hárommal vagy elméletileg akár többel is visszatérhetünk a függvényekből.
+
+A helyzetet még az komplikálja, hogy bizonyos esetekben más számú visszatérési értékekkel kell számolnunk. Ez legtöbbször például a kereső függvényeknél van használva, ahol az első érték azt jelzi, hogy egyáltalán megtaláltuk-e a keresett értéket, míg a második ennek indexével tér vissza, ha igen. Ilyen esetekben, ha nem találtunk megfelelő értéket egy darab visszatérési értékkel rendelkezünk, ha igen, akkor pedig kettővel.
+
+Ennek támogatása erősen bonyolítana a típusellenörző kódján, így helyette kötelezem a függvényeket, hogy minden águkban ugyanolyan típusú értékkel térjenek vissza. Például a fentebb említett kereső függvényeknél ilyen esetben \texttt{(hamis, 0)} elempárral térünk vissza.
+
+\subsubsection{Különleges karakterek}
+
+A jegyzetben található Pszeudokód teljes mértékben igénybe veszi az UTF-8 által nyújtott matematikai szimbólumokat a változók értékének hozzárendeléséhez használt nyíltól kezdve a halmazműveletekig.
+
+Ezek begépelése nem egyszerű az átlag felhasználó számára, így úgy döntöttem az egyszerűbb jeleket ASCII megfelelőkkel (például a nyíl helyett "\texttt{<-}", az áthúzott egyenlőség jel helyett "\texttt{=/=}"), az ennél különlegesebb szimbólumokat pedig azok kiírt neveivel helyettesítem (például "\texttt{végtelen}" vagy "\texttt{Halmaz}").

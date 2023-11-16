@@ -24,6 +24,8 @@ Ugyanígy ebben a lépésben szűrjük ki a jelentéssel nem rendelkező elemeke
 
 A tokenek közé tartoznak például az operátorok, a változónevek, a különböző utasítások és kifejezések nevei, és a már tovább nem bontható, önmagukban is értelmes értékek, az úgynevezett "atomok," melyek olyan értékek, amik a Pszeudokód nyelvben számokat, szövegeket, vagy logikai értékeket tartalmaznak.
 
+Bár alapesetben a tokenizáló algoritmus feladata, hogy a kommenteket és helykihagyásokat (üres helyek és sortörések) kiszűrje, a saját implementációmban ezek is tokenként kerülnek elmentésre, majd a következő lépés előtt kerülnek szűrésre.
+
 Kód szempontjából a tokenek olyan adatszerkezetek, melyek tartalmazzák saját fajtájuk (mely megmondja, hogy például a token egy atomi értéket vagy kulcsszót tartalmaz), az eredeti szöveg hozzájuk tartozó részét (például "elágazás"), és ezen szöveg kezdetének sorát és oszlopát. Ez utobbit akkor használjuk fel, ha itt vagy a későbbi lépések során hibába ütközünk és a felhasználóval tudatni szeretnénk hol is keresse a hibát a kódjában.
 
 A tokenizálás egy egyszerű, a szöveget balról-jobbra feldolgozó algoritmussal van megvalósítva. A feldolgozásért felelős osztály rendelkezik a nyelv összes lehetséges tokenjére egy metódussal, mely sikeres feldolgozás esetén a hozzá tartozó tokennel tér vissza (a fentebb specifikált egyéb információkat beleértve) és a bemenetetet annyi karakterrel lépteti előrébb, ahány a tokenhez szükséges. Sikertelen feldolgozás esetén null értékkel térünk vissza és az esetleges előreléptetést visszacsináljuk.
