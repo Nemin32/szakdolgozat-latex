@@ -19,10 +19,10 @@ Programozási analógiával élve az adatok szalagja egy hosszú, számokat tart
 A nyelv a következő utasításokat definiálja:
 
 \begin{itemize}
-    \item \textbf{<} - Egyel balra lépteti a fejet a szalagon.
-    \item \textbf{>} - Egyel jobbra lépteti a fejet a szalagon.
-    \item \textbf{+} - Egyel megnöveli a jelenlegi cella értékét.
-    \item \textbf{-} - Egyel csökkenti a jelenlegi cella értékét.
+    \item \textbf{<} - Eggyel balra lépteti a fejet a szalagon.
+    \item \textbf{>} - Eggyel jobbra lépteti a fejet a szalagon.
+    \item \textbf{+} - Eggyel megnöveli a jelenlegi cella értékét.
+    \item \textbf{-} - Eggyel csökkenti a jelenlegi cella értékét.
     \item \textbf{[} - Ha a fej alatti érték nulla előreugrik a következő ] karakterhez az utasításokban. Ellenkező esetben továbblép a következő utasításra. 
     \item \textbf{]} - Ha a fej alatti érték nem nulla, visszaugrik az előző [ karakterhez az utasításokban, különben továbblép a következőre.
     \item \textbf{,} - Beolvas egy bájtot a bemenetről és eltárolja a szalag jelenlegi cellájában.
@@ -48,12 +48,13 @@ Az értelmező a következő lépéseket végzi el:
 
 \begin{enumerate}
     \item Inicializál egy 30.000 elem hosszú tömböt (a Brainflakes adatszalag hossza megegyezés alapján legalább ekkora) tartalmazó kontextust,
-    \item A bemeneti szöveget átadja egy értelmezőnek, mely egy utasításokból álló láncolt listát generál, oly módon, hogy az ismételt utasítások egy lépésben fejtik ki hatásuk (tehát például \texttt{+++} kód esetén nem háromszor növeljük a jelenlegi számot egyel, hanem egyszer hárommal),
+    \item A bemeneti szöveget átadja egy értelmezőnek, mely egy utasításokból álló láncolt listát generál, oly módon, hogy az ismételt utasítások egy lépésben fejtik ki hatásuk (tehát például \texttt{+++} kód esetén nem háromszor növeljük a jelenlegi számot eggyel, hanem egyszer hárommal),
     \item Az így kapott lista átadásra kerül a kontextus számára, melyen az ezután végiglépked és a fent leírt szabályok alapján lefuttatja,
     \item Ezután az értelmező feltakarítja mind a listát, mind a tömböt és kilép.
 \end{enumerate}
 
 \subsection{SimPL}
+\label{sec:simpl}
 
 \subsubsection{A nyelvről röviden}
 

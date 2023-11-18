@@ -2,37 +2,38 @@ A felhasználó által begépelt bemeneti szöveg több átalakításon esik át
 
 \subsection{Formázás}
 
-Első lépésben a felhasználó szöveget gépel be a program által nyújtott szövegdobozba, majd rákattint a fordítás gombra. Mielőtt a program értelmezése elkezdődne, a fordító először is megnézi a bemenet egyes sorait és a következőket teszi:
+Első lépésben a felhasználó szöveget gépel be a program által nyújtott szövegdobozba, majd rákattint a fordítás gombra. Mielőtt a program értelmezése elkezdődne, lefut rajta egy formázó algoritmus, mely a szöveget soraira tördeli, majd ezeket a \ref{sec:formatting} alfejezetben leírt szabályok szerint formázza.
+
+Ehhez a következő változókat tartja számon:
 
 \begin{itemize}
-    \item Ha fölöslesges üres sorokat talál, azokat kitörli,
-    \item Ha új blokkot kezdeményező utasítással kezdődik a sor (például "ciklus", "függvény", "ha", stb.), akkor a jelenlegi sort követő kód behúzásra kerül,
-    \item Ha blokkot záró utasítással végződik egy sor ("[utasítás] vége"), akkor már a jelenlegi sort és az azokat követőket egy szinttel kevésbé húzzuk be.
+    \item prevIndent - Értéke igaz, ha az előző sorban volt behúzás,
+    \item prevDedent - Értéke igaz, ha az előző sor egy szinttel kevébsé lett behúzva,
+    \item oldIndent - Az előző sor behúzásának értéke számszerint.
 \end{itemize}
 
-Ennek eredménye, hogy a felhasználói bemenettől függetlenül konzisztens és jól tördelt kódot kapunk, melyet továbbadunk az értelmezőnek.
+Megnézzük, hogy a jelenlegi sor első szava megegyezik-e egy olyan kulcsszóval, mely új blokkot kezdeményez ("ha", "függvény", "eljárás", "ciklus") és azt, hogy az utolsó szava pedig "vége"-e.
+
+Ha az előbbi feltétel igaz, de az utóbbi nem, a behúzás egy szinttel növekszik. Ha az utóbbi feltétel igaz, akkor az első feltétel állapotától függetlenül mindig csökkentjük a behúzás szintjét. Erre azért van szükségünk, mivel a blokkokat lezáró utasítások magukban tartalmazzák a nyitó utasítást is (például a "függvény vége" tartalmazza a "függvény" szót is), így enélkül a precedencia nélkül egyszerre próbálnánk növelni és csökkenteni is a behúzást, mely így nem változna.
+
+Ez alól egyetlen kivétel a "különben" kulcsszó, melyet egyszerre kell egy szinttel kevésbé behúznunk, ám a következő sorban már ismét egy szinttel jobban. Ennek ellenőrzésére a formázó figyelembe veszi, hogy a jelenlegi sor tartalmazza-e a "különben" kulcsszót.
+
+Ezután az előző sor információit tartalmazó változók és a jelenlegi sor információi alapján eldöntjük, hogy szükséges-e új sort tennünk a következő utasítás elé.
+
+Végül befüzzük a jelenlegi sort a végeredménybe a megfelelő behúzással és az esetleges új sorral együtt.
 
 \subsection{Tokenizálás}
+\label{sec:tokenizer}
 
-Robert Nystrom a \textit{Crafting Interpreters} című könyvének tokenizálásról szóló fejezetét\cite{crafting} a következővel nyitja:
-
-\say{Az első lépés bármely értelmező vagy fordító létrehozásában a szkennelés. A szkenner a nyers bemeneti forráskódot karakterek sorozataként fogadja, majd ezeket tokeneknek nevezett csoportokba gyűjti. Ezek a nyelv értelmes \say{szavai} és \say{írásjelei} melyek kialakítják annak nyelvtanát.}
-
-Ahogy az fentebb is olvasható, a nyers szöveg hiába van jól formázva, önmagában a számítógép számára nem értelmezhető. Épp ezért az első lépés, hogy a fordítóprogram által is értelmezett legkisebb egységekre, úgynevezett "tokenekbe", bontsuk a kódot, ez a tokenizálás.\footnote{A szakirodalmat böngészve több különböző kifejezéssel is találkozhatunk erre a folyamatra. A fentebb idézett szövegben az író a "szkennelés" szót alkalmazta, én a "tokenizálást", megint más szövegek pedig a "lexer" vagy "lexing" szóval hivatkoznak a forrásszövegek egységekre való bontására. Szigorúan véve van különbség a fogalmak között (a tokenizáló csupán elemekre bontja a szöveget, míg egy lexer egyéb információkat is fűz az elemekhez), ám általánosságban szinonímaként használjuk őket.}
-
-Ugyanígy ebben a lépésben szűrjük ki a jelentéssel nem rendelkező elemeket (úgynevezett \textit{triviákat}). Ezek közé tartoznak a kommentek (hisz ezeket az értelmező figyelmen kívül hagyja) és az jelentést nem módosító üres helyek (mivel a program szempontjából nem jelent semmiféle különbséget, hogy valaki \verb|5 + 3|-t ír vagy \verb|5     +3|-t vagy mindhárom karaktert különböző sorba írja).
-
-A tokenek közé tartoznak például az operátorok, a változónevek, a különböző utasítások és kifejezések nevei, és a már tovább nem bontható, önmagukban is értelmes értékek, az úgynevezett "atomok," melyek olyan értékek, amik a Pszeudokód nyelvben számokat, szövegeket, vagy logikai értékeket tartalmaznak.
+Ahogy azt a \ref{sec:tokenizer_tech} alfejezetben bevezettem a jól formázott szövegünk feldolgozásának első lépése annak tokenekre bontása.
 
 Bár alapesetben a tokenizáló algoritmus feladata, hogy a kommenteket és helykihagyásokat (üres helyek és sortörések) kiszűrje, a saját implementációmban ezek is tokenként kerülnek elmentésre, majd a következő lépés előtt kerülnek szűrésre.
 
-Kód szempontjából a tokenek olyan adatszerkezetek, melyek tartalmazzák saját fajtájuk (mely megmondja, hogy például a token egy atomi értéket vagy kulcsszót tartalmaz), az eredeti szöveg hozzájuk tartozó részét (például "elágazás"), és ezen szöveg kezdetének sorát és oszlopát. Ez utobbit akkor használjuk fel, ha itt vagy a későbbi lépések során hibába ütközünk és a felhasználóval tudatni szeretnénk hol is keresse a hibát a kódjában.
-
-A tokenizálás egy egyszerű, a szöveget balról-jobbra feldolgozó algoritmussal van megvalósítva. A feldolgozásért felelős osztály rendelkezik a nyelv összes lehetséges tokenjére egy metódussal, mely sikeres feldolgozás esetén a hozzá tartozó tokennel tér vissza (a fentebb specifikált egyéb információkat beleértve) és a bemenetetet annyi karakterrel lépteti előrébb, ahány a tokenhez szükséges. Sikertelen feldolgozás esetén null értékkel térünk vissza és az esetleges előreléptetést visszacsináljuk.
+Az általam készített tokenizálás egy egyszerű, a szöveget balról-jobbra feldolgozó algoritmussal van megvalósítva. A feldolgozásért felelős osztály rendelkezik a nyelv összes lehetséges tokenjére egy metódussal, mely sikeres feldolgozás esetén a hozzá tartozó tokennel tér vissza (a fentebb specifikált egyéb információkat beleértve) és a bemenetetet annyi karakterrel lépteti előrébb, ahány a tokenhez szükséges. Sikertelen feldolgozás esetén null értékkel térünk vissza és az esetleges előreléptetést visszacsináljuk.
 
 Az algoritmus sorrendben végigpróbálja az összes lehetséges token mintáját és, ha olyat talál amely ráillik a jelenlegi bemenetre, akkor továbblépteti a bemeneti szöveget és a kapott tokent hozzáfűzi a kimeneti tokenek listájához.
 
-Mivel ennek a folyamatnak az algoritmusa a modern számítógépeken a felhasználó számára érzékelhetetlenül kevés időt vesz igénybe (körülbelül 20-25 millisecundum), így a felhasználótól kapott bemenet még gépelés közben át is esik a folyamaton. 
+Mivel ennek a folyamatnak az algoritmusa a modern számítógépeken a felhasználó számára érzékelhetetlenül kevés időt vesz igénybe (a saját gépemen ez körülbelül 20-25 millisecundum), így a felhasználótól kapott bemenet még gépelés közben át is esik a folyamaton. 
 
 Fölmerülhet bennünk, hogy erre mi szükség van, hisz a tokenizálás folyamatát elég lenne csupán egyszer a fordítás folyamatának elején lefuttatnunk. A válasz, hogy a program egyben szintaktikai kiemelést is végez a tokenek segítségével (tehát a különböző nyelvi elemeket különféle színekkel jelöljük, így egyszerűbbé téve a programozó számára, hogy eligazodjon a kódon). Ez egy egyszerű szótár adatszerkezettel van implementálva, minden token típushoz hozzápárosítunk egy színt, melyet a felhasználói felületen beállítunk a megfelelő szövegrészletekhez.
 
@@ -45,16 +46,15 @@ Viszont hiba lehet például egy le nem zárt szöveg, vagy olyan karakter vagy 
 Ha a tokenizálás hibás tokenbe ütközik, a folyamat rögtön megáll és a hibás tokentől kezdve vörös kiemeléssel tudatjuk vizuálisan, hogy a feldolgozás sikertelen.
 
 \subsection{Szintaxisfa generálás}
+\label{sec:parser}
 
-Ha a tokenizálás közben nem futottunk hibába, az így kapott lista kész arra, hogy egy "absztrakt szintaxisfának" nevezett adatszerkezetté dolgozzuk át.
-
-Az "absztrakt szintaxisfa" (angolul \textit{abstract syntax tree}, gyakran rövidítve 'AST') egy olyan fa-szerkezet, melynek levélelemei atomok, ágai pedig egy vagy több értéket fogadó operátorok és kulcsszavak. A kód olyan reprezentációja, mely annak hierarchiájára fókuszál, elvetve minden olyan információt, mely nem szükséges annak értelmezéséhez.
-
-A folyamathoz itt egy úgynevezett monadikus kombinátor parsert\footnote{A "parser" szót a "nyelvi értelmező" kifejezéssel lehetne a legpontosabban magyarra fordítani. Ám, mivel a külföldi szakirodalomban is mindig a "parsing" / "parser" kifejezésekkel hivatkoznak a folyamatra és algoritmus-családra és mivel a magyar név kissé körülményes, ebben a szövegben én is az angol szóval fogom ezeket a fogalmakat illetni.} használtam, melynek működési elvét egy Haskell nyelven írt programot bemutató papírból\cite{monadic} vettem át.
+A szintaxisfa generelásához a kódomban egy úgynevezett monadikus kombinátor parsert\footnote{A "parser" szót a "nyelvi értelmező" kifejezéssel lehetne a legpontosabban magyarra fordítani. Ám, mivel a külföldi szakirodalomban is mindig a "parsing" / "parser" kifejezésekkel hivatkoznak a folyamatra és algoritmus-családra és mivel a magyar név kissé körülményes, ebben a szövegben én is az angol szóval fogom ezeket a fogalmakat illetni.} használtam, melynek működési elvét egy Haskell nyelven írt programot bemutató papírból\cite{monadic} vettem át.
 
 A parser a következőképp működik: Olyan függvényeket specifikálunk, mely bemenetként megkapja a bemeneti szöveget és azt az indexet, ahol jelenleg tartunk a szövegben és mely egy felhasználó által specifikált értékkel és egy új (bemenet, index) párossal tér vissza, melyben az index annyival előrébb lett tolva, ahány elemet felhasználtunk. Az algoritmus használható lenne sima szövegeken is (az eredeti papír így is tesz), viszont a saját fordítómban a parser a tokenizálásból eredő listát használja fel bemenetként.
 
 A fentebb említett függvényeket "kombinátoroknak" nevezzük. A név onnan ered, hogy az egyes függvények egymással kombinálhatóak, így egyre bonyolultabb parsereket tudunk felépíteni. Ennek módja az úgynevezett \textit{bind} ("kötés") függvény, mely két kombinátort vár bemenetként és egy új kombinátorral tér vissza. Ez lefuttatja először az első függvényt, ha ez hiba, akkor visszatér ezzel a hibával. Ha nem, akkor az ebből kapott (bemenet, index) párost és a kapott értéket átadja a második függvénynek. Ezzel úgymond "egymásba tudjuk láncolni" a különböző kombinátorokat, melyek vagy a lánc összes elemének feldolgozott értékeivel térnek vissza, vagy ha a lánc során bárhol hibába futunk, akkor azzal.
+
+\subsubsection{Alapvető kombinátorok}
 
 A papír definiál néhány alap függvényt, melyekből a nyelvi elemeket értelmezni tudó parsert építjük fel, ezek a következők egyike lehetnek:
 
@@ -75,6 +75,8 @@ A papír definiál néhány alap függvényt, melyekből a nyelvi elemeket érte
     \item \textbf{right} - Lefuttat egymás után két kombinátort, majd elveti az első értékét.
 \end{itemize}
 
+\subsubsection{Kiegészítő kombinátorok}
+
 Ezeket kiegészítettem még pár saját vagy más forrásból származó kombinátorral, melyek olyan mintákat rövidítenek le, amelyek a kódban nagyon gyakran fordultak elő:
 
 \begin{itemize}
@@ -87,6 +89,8 @@ Ezeket kiegészítettem még pár saját vagy más forrásból származó kombin
     
     Hozzárendelésnél hasznos, hisz a például \texttt{változó <- érték} és a \texttt{változó <- Függvényhívás()} első két tagja minden esetben megegyezik, így ha idáig eljutottunk, biztosak lehetünk benne, hogy csak ez a két lehetőség következhet (a valódi értelmezőben ennél több ág is lehetséges, itt a példa kedvéért egyszerűsítettem).
 \end{itemize}
+
+\subsubsection{A \textit{do}-alak használata kombinátorok lineáris egybefűzésére}
 
 Végezetül mivel néhány parser igen hosszúra tud nyúlni, így ez elkerülhetetlenül ahhoz vezet, hogy több egymásba ágyazott \textit{bind} hívást kéne kezelnünk. Az ilyen kódon a rengeteg zárójel-pár és különféle helyeken bevezetett paraméterek és változók miatt hírhedten nehéz kiigazodni. Olyannira hogy a JavaScriptben fejlesztő programozók frusztrációjukban a "callback hell" vagyis "visszahívó (függvény) pokol" fantázianévvel illeték a jelenséget.
 
@@ -133,10 +137,11 @@ Ezen eszközök segítségével a 2.1-es fejezetben látható szintaxis szinte e
 Fontos megjegyezni, hogy egy érvényes tokenekből álló lista nem feltétlen eredményez érvényes szintaxisfát. Hiába képes a tokenizáló értelmezni a "ha ha ha ha" vagy "ciklus elágazás" bemenetet, ezek értelemszerűen nem alkotnak szintaktikailag érvényes kódot. Ha bárhol nem vagyunk képesek egy illő mintát se találni, a folyamat hibával tér vissza és megszakad.
 
 \subsection{Típusellenőrzés}
+\label{sec:typecheck}
 
-A típusellenőrzés feladata, hogy megbizonyosodjon afelől, hogy egy szintaktikailag helyes szintaxisfa szemantikailag is érvényes kódból készült. Ez alatt azt értjük, hogy például a függvények megfelelő típusú paramétereket kapnak, műveleteket csak olyan értékeken végzünk melyekre ezek értelmezve vannak (nem adhatunk számhoz szöveget például), ezen kívül azt is ellenőrizzük, hogy a függvények megfelelő típusú értékkel térnek-e vissza.
+A típusellenőrzés feladata, hogy megbizonyosodjon afelől, hogy egy szintaktikailag helyes szintaxisfa szemantikailag is érvényes kódból készült. Ennek részleteiről a \ref{sec:typecheck_tech} alfejezetben írok.
 
-Ehhez egy rekurzív függvényt használunk fel, mely két bemenettel rendelkezik. Az első egy szintaxisfa-elem (kezdetben értelemszerűen a program gyökéreleme), a második pedig egy úgy nevezett típus-szótár, melyet rögtön definiálunk. A függvény kimenete sikeres típusellenőrzés esetén az adott szintaxisfa-elem típusa és egy opcionálisan módosított típus-szótár. Működése, hogy minden lehetséges szintaxisfa-elem típusra megadunk szabályokat, melyek segítségével ki tudjuk számolni annak típusát és, hogy gyermekelemei szintén megfelelőek-e.
+A saját megvalósításomban a típusellenőrzéshez egy rekurzív függvényt használok fel, mely két bemenettel rendelkezik. Az első egy szintaxisfa-elem (kezdetben értelemszerűen a program gyökéreleme), a második pedig egy úgy nevezett típus-szótár, melyet rögtön definiálunk. A függvény kimenete sikeres típusellenőrzés esetén az adott szintaxisfa-elem típusa és egy opcionálisan módosított típus-szótár. Működése, hogy minden lehetséges szintaxisfa-elem típusra megadunk szabályokat, melyek segítségével ki tudjuk számolni annak típusát és, hogy gyermekelemei szintén megfelelőek-e.
 
 Például, ha az összeadás műveletét ellenőrizzük, akkor meg kell néznünk, hogy a bal és jobb oldali elem szám típusú értékek-e (melyeket a függvény rekurzív meghívásával érünk el) és, ha azok, akkor a művelet eredménye is szám lesz (mely tényt esetleg egy másik típusellenörzésnél is felhasználhatunk). Ha valamely szabály meghiúsul, akkor kivételt dobunk, mely által az egész folyamat megszakad.
 
@@ -158,23 +163,30 @@ A típusellenörzés szabályai röviden a következőek:
 
 \begin{itemize}
     \item Atom esetén annak értéke alapján meg tudjuk határozni a típust,
-    \item Értékadáshoz esetén eltároljuk a változót és annak típusát a jelenlegi típus-szótárba,
+    \item Értékadáshoz esetén eltároljuk a változót és annak típusát a jelenlegi típus-szótárba, megbizonyosdva afelől, hogy az eltárolt típus nem üres-típus,
     \item Változó esetén lekérjük annak típusát név alapján. Ha nem találjuk kivételt dobunk,
-    \item Függvénydeklaráció esetén eltároljuk annak visszatérési értékét a függvénytörzs utasításai alapján és a paramétereinek számát és azok elvárt típusait,
-    \item Függvényhívás esetén lekérjük a fentebb eltárolt értékeket és megnézzük, hogy megfelelő számú és típusú paramétert adtunk át, majd visszatérünk az eltárolt típussal (kivétel ez alól a generikus függvények, melyet lejjebb tárgyalunk),
+    \item Függvénydeklaráció esetén eltároljuk annak visszatérési értékét a függvénytörzs utasításai alapján és a paramétereinek számát és azok elvárt típusait. Ha egy paraméter generikus, annak kezelését lejjebb, a \ref{sec:generic} szekcióban mutatom be.
+    \item Függvényhívás esetén lekérjük a fentebb eltárolt értékeket és a következőket ellenőrizzük:
+    \begin{itemize}
+        \item A függvény megfelelő számú paramétert kapott-e,
+        \item A függvény által kapott paraméterek típusai egyeznek-e a definícióban szereplő paraméterek típusaival,
+        \item Esetleges generikus típusok esetén az ezekre való behelyettesítés után értelmes függvénytörzset kapunk-e, mely visszatérési értéke megegyezik a szignatúrában definiált vagy annak híján az előre kiszámolt visszatérési értékkel.
+    \end{itemize}
+    Ha a hívás minden feltételnek megfelel, a függvény visszatérési értékének típusával térünk vissza,
     \item Aritmetikai, logikai, és összehasonlító műveletek esetén ellenőrizzük a tagokat és a végeredmény típusával térünk vissza,
     \item Elágazás esetén ellenőrizzük, hogy a predikátum logikai érték és hogy az ágak ugyanolyan típusú értékkel térnek vissza (mely lehet üres is),
     \item Ciklusok esetén a ciklusváltozó értékét eltároljuk a típus-szótárba, majd a ciklus törzsének típusával térünk vissza,
     \item Egyéb utasítások esetén a visszatérési típus üres. 
 \end{itemize}
 
+\subsubsection{Generikus függvények kezelése}
+\label{sec:generic}
+
 Egy esetben azonban a típus nem dönthető el rögtön, ez az eset pedig a generikus függvények definiálása. Ilyenkor a \texttt{T} (vagy bármely más egy, nagybetűs karakter) ideiglenes értékkel hivatkozunk egy olyan típusra, melyet csak a függvény meghívásakor vagyunk képesek kiszámolni. Ekkor segít nekünk ismét a típus-szótár, mely a sima névhez kötésen túl képes típusokat behelyettesíteni is.
 
-Ha meghívunk egy generikus paraméterrel rendelkező függvényt egzakt típussal, akkor a típusellenörző ismét lefut a függvény törzsén. Ekkor azomban, a szótár behelyettesíti ezt az egzakt típust az összes olyan generikus típushoz kötött névhez, ahol a típus ideiglenes egy-karakteres értéke megegyezik a behelyettesített típus értékével.
+Ha meghívunk egy generikus paraméterrel rendelkező függvényt egzakt típussal, akkor a típusellenörző ismét lefut a függvény törzsén. Ekkor azonban, a szótár behelyettesíti ezt az egzakt típust az összes olyan generikus típushoz kötött névhez, ahol a típus ideiglenes egy-karakteres értéke megegyezik a behelyettesített típus értékével.
 
 Ez alapján, ha például \texttt{T}-re helyettesítünk \texttt{egész} típussal, akkor a \texttt{T, T tömb,} és \texttt{T referencia} típusok mind megfelelő egzakt típussá változnak (\texttt{egész}, \texttt{egész} \texttt{tömb}, és \texttt{egész} \texttt{referencia}).
-
-Ez a lépés nem végez átalakítást a szintaxisfán, csupán az esetleges kivételei miatt érdekes számunkra.
 
 \subsection{Szekvenciális program generálása}
 

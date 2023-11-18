@@ -1,6 +1,10 @@
 \subsection{Összeállítás}
 
-A diplomamunka egyes elemei külön egységekként lesznek lekódolva, melyek interfészekkel lesznek képesek egymással kommunikálni. Ez azért ideális, mert a végeredmény egy kevés fájlból álló, egyszerűen mozgatható és összeállítható csomag. Emellett mivel az eredeti forrásállományok egymással nincsenek szoros függésben, így  bármelyik részt könnyű lecserélni, ha ez esetleg szükségessé válna.
+\addimage{rendszerterv.png}{A fordítóprogram egységei.}{plan}
+
+Az értelmező egyes lépései külön egységekként lesznek lekódolva, melyek interfészekkel képesek egymással kommunikálni. Ez azért ideális, mert a végeredmény egy látványosan elkülönülő részekből álló, egyszerűen mozgatható és összeállítható csomag. Emellett mivel az eredeti forrásállományok egymással nincsenek szoros függésben, így  bármelyik részt könnyű lecserélni, ha ez esetleg szükségessé válna.
+
+Ezen egységek egymással való kapcsolatát a \ref{fig:plan} ábra mutatja be. A zölddel jelölt útvonalak a sikeres lépéseket jelölik, bennük feltüntetve, hogy milyen adattal is szolgálunk a következő lépés számára. Pirossal pedig az egyes hibákat jelöljük, melyek rendre megszakítják a fordítás folyamatát és a felhasználói felületen megjelenítésre kerülnek.
 
 Eredeti elképzelésem szerint a fordítóprogram egy szerverként működött volna, melyhez a felhasználó egy webes kliensen keresztül fért volna hozzá. Ezen szerver feladata az lett volna, hogy a felhasználó által átadott szövegeket feldolgozza, majd olyan formában küldje vissza a kliens számára, melyet az le képes futtatni.
 

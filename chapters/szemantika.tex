@@ -1,0 +1,71 @@
+\begin{code}{A Pszeudokód szintaktikai specifikációja}{code:syntax}
+expression ::= arrayIndex | atom | binaryOperation | functionCall | not | reference | variable
+
+statement ::= arrayComprehension | assignment | block | debug | for | functionCall | functionDeclaration | if | newArray | print | return | swap | while
+
+block ::= statement+
+
+newArray ::= variable " <- " (oneDimensionalArray | multiDimensionalArray)
+multiDimensionalArray ::= "TáblaLétrehoz(" atomType ")[" expression ("," expression)+ "]"
+oneDimensionalArray ::= "Létrehoz(" atomType ")[" expression "]"
+
+swap ::= address " <- " address
+
+if ::= ifHead (ifElseIf* ifElse)? " elágazás vége"
+
+ifElseIf ::= ( " különben ha " expression " akkor " block)
+ifElse ::= " különben " block
+ifHead ::= "ha " expression " akkor " block 
+
+for ::= "ciklus" variable "<-" expression ("-tól" | "-től") expression "-ig" block " ciklus vége"
+
+while ::= normalWhile | doWhile
+doWhile ::= "ciklus " block " amíg " expression
+normalWhile ::= "ciklus amíg " expression block " ciklus vége"
+
+return ::= "vissza " (expression | arrayComprehension) 
+
+debug ::= "debug"
+
+print ::= "kiír " expression
+
+binaryOperation ::= logicOp
+
+mulOp ::= primary | primary ("*" | "/" | "mod") primary
+addOp ::= mulOp | mulOp ("+" | "-") mulOp
+compOp ::= addOp | addOp ("<" | "<=" | ">" | ">=" | "=" | "=/=") addOp
+logicOp ::= compOp | compOp ("és" | "vagy") compOp
+
+primary ::= "(" expression ")" | not | reference | functionCall | arrayIndex | variable | atom
+
+not ::= "~" expression
+reference ::= "&" address
+
+functionCall ::= functionName ("()" | "(" expression ("," expression)* ")")
+
+functionDeclaration ::= "függvény " functionName ("()" | "(" parameter ("," parameter)* ")") statement+ " függvény vége"
+
+functionName ::= [A-Z] ([a-z] | [A-Z])*
+
+parameter ::= "címszerint "? (functionName | variable) " : " type
+
+baseType ::= atomType | arrayType
+arrayType ::= "rendezett "? atomType " tömb"
+atomType ::= "egész" | "szöveg" | "logikai"
+
+
+address ::= arrayIndex | variable
+
+arrayIndex ::= variable "[" expression ("," expression)* "]"
+
+variable ::= [a-z] ([a-z] | [A-Z])+
+
+atom ::= string | number | boolean
+
+string ::= '"' [a-z]* '"'
+number ::= "0" | ( "-"? [1-9] [0-9]* )
+boolean ::= "Igaz" | "igaz" | "Hamis" | "hamis"
+
+nl ::= " "* "\n"+ " "*
+
+\end{code}

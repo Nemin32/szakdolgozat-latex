@@ -3,6 +3,7 @@ A tervezett értelmezőnek képesnek kell lennie a felhasználó által szolgál
 Ehhez a következő lépéseket kell elvégeznünk
 
 \subsection{Formázás}
+\label{sec:formatting}
 
 Bár a C-szerű nyelvekben, így a Pszeudokódban is, az üres helyek és sortörések csupán a különféle nyelvi elemek elhatárolására szolgálnak, mégis a kód könnyű átláthatósága érdekében definiálni szoktunk egy szabályrendszert, amely alapján a kód különböző elemeit formázzuk.
 
@@ -17,12 +18,15 @@ Rengetegféle variáció létezik az ilyen szabályrendszerekre, beleértve, hog
     \item Az egyes egymástól elhatárolt blokkok közé (függvények, elágazások, ciklusok) sortörést helyezünk,
     \item Az egymást követő utasítások közé nem helyezünk sortörést, kivéve ha az előző szabály szerint tennénk,
     \item A kód se az elején, se a végén nem tartalmaz fölösleges üres helyeket vagy sortöréseket,
-    \item Az egyes sorok nem tartalmaznak se az elejükön, se a végükön fölösleges üres helyeket.
+    \item Az egyes sorok nem tartalmaznak se az elejükön, se a végükön fölösleges üres helyeket,
+    \item Ha új blokkot kezdeményező utasítással kezdődik a sor (például "ciklus", "függvény", "ha", stb.), akkor a jelenlegi sort követő kód behúzásra kerül,
+    \item Ha blokkot záró utasítással végződik egy sor ("[utasítás] vége"), akkor már a jelenlegi sort és az azokat követőket egy szinttel kevésbé húzzuk be.
 \end{itemize}
 
 Ezeket a szabályokat alkalmazva a felhasználói bemenettől függetlenül konzisztens és jól tördelt kódot kapunk, melyet továbbadunk a következő lépésnek.
 
 \subsection{Tokenizálás}
+\label{sec:tokenizer_tech}
 
 Robert Nystrom a \textit{Crafting Interpreters}\cite{crafting} című könyvének tokenizálásról szóló fejezetét a következővel nyitja:
 
@@ -34,7 +38,7 @@ Vagy feldolgozhatjuk a szöveget úgy ahogy van. Erre főleg egyszerűbb nyelvek
 
 Jó példa erre a FORTH, mely egy minimalista, verem-alapú programozási nyelv, aminek értelmezéséhez nincs szükség a bemenet előzetes feldolgozásra, csupán egy függvényre, mely a szöveg következő szavát (vagyis azt a karakterláncot, ami a következő üres helyig tart) képes beolvasni egy pufferbe. Természetesen ez a módszer bár igen egyszerű, mellé erősen limitált és céljaink számára teljesen alkalmatlan, így többet nem is foglalkozunk vele.
 
-Helyette a nyers szöveget a fordítóprogram által is értelmezett legkisebb egységekre (úgynevezett "tokenekbe") bontjuk. Ez a folyamat a tokenizálás.\footnote{A szakirodalmat böngészve több különböző kifejezéssel is találkozhatunk erre a folyamatra. A fentebb idézett szövegben az író a "szkennelés" szót alkalmazta, míg én a "tokenizálást". Megint más szövegek pedig a "lexer" vagy "lexing" kifejezéssel hivatkoznak a forrásszövegek egységekre való bontására. Szigorúan véve van különbség a fogalmak között (a tokenizáló csupán elemekre bontja a szöveget, míg egy lexer egyéb információkat is fűz az elemekhez), ám általánosságban szinonímaként használjuk őket.}
+Helyette a nyers szöveget a fordítóprogram által is értelmezni képes legkisebb egységekre (úgynevezett "tokenekbe") bontjuk. Ez a folyamat a tokenizálás.\footnote{A szakirodalmat böngészve több különböző kifejezéssel is találkozhatunk erre a folyamatra. A fentebb idézett szövegben az író a "szkennelés" szót alkalmazta, míg én a "tokenizálást". Megint más szövegek pedig a "lexer" vagy "lexing" kifejezéssel hivatkoznak a forrásszövegek egységekre való bontására. Szigorúan véve van különbség a fogalmak között (a tokenizáló csupán elemekre bontja a szöveget, míg egy lexer egyéb információkat is fűz az elemekhez), ám általánosságban szinonímaként használjuk őket.}
 
 A tokenek közé tartoznak például az operátorok, a változónevek, a különböző utasítások és kifejezések nevei, a különféle zárójelek, és a már tovább nem bontható, önmagukban is értelmes értékek, az úgynevezett "atomok". A Pszeudokód nyelvben a számokat, szövegeket, és logikai értékeket értjük atomok alatt.
 
@@ -71,12 +75,15 @@ A lentről-fölfelé parser esetében pedig a folyamat pont fordítva történik
 A saját implementációmban egy fentről-lefelé parsert valósítok meg. Ez a \ref{sec:parser} alfejezetben kerül kifejétsre.
 
 \subsection{Típusellenőrzés}
+\label{sec:typecheck_tech}
 
 Az elkészült szintaxisfánk garantáltan szintaktikailag helyes kódot tartalmaz, ám arról, hogy szemantikailag is helyes, tehát van értelme annak, amit a kód tenni próbál, szintén meg kell győződnünk.
 
 Formálisabban definiálva, "értelmes program" alatt olyan programot értünk, mely nem végez olyan műveletet, ami áthágja a nyelv utasításainak típusmegkötéseit. Például egy számot nem adhatunk egy szöveghez. Egy elágazás predikátuma mindig logikai érték. Ha egy függvény szám típusú értéket vár, ne adhassunk neki egy tömböt.
 
 Ennek folyamata a típusellenőrzés. Ezt legtöbbször egy rekurzív függvénnyel valósítjuk meg, mely a szintaxisfa minden elemére, legyen az ág vagy levél, képes kiszámolni annak típusát. Mivel a levélelemek atomi értékek és az atomi értékek típusa ismert (például egy szám csak szám típusú lehet), így ezek szolgálnak a rekurzív folyamat alapeseteként és ezekből tudjuk felépíteni az egymásra épülő egyre nagyobb rész-fák típusait is, míg végül elérünk a gyökérelemhez.
+
+Ez a lépés nem végez átalakítást a szintaxisfán, csupán amiatt érdekes számunkra, hogy sikeres végigfutás esetén biztosak lehetünk benne, hogy a kódunk szemantikailag helyes. Hiba esetén pedig információt nyújt arról a kód melyik részletében keressük a rossz utasítást.
 
 Például, ha az összeadás műveletét ellenőrizzük, akkor meg kell néznünk, hogy a bal és jobb oldali elem szám típusú értékek-e (melyeket a függvény rekurzív meghívásával érünk el) és, ha azok, akkor a művelet eredménye is szám lesz (mely tényt esetleg egy másik típusellenőrzésnél is felhasználhatunk).
 
@@ -123,3 +130,17 @@ A virtuális gépes megvalósítás előnye, hogy teljes mértékben mi szabjuk 
 Mivel a projektspecifikáció része, hogy a kód egyes utasításai között léptetni is lehessen előre- és visszafelé is, emiatt a gép állapotát úgynevezett megváltoztathatatlan („immutable”) adatszerkezetekben eltárolni, melyek lényege, hogy adattagjai az adatszerkezet létrehozása után nem módosíthatóak. 
 
 Ha ezeket egy listában tároljuk el, a lista feje mindig az éppen aktív állapota a gépünknek. Előreléptetéskor egy új elemet számolunk ki, mely ezáltal a lista új fejévé válik, visszaléptetéskor pedig a tömb egy korábbi elemére lépnünk.
+
+\subsection{Felhasználói felület}
+
+A felhasználói felület feladata, hogy interfészként szolgáljon az előző alfejezetekben vázolt folyamatokhoz, azokat meghjvja, és eredményeiket a felhasználó számára láthatóvá tegye.
+
+Ez célunktól függően lehet automatikus (mely esetén a felhasználó csupán elindítja a folyamatot, esetleg úgy, hogy a program indulásakor bizonyos paramétereket beállít) vagy pedig interaktív (mely esetén a program bizonyos utasítások esetén megáll és a felhasználótól kapott bemenet alapján folytatja működését). Megjelenítés szempontjából készíthetünk parancssori programot, grafikus interfészt, vagy interneten át szolgált webes applikációt.
+
+Én ezutóbbit választottam, mivel a böngészőkben futó programok egységes környezetet nyújt operációs rendszertől és architektúrától függetlenül, így elég csupán egy változatban lefejleszteni a programom, mely így mindenhol működik.
+
+Emelett a végfelhasználó számára is sokkal kényelmesebb, ha csupán el kell navigálnia egy weboldalra, mely egyéb előzetes lépés nélkül rögtön képes értelmezni és végrehajtani az általa begépelt Pszeudokódot.
+
+Végül a böngészőkben futó kód garantáltan úgynevezett \textit{homokozóban} (sandbox) kerül végrehajtásra, mely annyit jelent, hogy a kód és az operációs rendszer között erős válaszfal van, mely megakadályozza, hogy egy rosszindulatú kód bármiféle kárt okozhasson a felhasználó gépében.
+
+Bár az én fordítóprogramom értelmszerűen nem tartalmaz magában kártékony kódot, a böngésző homokozójának felhasználásával biztosra megyek, hogy a legrosszabb, ami történhet egy hibás vagy kártékony bemenet esetén az a böngésző ablakának lefagyasztása.

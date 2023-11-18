@@ -1,0 +1,52 @@
+Mivel a progrmamom weben át felszolgált formátumban szeretném elérhetővé tenni, így egyrészt elkerülhetetlen valamennyi JavaScript használata, hisz a böngészők natívan ezt az egy nyelvet támogatják. A fő program megírásához háromféle opciónk van:
+
+\subsection{Kliens-szerver architektúra}
+
+Lehetőségünk van a felhasználói felületet böngészőben futtatni, míg a kód feldolgozását és lefuttatását egy gépi kódra forduló nyelvben írt szerveren feldolgozni. Ennek előnye, hogy bármely nyelvet alkalmazhatjuk a szerver megírására, amely képes internetes kommunikációra, hátránya viszont, hogy majdnem minden mást cserébe lényegesen megbonyolít.
+
+A kliens és felhasználó közötti összes kommunikáció így hálózati alapon történik, különböző adat-reprezentációkat használva. Bár ez volt az első megközelítésem, gyakorlatban hamar túl bonyolulttá vált a kód és úgy döntöttem ez a módszer nem nyújt elég pozitívumot a komplexitásért cserébe. 
+
+\subsubsection{Java}
+\subsubsection{C\#}
+
+\subsubsection{LISP}
+
+\subsection{WASM-ra forduló nyelv használata}
+
+Második opció, hogy egy olyan nyelvet használunk, mely képes WASM formátumba fordulni. Ez egy pár évvel ezelőtt bevezett nyelv, mely a JavaScripttől eltérően egy verem-alapú, bájtkóddal reprezentált programozási nyelv. Különlegessége, hogy több olyan programozási nyelv, mely korábban csak asztali környezetben volt használható lefordítható rá, így lehetőségünk nyílik ezek használatára webes környezetben is.
+
+Bár ez a projektem szempontjából sokkal járhatóbb út, mint az első lehetőség, itt is felmerül, hogy a WASM és a JavaScriptes környezetek között oda és vissza kell konvertálnunk az adatokat. Például a WASM natívan nem támogatja a szöveges értékeket\cite{wasmstring}, így ezeket C-szerű szövegekként (vagyis számokat tartalmazó tömbökként) kellene kezelnünk. Mivel az implementációmban másodlagos a fordító sebessége és az egyik felmerült nyelvet se találtam kifejezetten alkalmasabbnak mint a JavaScript, így az ezzel a módszerrel nyert előnyök számomra nem ellensúlyozzák az extra lépéseket.
+
+\subsubsection{C}
+\subsubsection{C++}
+\subsubsection{Rust}
+
+\subsection{JavaScript és arra forduló nyelvek}
+
+Végül lehetőségünk van még az egész programot JavaScriptben vagy egy arra forduló nyelvben írjuk meg. Ekkor nincs szükség semmiféle bonyolult adatátadási kódra, hisz az adatok a feldolgozás kezdetétől végééig natív JavaScriptes formátumban kerülnek eltárolásra. Végül emelett a módszer mellett döntöttem.
+
+\subsubsection{JavaScript}
+
+A JavaScript a böngészőkben futó általános célú nyelv. Az évtizedek során kinőtte egyszerű interaktivitást nyujtó funkcionalitását és mára egy kifejlett, dinamikus gyenge típusosságal rendelkező programozási nyelv.
+
+Előnyei közé tartozik, hogy a nyelv automatikus memóriakezeléssel, dinamikus hosszúságú tömbökkel, és mutatók helyett referenciakezeléssel rendelkezik, így az egyes értékek szabadon egymásba ágyazhatóak. Emelett, mivel a böngészők natívan támogatják, így használata nem igényel fordítóprogramot.
+
+Hátránya viszont, hogy mivel gyengén típusos nyelv, így a progamozónak saját magának kell megbizonyosodnia afelől, hogy az egyes függvények és műveletek megfelelő típusú értékeken kerülnek elvégzésre. Ez könnyen vezethet óvatlanságból hibákhoz, főleg egy ilyen volumenű programban, így végül a TypeScript mellett döntöttem.
+
+\subsubsection{TypeScript}
+
+A TypeScript a JavaScript-et kiegészítő nyelv. Bármely JavaScriptben írt kód érvényes TypeScript kódnak felel meg, fordítva viszont ez nem igaz. Az eredeti nyelv gyenge típusosságát igyekszik kiküszöbölni azzal, hogy a kód egy típusellenörző-fordítón kerül átalakításra először, mely képes kiszűrni a típushibák nagyját.
+
+A JavaScript összes előnyével rendelkezik, azon felül még az óvatlanságból eredő hibák nagyját is megelőzi és egyéb a kód rendezettségét növelő funkcionalitással is rendelkezik (enumok, interfészek), mely az eredeti nyelv kissé kezdetleges osztályait kiegészíti úgy, hogy valódi OOP elvű kódot lehessen írni benne.
+
+Hátránya, hogy egy extra fordítási lépést igényel és hiába a típusellenőrzés, vannak szituációk, amik esetében a típusellenörző képtelen önmagától ítéletet hozni.
+
+Végül emellett a nyelv mellett döntöttem és az egész projekt, beleértve a fordítót és az azt meghajtó felhasználói felületet, így TypeScript nyelven írtam.
+
+\subsubsection{ReScript}
+
+A ReScript az OCaml nyelv szintaxisát kölcsönző programozási nyelv, mely JavaScriptre fordul. A TypeScripttel ellentétben nincs olyan szituáció, hogy a kód típusossága ne lehetne kiszámítható benne.
+
+Hisz a dolgozatra való készülésben sokat segített a \ref{sec:simpl} alfejezetben tárgyalt SimPL nyelv, mely szintén OCaml nyelvben íródott, így fölmerült bennem, hogy ideális lenne a könyből tanult módszereket egy olyan nyelvben kamatoztatni, mely végül szintén JavaScriptre fordul, így eleget téve annak a kívánságnak, hogy ne kelljen két külön futtatási környezet között konvertálnunk adatokat.
+
+Sajnos azonban a nyelvvel való kísérletezés során arra jutottam, hogy nagyon kényelmetlen számomra a használata és azon parser algoritmus, melyet fel szerettem volna használni a nyelv egy limitációja miatt nem is működne. Így sajnos látványos előnyei ellenére el kellett vetnem a nyelv használatát.
