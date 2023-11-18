@@ -7,19 +7,158 @@ Lehetőségünk van a felhasználói felületet böngészőben futtatni, míg a 
 A kliens és felhasználó közötti összes kommunikáció így hálózati alapon történik, különböző adat-reprezentációkat használva. Bár ez volt az első megközelítésem, gyakorlatban hamar túl bonyolulttá vált a kód és úgy döntöttem ez a módszer nem nyújt elég pozitívumot a komplexitásért cserébe. 
 
 \subsubsection{Java}
+
+A szakdolgozat megvalósításának elején először a Java nyelvre esett a választásom, hisz egyrészt sokat használtam már, másrészt natívan támogatja a nagyszerű ANTLR4 könyvtárat, melyet kifejezetten programozási nyelvek értelmezésére és feldolgozására alkottak meg.
+
+Sajnos azonban a fejlesztés során hamar rájöttem, hogy mivel a nyelv nem képes WASM formátumba fordulni, egy kliens-szerver architektúra megvalósítása pedig túlságosan eltért volna a szakdolgozat témájától, így végül elvetettem használatát.
+
+Ennek ellenére a jelenlegi megvalósítás alapjait fektette le a nyelv használata, így mindenképp megérdemel egy helyet a listában. A nyelv értékelésének összefoglalója az \ref{javanyelv}-es táblázatban látható.
+
+\begin{center}
+  \captionof{table}{A Java nyelv értékelése.\label{javanyelv}}
+  \begin{tabularx}{\textwidth}{X X}
+    \hline
+    \multicolumn{1}{c}{\bfseries{Pozitívumok}}         & \multicolumn{1}{c}{\bfseries{Negatívumok}} \\
+    \hline
+    Ismerős szintaxis & Webes kommunikáció csak API-k segítségével \\
+    ANTLR4 könyvtár & Nem fordul webes formátumba \\
+    Dinamikus memóriakezeléssel rendelkezik \\
+    Erősen típusos nyelv \\
+    \hline
+  \end{tabularx}
+\end{center}
+
 \subsubsection{C\#}
 
+\say{A Blazor a Microsoft új kísérletbeli framework-je, mely pluginok használata nélkül hozza el a C\#-ot bármely böngészőbe.}[11] 
+
+Az előző két nyelvvel ellentétben a C\# teljesen automatikus memóriakezeléssel rendelkezik, ezen kívül a C++-hoz hasonlóan ugyanúgy lehet benne osztályokat és interfészeket használni, mely által a kód sokkal átláthatóbb.
+
+Viszont míg a többi nyelvnél a kliens maga képes a kód teljes feldolgozására és lefuttatására, a Blazor használatánál szükséges egy szervergép is, melyet fel kell szerelnünk a szerver futtatásának minden szükséges elemével (megfelelő hardver, .NET Core telepítése.)
+
+Bár az egyetemi tanulmányaim miatt sok tapasztalattal rendelkezem már a nyelvvel kapcsolatban, nem szívesen kötném magam egy webes frameworkhöz, így a C\# sem megfelelő számomra a feladathoz. A nyelv értékelésének összefoglalója az \ref{csnyelv}-as táblázatban látható.
+
+\begin{center}
+  \captionof{table}{A C\# nyelv értékelése.\label{csnyelv}}
+  \begin{tabularx}{\textwidth}{X X}
+    \hline
+    \multicolumn{1}{c}{\bfseries{Pozitívumok}}                              & \multicolumn{1}{c}{\bfseries{Negatívumok}}                      \\
+    \hline
+    Sok személyes tapasztalat                                               & Terjengősebb mint a többi nyelv                                 \\
+    A memóriakezelést a rendszer intézi, nekünk nem kell foglalkoznunk vele & Semennyi tapasztalatom nincs a webes frameworkökkel             \\
+    Blazor framework kifejezetten webes alkalmazások fejlesztésére          & Futtatási környezetet igényel, nagyobb mint a fentebbi nyelvek. \\
+    Kiváló standard könyvtár                                                                                                                  \\
+    Erős OOP                                                                                                                                  \\
+    Jó szövegkezelés                                                                                                                          \\
+    \hline
+  \end{tabularx}
+\end{center}
+
 \subsubsection{LISP}
+
+A LISP[16] egy C-hez hasonló korú nyelv, mely lényege, hogy a kód és az adat ugyanolyan adatszerkezetben vannak tárolva. Ez nem más, mint a láncolt lista, mely lehetővé teszi, hogy bármilyen hosszúságú és bonyolultságú adatot el tudjunk tárolni aránylag egyszerű módon.
+
+Bár egyáltalán nem tartom megfelelő nyelvnek a projektemhez, nem hagyhattam ki a megemlítését, hisz a láncolt lista futtatása nagyon hasonlít a virtuális gépről szóló fejezetben tárgyalt működéséről.
+
+A Structure and Interpretation of Computer Programs\cite{sicp} című könyv sokat segített a folyamat megértésében, mely a LISP egyik átalakított változatát, a Scheme-t használja és egy fejezetében egy interpreter majd később egy fordító megírását mutatja be. A nyelv értékelésének összefoglalója az \ref{lispnyelv}-ös táblázatban látható.
+
+\begin{center}
+  \captionof{table}{A LISP nyelv értékelése.\label{lispnyelv}}
+  \begin{tabularx}{\textwidth}{X X}
+    \hline
+    \multicolumn{1}{c}{\bfseries{Pozitívumok}}               & \multicolumn{1}{c}{\bfseries{Negatívumok}}              \\
+    \hline
+    A kód maga egyben adat is                                & Semmi reális tapasztalatom nincs a nyelvvel             \\
+    Nem igényel fordítást, gyorsan lehet prototípizálni vele & Idegen, nehezen átlátható szintaxissal rendelkezik      \\
+    Páratlan listafeldolgozási képességekkel rendelkezik     & Nem igazán interneten át való futtatásra kitalált nyelv \\
+    Kiforrott standard könyvtárral rendelkezik               & Nem szeretném használni                                 \\
+    \hline
+  \end{tabularx}
+\end{center}
 
 \subsection{WASM-ra forduló nyelv használata}
 
 Második opció, hogy egy olyan nyelvet használunk, mely képes WASM formátumba fordulni. Ez egy pár évvel ezelőtt bevezett nyelv, mely a JavaScripttől eltérően egy verem-alapú, bájtkóddal reprezentált programozási nyelv. Különlegessége, hogy több olyan programozási nyelv, mely korábban csak asztali környezetben volt használható lefordítható rá, így lehetőségünk nyílik ezek használatára webes környezetben is.
 
+„Az Emscripten egy nyílt-forráskódú fordító WebAssembly-re. A segítségével C és C++ kódot vagy bármely más LLVM-et használó nyelvet WebAssembly-re fordíthatunk és az Web-en, Node.js-en, vagy más wasm futtatási környezetben futtathatjuk.”[4]
+
 Bár ez a projektem szempontjából sokkal járhatóbb út, mint az első lehetőség, itt is felmerül, hogy a WASM és a JavaScriptes környezetek között oda és vissza kell konvertálnunk az adatokat. Például a WASM natívan nem támogatja a szöveges értékeket\cite{wasmstring}, így ezeket C-szerű szövegekként (vagyis számokat tartalmazó tömbökként) kellene kezelnünk. Mivel az implementációmban másodlagos a fordító sebessége és az egyik felmerült nyelvet se találtam kifejezetten alkalmasabbnak mint a JavaScript, így az ezzel a módszerrel nyert előnyök számomra nem ellensúlyozzák az extra lépéseket.
 
 \subsubsection{C}
+
+Természetesen nem hagyhatjuk ki az egyik legöregebb és mégis széles körűen használatos nyelvet.
+
+A C pozitívumai közé sorolandó, hogy nagyon könnyen lehet más platformokra fordítani. Az Emscripten nevű fordítói csomag segítségével a C Wasm formátumba is fordítható, ezáltal böngészőben is futni képes.
+
+A nyelv pozitívumai közé sorolandó még, hogy nem túl „meglepő” (kevés szintaxissal és aránylag átlátható szabályokkal rendelkezik), kifejezetten gyors és kis állományokká fordul, és szinte páratlan szabadságot ad a fejlesztőnek a rendszer erőforrásainak felhasználásához.
+
+Cserébe a több évtizedes standard könyvtár és a nyelv pár furcsasága miatt könnyen futhat a programozó furcsa hibákba, mint például a szövegeknél esetlegesen hiányzó null byteok esetén történő túlcsordulások, vagy a hibásan lefoglalt / korábban felszabadított memóriaterületekre való írás/olvasás esetén előforduló végzetes hibák.
+
+Ezen kívül a teljesen manuális memóriakezelés bár nagyon hasznos tud lenni, de jelen problémához fölösleges extra terhet jelentene csupán. Ezen kívül a nyelv nem támogatja az osztályokat, helyette struct-ok átadogatásával oldjuk meg az egybefüggő objektumok megváltoztatását. Ez könnyen tud átláthatatlansághoz vezetni, melyet egy ilyen nem-triviális projektnél nem szívesen vállalnék.
+
+Bár a nyelv az egyik személyes kedvencem, számomra nem megfelelő a feladathoz. A nyelv értékelésének összefoglalója az \ref{cnyelv} táblázatban látható.
+
+\begin{center}
+  \captionof{table}{A C nyelv értékelése.\label{cnyelv}}
+  \begin{tabularx}{\textwidth}{X X}
+    \hline
+    \multicolumn{1}{c}{\bfseries{Pozitívumok}} & \multicolumn{1}{c}{\bfseries{Negatívumok}}                                  \\
+    \hline
+    Könnyen fordítható Wasm-be                 & Manuális memóriakezelés                                                     \\
+    Jól felszerelt eszköztár                   & Nincs OOP                                                                   \\
+    Személyes ismeretség                       & Kényelmi funkciók hiánya (pl.: regex, for-each, map, adatszerkezetek, stb.) \\
+    Más nyelveket is ebben írtak (pl.: Python) & Nincs könnyű mód a hibakezelésre (segfault)                                 \\
+    \hline
+  \end{tabularx}
+\end{center}
+
 \subsubsection{C++}
+
+A C++ kijavítja a C főbb hibáit a RAII-vel (Resource Aquisition Is Initialization[18], „az erőforrás lefoglalása egyben inicializáció is,” magyarul a különböző adattagok létrehozásakor a memória automatikusan lefoglalódik, megszűnésükkor pedig felszabadul) és egy sokkal kevésbé meglepő standard könyvtárral, viszont cserébe saját negatívumokkal is rendelkezik.
+
+Bár az Emscripten képes Wasm formátumba fordítani a nyelvet, a hibakezelése problematikus. Alapesetben a generált kód végzetes hibával lép ki bármilyen hiba esetén, beleértve az amúgy elkapható exception-öket. Ugyan egy kapcsoló segítségével engedélyezhetjük, hogy az utóbbi hibák újra elkaphatóak legyenek, ez súlyos lelassuláshoz vezet a programban.[5]
+
+Ezen kívül a szövegkezelése a lentebb tárgyalt nyelvekhez képest igen nehézkes. Bár a C++ rendelkezik regex könyvtárakkal, de ezekkel kapcsolatban semmi ismeretségem nincs. A C++ hibakezelési képességei ellenére dobhat segfaultot[1]. A nyelv nem rendelkezik hivatalos csomagkezelővel sem, így a könyvtárak beimportálása nem feltétlen egyszerű és nem garantált, hogy ezek valóban át is fordulnának Wasm-ra.
+
+Mivel a nyelv használhatósága a feladathoz ennyire kétséges, így nem felel meg számomra. A nyelv értékelésének összefoglalója az \ref{cppnyelv}-es táblázatban látható.
+
+\begin{center}
+  \captionof{table}{A C++ nyelv értékelése.\label{cppnyelv}}
+  \begin{tabularx}{\textwidth}{X X}
+    \hline
+    \multicolumn{1}{c}{\bfseries{Pozitívumok}}         & \multicolumn{1}{c}{\bfseries{Negatívumok}}                                             \\
+    \hline
+    Van OOP                                            & Bár van hibakezelés, de segfaultok itt is történhetnek                                 \\
+    RAII (memóriakezelést leegyszerűsíti)              & A szövegkezelés nehézkes (stream-ek, atoi és hasonló átalakító függvények furcsaságai) \\
+    Ésszerű, kiforrott standard könyvtár               & A WebAssemblybe való fordítás lassú és több előkészületet igényel                      \\
+    Személyes tapasztalat (bár nem annyi mint a C-vel) & Nem minden külső könyvtár alkalmas a Wasm-ba való fordításra                           \\
+    \hline
+  \end{tabularx}
+\end{center}
+
 \subsubsection{Rust}
+
+\say{A Rust programozási nyelv segít, hogy gyorsabb és megbízhatóbb szoftvert írjunk. A magas-szintű ergonómia és az alacsony-szintű irányítás gyakran összeegyeztethetetlen a programozási nyelvek dizájnjában; a Rust ezt az állítást kérdőjelezi meg.}[7]
+
+A Rust egy relatíve új programozási nyelv, mely céljának a teljes memória-biztonságot és a gyakori hibák elkerülését tűzte ki, emellett natív fordításra is képes. A statikus analízise erősebb az összes fentebb felsorolt nyelvnél, a sebessége pedig a C/C++-hoz hasonlatos. Ezen kívül remek könyvtárakkal rendelkezik, melyek például a regexelést nagyon egyszerűvé teszik. A nyelv natívan fordul WebAssembly-re így ez se okoz problémát.
+
+Cserébe a nyelv írása nagyon nehézkes, a fordító ott ahol tud felhívja a figyelmét a programozónak az esetleges hibákra vagy kifelejtett ellenőrzésekre. Ez természetesen a program minőségére nézve abszolút pozitív, ám cserébe nagyon nehézkessé teszi a prototípusok létrehozását.
+
+Mivel a nyelv használata ilyen nehézkes és a prototípizálás lassú, így nem szeretném ezt a nyelvet választani. A nyelv értékelésének összefoglalója az \ref{rustnyelv}-os táblázatban látható.
+
+\begin{center}
+  \captionof{table}{A Rust nyelv értékelése.\label{rustnyelv}}
+  \begin{tabularx}{\textwidth}{X X}
+    \hline
+    \multicolumn{1}{c}{\bfseries{Pozitívumok}}         & \multicolumn{1}{c}{\bfseries{Negatívumok}} \\
+    \hline
+    Gazdag standard könyvtár                           & Nehézkes szintaxissal rendelkezik          \\
+    Jó hibakezelés, segfault átlagos kódban lehetetlen & Nincs vele elég tapasztalatom              \\
+    Remek könyvtárak, csomagkezelővel                  & Fordítás kicsit lassú                      \\
+    Natív fordulás böngésző által is érthető formátumba                                             \\
+    \hline
+  \end{tabularx}
+\end{center}
 
 \subsection{JavaScript és arra forduló nyelvek}
 
