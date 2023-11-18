@@ -58,22 +58,22 @@ John W. Backus 1959-ben az ALGOL 60 nyelv nyelvi elemeinek formális definiálá
 
 <number-tail> ::= <digit> | <digit> <number-tail>
 
-<number> ::= <non-zero> | <nonZero> <number-tail> 
+<number> ::= <digit> | <nonZero> <number-tail> 
 \end{code}
 
 A \ref{code:bnfexample} forráskód bemutatja, hogyan is lehet BNF alakba hozni a pozitív, egész számokat, a nullát belevéve: 
 
 \begin{itemize}
-  \item \texttt{<non-zero>} - Először definiáljuk a pozitív számjegyeket,
+  \item \texttt{<non-zero>} - Először definiáljuk a nem-nulla számjegyeket,
   \item \texttt{<zero>} - Majd a nullát, 
-  \item \texttt{<digit>} - Eztán a számjegy fogalmát, mely lehet pozitív számjegy vagy nulla,
-  \item \texttt{<number-tail>} - Ezután rekurzívan definiáljuk, hogy egy szám a második számjegytől kezdve lehet vagy egy számjegy, vagy egy számjegy melyet a szám további számjegyei követnek. 
-  \item \texttt{<number>} - Végül pedig kijelentjük, hogy egy szám az vagy egy pozitív számjegy, vagy pedig egy pozitív számjegy melyet tetszőleges számú (de legalább egy) más számjegy követ.
+  \item \texttt{<digit>} - Eztán a számjegy fogalmát, mely lehet nem-nulla számjegy vagy nulla,
+  \item \texttt{<number-tail>} - Rekurzívan adjuk meg, hogy egy szám a második számjegytől kezdve lehet vagy egy számjegy önmagában, vagy egy számjegy melyet a szám további számjegyei követnek. Erre a szabályra azért van külön szükség, hogy elkerüljük a "0123" alakban megadott számokat, melyeket nem értelmezünk.
+  \item \texttt{<number>} - Végül pedig kijelentjük, hogy egy szám az vagy egy számjegy, vagy pedig egy nem-nulla számjegy melyet tetszőleges számú (de legalább egy) más számjegy követ.
 \end{itemize}
 
 Ahogy az ebből az egyszerű példából is látható, önmagában a BNF alak kissé esetlen. Olyan intuitív fogalmak, mint az opcionális elemek (tehát olyan elemek, melyek hiánya esetén is érvényes a szabály) és az egymást követő karakterek rövidített leírása (tehát, ha azt szeretnénk, hogy egy szabály például az angol ABC összes betűjére vonatkozzon, ahelyett, hogy azt mondhatnánk, hogy "a-z", mind a huszonhat betűt ki kéne írnunk) hiányoznak belőle, így több programozói és szabványkészítő csoport amellett döntött, hogy kiterjeszti a formátumot.
 
-Ezek közül én a World Wide Web Consortium által, eredetileg az XML nyelv leírásához kifejlesztett\cite{w3c}, \textit{Extended Brackus-Naur Form} (EBNF)\footnote{Valójában mind a BNF, mind az EBNF nem önálló nyelvek, hanem hasonló vonásokkal rendelkező nyelvcsaládok, ezáltal ugyanazt a nevet több szabvány is viseli. EBNF-nek nevezzük többek között az ISO/IEC 14977 szabványt is, mely szintén a BNF kiterjesztése, ám a W3C által specifikált nyelvhez képest eltérő szintaxissal rendelkezik. Az egyszerűség kedvéért dolgozatomban úgy hivatkozom az utóbbi csoport által fejlesztett változatra, mintha önálló nyelv lenne.}, vagyis Kiterjesztett Brackus-Naur Formát kívánom használni a Pszeudokód leírására.
+Ezek közül én a World Wide Web Consortium által, eredetileg az XML nyelv leírásához kifejlesztett\cite{w3c}, \textit{Extended Brackus-Naur Form} (EBNF)\footnote{Valójában mind a BNF, mind az EBNF nem önálló nyelvek, hanem hasonló vonásokkal rendelkező nyelvcsaládok, ezáltal ugyanazt a nevet több szabvány is viseli. EBNF-nek nevezzük többek között az ISO/IEC 14977 szabványt is, mely szintén a BNF kiterjesztése, ám a W3C által specifikált nyelvhez képest eltérő szintaxissal rendelkezik. Az egyszerűség kedvéért dolgozatomban úgy hivatkozom az utóbbi csoport által fejlesztett változatra, mintha önálló nyelv lenne.}, vagyis Kiterjesztett Brackus-Naur Formát kívánom használni a Pszeudokód leírására. Ez lehetővé teszi olyan szabályok egyszerű leírását, melyek a \ref{sec:parser} alfejezetben használt értelmező több művöletet egy-az-egyben mintázza.
 
 \input{chapters/szemantika.tex}
 

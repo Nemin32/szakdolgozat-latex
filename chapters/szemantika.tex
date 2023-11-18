@@ -1,3 +1,4 @@
+\iffalse
 \begin{code}{A Pszeudokód szintaktikai specifikációja}{code:syntax}
 expression ::= arrayIndex | atom | binaryOperation | functionCall | not | reference | variable
 
@@ -9,7 +10,9 @@ newArray ::= variable " <- " (oneDimensionalArray | multiDimensionalArray)
 multiDimensionalArray ::= "TáblaLétrehoz(" atomType ")[" expression ("," expression)+ "]"
 oneDimensionalArray ::= "Létrehoz(" atomType ")[" expression "]"
 
-swap ::= address " <- " address
+swap ::= address " <-> " address
+
+assignment ::= address " <- " expression
 
 if ::= ifHead (ifElseIf* ifElse)? " elágazás vége"
 
@@ -53,7 +56,6 @@ baseType ::= atomType | arrayType
 arrayType ::= "rendezett "? atomType " tömb"
 atomType ::= "egész" | "szöveg" | "logikai"
 
-
 address ::= arrayIndex | variable
 
 arrayIndex ::= variable "[" expression ("," expression)* "]"
@@ -69,3 +71,260 @@ boolean ::= "Igaz" | "igaz" | "Hamis" | "hamis"
 nl ::= " "* "\n"+ " "*
 
 \end{code}
+\fi
+
+\subsection{Üres helyek és sorkihagyások}
+
+A Pythonhoz hasonló nyelvekkel ellentétben, a Pszeudokód nem veszi figyelembe az üres helyeket, ezeket csupán az átláthatósághoz és a kód fordításánál használjuk fel, a nyelvi elemek és utasítások elhatárolására. A végső szintaxisfából kiszűrésre kerülnek.
+
+Mivel a kód nem tartalmaz semmiféle sorlezáró jelet (ilyen például a C-hez hasonlatos nyelvekben használt pontosvessző), így az egymás után következő utasításokat célszerűen sortöréssel választjuk el egymástól. A kód elemeit pedig egy soron belül tetszőleges számú, de legalább egy üres hellyel választhatjuk el.
+
+\subsection{Kommentek}
+
+\begin{footnotesize}
+\begin{verbatim}
+comment ::= '//' character* '\n'
+\end{verbatim}
+\end{footnotesize}
+
+Bár a jegyzetben használt Pszeudokód nem definiálja a kommentelést, mint lehetséges nyelvi elemet, hasznossága miatt ez az implementáció figyelmen kívül hagyja a C nyelvből megszokott két perjellel kezdődő sorokat.
+
+\subsubsection{Atomi értékek}
+
+\begin{ebnf}
+atom ::= string | number | boolean
+string ::= '"' [a-z]* '"'
+number ::= "0" | ( "-"? [1-9] [0-9]* )
+boolean ::= "Igaz" | "igaz" | "Hamis" | "hamis"
+\end{ebnf}
+
+Az atomok, ahogy azt nevük is sugallja, tovább már nem bontható, önmagukban is értelmezhető értékek. Ide tartoznak a számok, szövegek, és logikai értékek, melyek egyben meghatározzák a nyelv által támogatott alap típusokat is.
+
+\subsubsection{Típusok}
+
+\begin{ebnf}
+baseType ::= atomType | arrayType
+arrayType ::= "rendezett "? atomType " tömb"
+atomType ::= "egész" | "szöveg" | "logikai"
+\end{ebnf}
+
+A nyelv három alap típusát az atomok típusai definiálják. Ezen kívül lehetőségünk van még tetszőleges hosszúságú és dimenziójú tömböket létrehozni. Tömb típusoknál megadhatjuk, hogy elvárjuk-e annak rendezettségét.
+
+\subsubsection{Változók és tömbök értékének lekérése}
+
+\begin{ebnf}
+address ::= arrayIndex | variable
+arrayIndex ::= variable "[" expression ("," expression)* "]"
+variable ::= [a-z] ([a-z] | [A-Z])+
+\end{ebnf}
+
+A változók tárolják a programban felhasznált értékeket. Azonosítóik kisbetűvel kezdődnek (ezáltal megkülönböztetve őket a függvények és eljárásoktól), majd szabadon kis és nagybetűkből épülnek fel. Típusuk első értékadáskor dől el, utána meg nem változtatható. 
+
+Konstans változók deklarálására nincs lehetőség a nyelvben. Az ilyen változók felülírásának elkerülése a programozó felelőssége.
+
+Elődeklarációra nincs lehetőség. A változók létrehozáskor értéket is kell, hogy kapjanak így se null érték, se üres változó nem lehetséges.
+
+A változó értékét annak nevével érhetjük el. Nem létező változó értékének elérése típusellenörzési vagy futásközbeni hibához vezet.
+
+Tömb-típusú változó esetén abba indexelni a megszokottól eltérően 1-indexű számokkal lehetséges. Ez azt jelenti, hogy a tömb első eleme \texttt{tömb[1]}-el elérhető, nem \texttt{tömb[0]}-val. Ezen felül többdimenziós tömb esetén, a C\# nyelvhez hasonlóan, az indexeket vesszővel választjuk el egymástól: \texttt{tömb[x, y, z]}.
+
+\subsubsection{Változó vagy tömb címének lekérése}
+
+\begin{ebnf}
+reference ::= "&" address
+\end{ebnf}
+
+Mivel a nyelv támogatja a címszerinti átadást, így lehetőséget kell adnunk arra, hogy egy váltoó vagy tömb-elem címét lekérjük. Ezen címek meghatározása az implementációra van hagyva, csupán annak a szabálynak kell megfelelnie, hogy egy változó vagy tömb-elem címe nem változhat (a címen tárolt érték viszont igen).
+
+\subsubsection{Logikai negálás}
+
+\begin{ebnf}
+not ::= "~" expression
+\end{ebnf}
+
+Logikai negálást végzünk a kifejezésen, tehát az igaz értékek hamissá válnak és fordítva.
+
+\subsubsection{Függvényhívás}
+
+\begin{ebnf}
+functionCall ::= functionName ("()" | "(" expression ("," expression)* ")")
+\end{ebnf}
+
+Az egyes függvények meghívhatóak akár kifejezésként is, mely esetben az azt hívó utasítás a visszatérési értékét tovább dolgozhat, vagy hívható önmagában utasításként is, ekkor a visszatérési érték eldobásra kerül.
+
+A függvénynevek szabálya a \ref{sec:funcdecl} szekcióban található.
+
+\subsubsection{Műveletek és kifejezések}
+\label{sec:expressions}
+
+\begin{ebnf}
+primary ::= "(" expression ")" 
+    | not 
+    | reference 
+    | functionCall 
+    | arrayIndex 
+    | variable 
+    | atom
+
+mulOp ::= primary 
+    | primary ("*" | "/" | "mod") primary
+
+addOp ::= mulOp 
+    | mulOp ("+" | "-") mulOp
+
+compOp ::= addOp 
+    | addOp ("<" | "<=" | ">" | ">=" | "=" | "=/=") addOp
+
+expression ::= compOp 
+    | compOp ("és" | "vagy") compOp
+\end{ebnf}
+
+Saját megvalósításomban az egyes műveleti jelek precedenciáját a szintaxis részévé tettem. Ez röviden annyit tesz, hogy a futtatási környezetnek nem szükséges tudnia arról, hogy például a szorzás műveletét előbb végezzük mint az összeadást, egy helyes szintaxisfában ez garantált.
+
+Az olvasó számára különös lehet, hogy a kifejezések nem rendelkeznek külön szabállyal, helyette a logikai műveletvégzés szabálya kapta meg ezt a nevet. Ez elsőre meglepő lehet, ám a behelyettesítési szabályoknak köszönhetően mégis működik.
+
+Ha tegyük fel egy változóra szeretnénk megnézni, hogy kifejezés-e, a következő behelyettesítések fognak történni:
+
+{\small \texttt{expression -> compOp -> addOp -> mulOp -> primary -> variable}\par}
+
+Tehát egyszerűen csak végiglépkedünk a műveletek szintjein, míg elérünk az önmagukban is értelmes szabályokhoz és ezek közül kiválasztjuk azt, amely a kifejezésünknek megfelelő. Ugyanez a logika kifejezések összes fajtáján működik.
+
+\subsubsection{Csere és értékadás}
+
+\begin{ebnf}
+swap ::= address " <-> " address
+assignment ::= address " <- " expression
+\end{ebnf}
+
+Két azonos típusú változó esetén azok értékeit felcserélhetjük. Ez funkcionálisan megegyezik a jegyzet 3.1-es algoritmusával.
+
+Egyéb esetben a változók és tömbök elemeinek értékét egy azonos típusú kifejezés végeredményére állíthatjuk. A kifejezésekről a \ref{sec:expressions} szekcióban írok.
+
+\subsubsection{Elágazások}
+
+\begin{ebnf}
+if ::= ifHead (ifElseIf* ifElse)? " elágazás vége"
+
+ifElseIf ::= ( " különben ha " expression " akkor " block)
+ifElse ::= " különben " block
+ifHead ::= "ha " expression " akkor " block 
+\end{ebnf}
+
+Három elágazás-alakot különböztetünk meg:
+
+\begin{itemize}
+    \item Egyszerű elágazás, egy predikátum ággal rendelkezik, melynek értéke ha igaz, akkor lefut az elágazás törzse,
+    \item Hamis ágas elágazás, ahol ha a predikátum értéke hamis, akkor egy alternatív ág fut le,
+    \item Végül pedig lehetőségünk van olyan elágazást is készíteni, mely tetszőleges számú egyéb predikátumot és hozzájuk tartozó törzset fogad és ezeket sorra próbálja, míg az egyik igaz nem lesz. Ha egyik sem igaz, akkor a kötelező hamis ág törzse fut le.
+\end{itemize}
+
+\subsubsection{Predikátum-alapú ciklusok}
+
+\begin{ebnf}
+while ::= normalWhile | doWhile
+doWhile ::= "ciklus " block " amíg " expression
+normalWhile ::= "ciklus amíg " expression block " ciklus vége"
+\end{ebnf}
+
+A ciklusok törzse addig fut le, amíg a megadott predikátum értéke igaz. Ha a predikátumot a ciklustörzs után írjuk, akkor annak értékétől függetlenül a törzs egyszer lefut.
+
+\subsubsection{Számláló-alapú ciklusok}
+
+\begin{ebnf}
+for ::= "ciklus" variable "<-" expression ("-tól" | "-től") expression "-ig" block " ciklus vége"
+\end{ebnf}
+
+Más nyelvekben \textit{for}-ciklusként ismert. Egy megadott kezdőértékkel rendelkező változót növel egy másik megadott értékig. A változó a függvénytörzsön belül elérhető, azon kívül nem.
+
+\begin{code}{Számláló-alapú ciklus megvalósítása}{code:for}
+változó <- kezdő
+
+ciklus amíg változó < vég
+    // Felhasználó által megadott ciklustörzs ...
+    változó <- változó + 1
+ciklus vége
+\end{code}
+
+Adott \texttt{kezdő} és \texttt{vég} érték esetén működése megegyezik a \ref{code:for} forráskódban látható cikluséval.
+
+\subsubsection{Visszatérés függvényből}
+
+\begin{ebnf}
+return ::= "vissza " (expression | arrayComprehension) 
+\end{ebnf}
+
+Megszakítja a jelenlegi függvény törzsét és az adott kifejezéssel visszatér. A Pszeudokód nem ad lehetőséget érték nélküli visszatérésre.
+
+\subsubsection{Hibakeresési töréspont}
+
+\begin{ebnf}
+debug ::= "debug"
+\end{ebnf}
+
+Megállítja a program futását és elindítja az implementáció hibakeresőjét. Nem része a jegyzetben felvázolt Pszeudokódnak, de a program egyik célkitűzése, hogy egyszerűvé tegye a futó kód állapotának megvizsgálását, így fontosnak találtam ezt hozzáadni a nyelvhez.
+
+\subsubsection{Kimenetre íratás}
+
+\begin{ebnf}
+print ::= "kiír " expression
+\end{ebnf}
+
+Az adott kifejezés értéke az implementáció által definiált kimenetre kerül kiírásra. Ez az utasítás nem része a jegyzetben felvázolt Pszeudokódnak, ám az interaktivitás érdekében hasznosnak találtam hozzáadni a nyelvhez.
+
+\subsubsection{Függvények deklarálása}
+\label{sec:funcdecl}
+
+\begin{ebnf}
+functionDeclaration ::= 
+    "függvény " functionName parameterList (" : " baseType)?
+        statement+ 
+    " függvény vége"
+
+parameterList ::="()" | (" parameter ("," parameter)* ")"
+functionName ::= [A-Z] ([a-z] | [A-Z])*
+
+parameter ::=
+    "címszerint "? (functionName | variable) " : " type
+\end{ebnf}
+
+A függvények egy törzsből és tetszőleges számú paraméterből állnak, melyek a törzsön belül elérhetővé válnak. A nyelv lehetőséget biztosít érték alapján átadott paraméterekre és cím alapján átadottakra, ami esetén a változó függvénytörzsben történt változásai annak eredeti példányán is megjelennek.
+
+A függvények szignatúrájának végén megadható annak visszatérési értéke, ez rekurzív függvények esetén kötelező, egyéb esetben opcionális.
+
+Bár a függvénydeklaráció az utasítások közé tartozik, társaival ellentétben egymásba ágyazott függvénydefiníciókra nincs lehetőségünk, csak a program fő ágában hozhatjuk létre őket. Így tehát a \ref{code:nestedfuncdecl} forráskódban látható program hibás.
+
+\begin{code}{Példa egy hibás egymásba ágyazásra.}{code:nestedfuncdecl}
+függvény Példa()
+    függvény Beágyazott(x : egész)
+        vissza x * 2
+    függvény vége
+
+    vissza Beágyazott(5)
+függvény vége
+\end{code}
+
+A függvények nevei nagybetűvel kezdődnek, majd tetszőleges karakterből állnak.
+
+\subsubsection{Utasítások}
+
+\begin{ebnf}
+statement ::= arrayComprehension 
+    | assignment 
+    | debug 
+    | for 
+    | functionCall 
+    | if 
+    | newArray 
+    | print 
+    | return 
+    | swap 
+    | while
+
+block ::= (functionDeclaration | statement)+
+\end{ebnf}
+
+Míg a kifejezések magukat az elvégzett számolásokat és műveleteket definiálják, az utasítások a program folyamatvezérlését, a változók elérését és módosítását, a standard kimenetre történő írást, és a hibakereső töréspontjait határozzák meg.
+
+Bár az utasítások definíció szerint nem térhetnek vissza értékekkel, ez alól kivételt képez a „vissza” utasítás, mely annak ellenére, hogy ehhez a kategóriához van sorolva, képes egy függvényt megszakítani és egy értékkel visszatérni.
+
+A program szintaxisfájának gyökere egy darab \texttt{<block>} elem.
