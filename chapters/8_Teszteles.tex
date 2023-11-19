@@ -1,0 +1,19 @@
+A program teszteléséhez a következő módszereket alkalmaztam:
+
+\subsection{A jegyzetben található algoritmusok lefordítása}
+
+Mivel a program része, hogy az oldalsávból a felhasználó betölthet tetszőleges algoritmusokat a jegyzetből, így célszerűnek láttam, hogy ezekkel automatikus tesztelést is végezzek.
+
+A tesztelési környezet sorra lefuttatja a tokenizálás, értelmezés, és típusellenőrzés lépéseit az egyes algoritmusokon, majd ennek eredményét egy webes felületen összegzi a felhasználó számára.
+
+A program jelenlegi állapotában mind a 96 algoritmust sikeresen feldolgozza.
+
+Ezen módszer előnye, hogy semmi felhasználói interakciót nem kíván és átfogóan ellenőrzi a program futásának első három állomását (a formázást nem beleértve, mely lényegi átalakítást nem végez). Hátránya azonban, hogy a kód bár garantáltan helyes típusosság szempontjából az implementáció pontosságát nem ellenőrzi, hisz az egyes függvények nem kerülnek lefuttatásra.
+
+\subsection{Példa algoritmusok lefuttatása}
+
+Az előző szekcióban felvázolt hiányosság pótlására néhány algoritmust manuálisan is lefuttatunk példa értékekre, ezzel tesztelve, hogy az implementáció helyesen értelmezi a kódunk.
+
+\addimage{teszt.png}{Az algoritmusok tesztelésének folyamata}{testing}
+
+A \ref{fig:testing} ábrán látható ennek folyamata. Adott algoritmus esetén megadjuk annak bemenetét és az elvárt kimenetet. A bemenetet Pszeudokód értékké konvertáljuk, majd létrehozunk egy virtuális gépet, melyben a bemeneti érték elérhető a \texttt{bemenet} változóval. Eztán lefordítjuk az ellenőrizni kívánt algoritmust és meghívjuk a szolgáltatott értékkel. A függvény kimenetét ezután visszakonvertáljuk JavaScript értékké, majd ezt összehasonlítjuk az elvárt értékkel.

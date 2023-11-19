@@ -504,14 +504,28 @@ Mivel a programok ezen kulcsszavak többé-kevésbé ugyanazt tették mint a cí
     SETARR & tömb, dimenzióSzám & A verem legfelső \textit{dimenzióSzám} darab eleme alapján beállítja a \textit{tömb} megfelelő indexét a veremben található következő értékre. \\
     SETVAR & változó & Lekéri a verem tetején lévő elemet és elmenti \textit{változó}-ba. \\
     MKREF & változó & Lekéri a verem tetején lévő elemet, melynek mutatónak kell lennie (egyéb esetben hibát dobunk). A \textit{változó} nevű változó címét ezen mutató címére állítjuk be. \\
+    ARRCMP & változó, dSzám, hossz & Leveszi a tömb legfelső \textit{dSzám} elemét, majd ezeket indexként értelmezve, leveszi a tömb legfelső \textit{hossz} elemét és ezeket sorra az előbb kiszámolt indexek alapján befűzi a \textit{változó} tömbbe. \\
 }
 
 Míg a \ref{code_getvar} tábla felelt a változók értékének lekéréséről, a \ref{code_mkvar} dolga, hogy egyáltalán értéket tudjunk adni ezeknek a változóknak. Mint azt feljebb tárgyaltuk, a változók maguk valójában nem többek, mint szöveges névvel rendelkező "álnevek" címek számára, így az egyes változók értékének beállítása valójában az általuk mutatott memória cella (vagy tömb esetében cellák) manipulálása.
 
 A Pszeudokód támogat mind érték alapú, mind pedig referencia alapú átadást függvények esetében. Az előbbit a \texttt{SETVAR} és \texttt{SETARR} utasítások biztosítják, melyek a megadott memóriacímen lévő értéket lemásolják és a másolat memóriacímét kötik az új változóhoz. Az utóbbit pedig az \texttt{MKREF} utasítással valósítjuk meg, mely lehetővé teszi, hogy ugyanarra a címre több változóval is hivatkozzunk.
 
+Az \texttt{ARRCMP} utasítás segítségével olyan kódokat tudunk lefordítani mint amely a \ref{code:arrcmp} mellékletben látható.
+
+\begin{code}{Példa a tömb eleméhez tömbbel való hozzárendelésre.}{code:arrcmp}
+tömb <- TáblaLétrehoz(egész)[3,2]
+
+tömb[1] <- (1,2)
+
+kiír tömb // [1,2, 0,0, 0,0]
+\end{code}
+
+Feladata, hogy a jobboldalon található tömböt a baloldali tömbbe töltse a baloldalt található indextől kezdve.
+
 \codetable{Tömb-kreáló műveletek}{code_mkarr}{
     MKARR & változó & Lekéri a verem tetején található \textit{érték}-et, majd készít egy \textit{érték} hosszú tömböt, melyet elment \textit{változó}-ba. \\
     COMPRE & változó & Lekéri a verem legfelső \textit{darab} elemét, majd lekéri a következő \textit{darab} mennyiségű elemet. Ezekből tömböt alkot, melyet elment \textit{változó}-ba. \\
-    ARRCMP & változó, dSzám, hossz & Leveszi a tömb legfelső \textit{dSzám} elemét, majd ezeket indexként értelmezve, leveszi a tömb legfelső \textit{hossz} elemét és ezeket sorra az előbb kiszámolt indexek alapján befűzi a \textit{változó} tömbbe. \\
 }
+
+Tömböt kétféleképp kreálhatunk vagy adott hossz és dimenziók alapján, vagy pedig előre megadott elemek alapján. A \ref{code_mkarr} táblában találhatóak ezekhez az utasítások.

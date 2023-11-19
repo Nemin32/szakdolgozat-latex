@@ -8,7 +8,7 @@ A kliens és felhasználó közötti összes kommunikáció így hálózati alap
 
 \subsubsection{Java}
 
-A szakdolgozat megvalósításának elején először a Java nyelvre esett a választásom, hisz egyrészt sokat használtam már, másrészt natívan támogatja a nagyszerű ANTLR4 könyvtárat, melyet kifejezetten programozási nyelvek értelmezésére és feldolgozására alkottak meg.
+A szakdolgozat megvalósításának elején először a Java nyelvre esett a választásom, hisz egyrészt sokat használtam már, másrészt natívan támogatja a nagyszerű ANTLR4 könyvtárat, melyet kifejezetten programozási nyelvek értelmezésére és feldolgozására alkottak meg.\cite{antlr-book}
 
 Sajnos azonban a fejlesztés során hamar rájöttem, hogy mivel a nyelv nem képes WASM formátumba fordulni, egy kliens-szerver architektúra megvalósítása pedig túlságosan eltért volna a szakdolgozat témájától, így végül elvetettem használatát.
 
@@ -138,7 +138,7 @@ Mivel a nyelv használhatósága a feladathoz ennyire kétséges, így nem felel
 
 \subsubsection{Rust}
 
-\say{A Rust programozási nyelv segít, hogy gyorsabb és megbízhatóbb szoftvert írjunk. A magas-szintű ergonómia és az alacsony-szintű irányítás gyakran összeegyeztethetetlen a programozási nyelvek dizájnjában; a Rust ezt az állítást kérdőjelezi meg.}[7]
+\say{A Rust programozási nyelv segít, hogy gyorsabb és megbízhatóbb szoftvert írjunk. A magas-szintű ergonómia és az alacsony-szintű irányítás gyakran összeegyeztethetetlen a programozási nyelvek dizájnjában; a Rust ezt az állítást kérdőjelezi meg.}\cite{rust}
 
 A Rust egy relatíve új programozási nyelv, mely céljának a teljes memória-biztonságot és a gyakori hibák elkerülését tűzte ki, emellett natív fordításra is képes. A statikus analízise erősebb az összes fentebb felsorolt nyelvnél, a sebessége pedig a C/C++-hoz hasonlatos. Ezen kívül remek könyvtárakkal rendelkezik, melyek például a regexelést nagyon egyszerűvé teszik. A nyelv natívan fordul WebAssembly-re így ez se okoz problémát.
 
