@@ -515,9 +515,7 @@ Az \texttt{ARRCMP} utasítás segítségével olyan kódokat tudunk lefordítani
 
 \begin{code}{Példa a tömb eleméhez tömbbel való hozzárendelésre.}{code:arrcmp}
 tömb <- TáblaLétrehoz(egész)[3,2]
-
 tömb[1] <- (1,2)
-
 kiír tömb // [1,2, 0,0, 0,0]
 \end{code}
 
@@ -529,3 +527,21 @@ Feladata, hogy a jobboldalon található tömböt a baloldali tömbbe töltse a 
 }
 
 Tömböt kétféleképp kreálhatunk vagy adott hossz és dimenziók alapján, vagy pedig előre megadott elemek alapján. A \ref{code_mkarr} táblában találhatóak ezekhez az utasítások.
+
+\subsection{Felhasználói felület}
+
+A felhasználói felület egy egyszerű HTML oldal, mely működését egy JavaScript osztály vezérlni. Ennek feladata a fordítóprogram meghívása, a kapott lineáris kódból virtuális gép kreálása, és végül ennek vezérlése és állapotának kijelzése a felhasználó számára. 
+
+\addimage{screenshot_edited.png}{Egy a felhasználói felületről készült képernyőkép.}{screenshot}
+
+A \ref{fig:screenshot} ábrán látható a felhasználói felület, mely a következő elemeket tartalmazza magában:
+
+\begin{enumerate}
+    \item Algoritmusválasztó - A jegyzetben található algoritmusok jelennek meg itt, fejezetre bontva. Az egyes algoritmusok címére kattintva az betöltődik a szerkesztőbe,
+    \item Szerkesztő - A felhasználó ide írhatja a kódot, mely még gépelés közben szintaxiskiemelésen esik át,
+    \item Gombok - A szerkesztőt és a virtuális gépet vezérlik. Lehetőségünk van a kód formázására, fordítására, lefuttatására, és végül egy-egy utasítást előre és visszafelé lépnünk,
+    \item Belső állapotot figyelő elemek - Feladatuk a virtuális gép egyes belső elemeinek követése.
+    \item Kimenet - A \texttt{kiír} utasítás kifejezései ide kerülnek megjelenítésre. Hiba esetén szintén ide írjuk az üzenetet a felhasználó számára,
+\end{enumerate}
+
+A belső állapotot figyelő elemek színekkel jelzik, hogy épp mi történik az általuk figyelt értékekkel. Zöld színnel jelöljük, ha új elemet vezetünk be, sárgával, ha meglévő elem változik, és pirossal, ha egy elem törlésre került. A gyorsabb sebesség érdekében a felület csak akkor frissül, ha a virtuális gép meg van állítva, így nem pazarlunk ciklusokat olyan elemek megjelenítésére és módosítására, melyeket a felhasználó a futás sebessége miatt amúgy sem látna.
