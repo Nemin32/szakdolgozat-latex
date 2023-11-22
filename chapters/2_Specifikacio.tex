@@ -33,7 +33,7 @@ Velük ellentétben állnak az úgynevezett deklaratív nyelvek, melyeknél a pr
 
 A Turing-teljesség definícióját Stephan Kepser cikkéből kölcsönöztem, melyben XSLT nyelvre bizonyítja a tulajdonság fennállását:
 
-\say{A Turing-teljesség egy programozási- vagy lekérési nyelv vagy bármely más számítási modell erejéről szóló állítás, mely kijelenti, hogy bármit, amit egy Turing-géppel kiszámoltathatunk ezzel a nyelvvel vagy számítási modellel is ki lehet. Mivel a Turing-gépek a legerősebb eddig ismert számítási modell, így a Turing teljesség azt jelenti, hogy bármi ami egyáltalán kiszámítható, kiszámítható a nyelv használatával is. Ez a programozási nyelvek számára igencsak kívánatos tulajdonság, mivel ez azt jelenti, hogy a nyelv nem korlátozza a felhasználót abban, milyen problémát is oldhat meg vagy számítást fejezhet ki benne.}\cite{turing}
+\say{\textit{A Turing-teljesség egy programozási- vagy lekérési nyelv vagy bármely más számítási modell erejéről szóló állítás, mely kijelenti, hogy bármit, amit egy Turing-géppel kiszámoltathatunk ezzel a nyelvvel vagy számítási modellel is ki lehet. Mivel a Turing-gépek a legerősebb eddig ismert számítási modell, így a Turing teljesség azt jelenti, hogy bármi ami egyáltalán kiszámítható, kiszámítható a nyelv használatával is. Ez a programozási nyelvek számára igencsak kívánatos tulajdonság, mivel ez azt jelenti, hogy a nyelv nem korlátozza a felhasználót abban, milyen problémát is oldhat meg vagy számítást fejezhet ki benne.}}\cite{turing}
 
 Ahhoz, hogy a teljességet bizonyítsuk, meg kell mutatnunk, hogy a nyelv képes egy univerzális Turing-gépet szimulálni. Ez a képzeletbeli gép egy végtelen hosszú tekerccsel rendelkező olvasó/író fej, mely egy véges hosszúságú utasítási lista alapján képes a tekercsről adatokat beolvasni, majd ezeket értelmezve új adatokat írni arra (vagy a meglévőket felülírni.)
 
@@ -64,16 +64,16 @@ John W. Backus 1959-ben az ALGOL 60 nyelv nyelvi elemeinek formális definiálá
 A \ref{code:bnfexample} forráskód bemutatja, hogyan is lehet BNF alakba hozni a pozitív, egész számokat, a nullát belevéve: 
 
 \begin{itemize}
-  \item \texttt{<non-zero>} - Először definiáljuk a nem-nulla számjegyeket,
-  \item \texttt{<zero>} - Majd a nullát, 
-  \item \texttt{<digit>} - Eztán a számjegy fogalmát, mely lehet nem-nulla számjegy vagy nulla,
-  \item \texttt{<number-tail>} - Rekurzívan adjuk meg, hogy egy szám a második számjegytől kezdve lehet vagy egy számjegy önmagában, vagy egy számjegy melyet a szám további számjegyei követnek. Erre a szabályra azért van külön szükség, hogy elkerüljük a "0123" alakban megadott számokat, melyeket nem értelmezünk.
-  \item \texttt{<number>} - Végül pedig kijelentjük, hogy egy szám az vagy egy számjegy, vagy pedig egy nem-nulla számjegy melyet tetszőleges számú (de legalább egy) más számjegy követ.
+  \item \texttt{<non-zero>} - először definiáljuk a nem-nulla számjegyeket,
+  \item \texttt{<zero>} - majd a nullát, 
+  \item \texttt{<digit>} - eztán a számjegy fogalmát, mely lehet nem-nulla számjegy vagy nulla,
+  \item \texttt{<number-tail>} - rekurzívan adjuk meg, hogy egy szám a második számjegytől kezdve lehet vagy egy számjegy önmagában, vagy egy számjegy melyet a szám további számjegyei követnek. Erre a szabályra azért van külön szükség, hogy elkerüljük a "0123" alakban megadott számokat, melyeket nem értelmezünk.
+  \item \texttt{<number>} - végül pedig kijelentjük, hogy egy szám az vagy egy számjegy, vagy pedig egy nem-nulla számjegy melyet tetszőleges számú (de legalább egy) más számjegy követ.
 \end{itemize}
 
 Ahogy az ebből az egyszerű példából is látható, önmagában a BNF alak kissé esetlen. Olyan intuitív fogalmak, mint az opcionális elemek (tehát olyan elemek, melyek hiánya esetén is érvényes a szabály) és az egymást követő karakterek rövidített leírása (tehát, ha azt szeretnénk, hogy egy szabály például az angol ABC összes betűjére vonatkozzon, ahelyett, hogy azt mondhatnánk, hogy "a-z", mind a huszonhat betűt ki kéne írnunk) hiányoznak belőle, így több programozói és szabványkészítő csoport amellett döntött, hogy kiterjeszti a formátumot.
 
-Ezek közül én a World Wide Web Consortium által, eredetileg az XML nyelv leírásához kifejlesztett\cite{w3c}, \textit{Extended Brackus-Naur Form} (EBNF)\footnote{Valójában mind a BNF, mind az EBNF nem önálló nyelvek, hanem hasonló vonásokkal rendelkező nyelvcsaládok, ezáltal ugyanazt a nevet több szabvány is viseli. EBNF-nek nevezzük többek között az ISO/IEC 14977 szabványt is, mely szintén a BNF kiterjesztése, ám a W3C által specifikált nyelvhez képest eltérő szintaxissal rendelkezik. Az egyszerűség kedvéért dolgozatomban úgy hivatkozom az utóbbi csoport által fejlesztett változatra, mintha önálló nyelv lenne.}, vagyis Kiterjesztett Brackus-Naur Formát kívánom használni a Pszeudokód leírására. Ez lehetővé teszi olyan szabályok egyszerű leírását, melyek a \ref{sec:parser} alfejezetben használt értelmező több művöletet egy-az-egyben mintázza.
+Ezek közül én a World Wide Web Consortium által, eredetileg az XML nyelv leírásához kifejlesztett\cite{w3c}, \textit{Extended Brackus-Naur Form} (EBNF)\footnote{Valójában mind a BNF, mind az EBNF nem önálló nyelvek, hanem hasonló vonásokkal rendelkező nyelvcsaládok, ezáltal ugyanazt a nevet több szabvány is viseli. EBNF-nek nevezzük többek között az ISO/IEC 14977\cite{isoebnf} szabványt is, mely szintén a BNF kiterjesztése, ám a W3C által specifikált nyelvhez képest eltérő szintaxissal rendelkezik. Az egyszerűség kedvéért dolgozatomban úgy hivatkozom az utóbbi csoport által fejlesztett változatra, mintha önálló nyelv lenne.}, vagyis Kiterjesztett Brackus-Naur Formát kívánom használni a Pszeudokód leírására. Ez lehetővé teszi olyan szabályok egyszerű leírását, melyek a \ref{sec:parser} alfejezetben használt értelmező több művöletet egy-az-egyben mintázza.
 
 \input{chapters/szemantika.tex}
 
@@ -81,7 +81,7 @@ Ezek közül én a World Wide Web Consortium által, eredetileg az XML nyelv le�
 
 Mivel a szakdolgozat célja a Szoftvertervezés és Fejlesztés I. hallgatóinak megsegítése, így igyekeztem amennyire csak lehet hűen adaptálni az órán használt jegyzetet\cite{jegyzet}.
 
-Ennek ellenére van egy-két részlet, amiben célszerűnek láttam eltérni a jegyzetben látottaktól. Most ezeket szeretném felsorolni:
+Ennek ellenére van egy-két részlet, amiben célszerűnek láttam eltérni a jegyzetben látottaktól. A következő fejezetekben ezeket veszem sorra.
 
 \subsubsection{Sorszámozás}
 

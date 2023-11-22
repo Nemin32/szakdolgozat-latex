@@ -126,7 +126,7 @@ Elődeklarációra nincs lehetőség. A változók létrehozáskor értéket is 
 
 A változó értékét annak nevével érhetjük el. Nem létező változó értékének elérése típusellenörzési vagy futásközbeni hibához vezet.
 
-Tömb-típusú változó esetén abba indexelni a megszokottól eltérően 1-indexű számokkal lehetséges. Ez azt jelenti, hogy a tömb első eleme \texttt{tömb[1]}-el elérhető, nem \texttt{tömb[0]}-val. Ezen felül többdimenziós tömb esetén, a C\# nyelvhez hasonlóan, az indexeket vesszővel választjuk el egymástól: \texttt{tömb[x, y, z]}.
+Tömb-típusú változó esetén abba indexelni a legtöbb programozási nyelvtől eltérően 1-indexű számokkal lehetséges. Ez azt jelenti, hogy a tömb első eleme \texttt{tömb[1]}-el elérhető, nem \texttt{tömb[0]}-val. Ezen felül többdimenziós tömb esetén, a C\# nyelvhez hasonlóan, az indexeket vesszővel választjuk el egymástól: \texttt{tömb[x, y, z]}.
 
 \subsubsection{Változó vagy tömb címének lekérése}
 
@@ -134,7 +134,7 @@ Tömb-típusú változó esetén abba indexelni a megszokottól eltérően 1-ind
 reference ::= "&" address
 \end{ebnf}
 
-Mivel a nyelv támogatja a címszerinti átadást, így lehetőséget kell adnunk arra, hogy egy váltoó vagy tömb-elem címét lekérjük. Ezen címek meghatározása az implementációra van hagyva, csupán annak a szabálynak kell megfelelnie, hogy egy változó vagy tömb-elem címe nem változhat (a címen tárolt érték viszont igen).
+Mivel a nyelv támogatja a címszerinti átadást, így lehetőséget kell adnunk arra, hogy egy változó vagy tömb-elem címét lekérjük. Ezen címek meghatározása az implementációra van hagyva, csupán annak a szabálynak kell megfelelnie, hogy egy változó vagy tömb-elem címe nem változhat (a címen tárolt érték viszont igen).
 
 \subsubsection{Logikai negálás}
 
@@ -152,7 +152,7 @@ functionCall ::= functionName ("()" | "(" expression ("," expression)* ")")
 
 Az egyes függvények meghívhatóak akár kifejezésként is, mely esetben az azt hívó utasítás a visszatérési értékét tovább dolgozhat, vagy hívható önmagában utasításként is, ekkor a visszatérési érték eldobásra kerül.
 
-A függvénynevek szabálya a \ref{sec:funcdecl} szekcióban található.
+A függvénynevek szabálya a \ref{sec:funcdecl} fejezetben található.
 
 \subsubsection{Műveletek és kifejezések}
 \label{sec:expressions}
@@ -196,9 +196,9 @@ swap ::= address " <-> " address
 assignment ::= address " <- " expression
 \end{ebnf}
 
-Két azonos típusú változó esetén azok értékeit felcserélhetjük. Ez funkcionálisan megegyezik a jegyzet 3.1-es algoritmusával.
+Két azonos típusú változó esetén azok értékeit felcserélhetjük. Ez funkcionálisan megegyezik a jegyzet\cite{jegyzet} 3.1-es algoritmusával.
 
-Egyéb esetben a változók és tömbök elemeinek értékét egy azonos típusú kifejezés végeredményére állíthatjuk. A kifejezésekről a \ref{sec:expressions} szekcióban írok.
+Egyéb esetben a változók és tömbök elemeinek értékét egy azonos típusú kifejezés végeredményére állíthatjuk. A kifejezésekről a \ref{sec:expressions} fejezetben írok.
 
 \subsubsection{Elágazások}
 

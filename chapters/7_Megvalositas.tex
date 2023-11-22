@@ -1,4 +1,4 @@
-A felhasználó által begépelt bemeneti szöveg több átalakításon esik át míg futtatható állapotba nem kerül. Ez a szekció ezt mutatja be.
+A felhasználó által begépelt bemeneti szöveg több átalakításon esik át míg futtatható állapotba nem kerül. Ez a fejezet ezt mutatja be.
 
 \subsection{Formázás}
 
@@ -37,7 +37,7 @@ Mivel ennek a folyamatnak az algoritmusa a modern számítógépeken a felhaszn�
 
 Fölmerülhet bennünk, hogy erre mi szükség van, hisz a tokenizálás folyamatát elég lenne csupán egyszer a fordítás folyamatának elején lefuttatnunk. A válasz, hogy a program egyben szintaktikai kiemelést is végez a tokenek segítségével (tehát a különböző nyelvi elemeket különféle színekkel jelöljük, így egyszerűbbé téve a programozó számára, hogy eligazodjon a kódon). Ez egy egyszerű szótár adatszerkezettel van implementálva, minden token típushoz hozzápárosítunk egy színt, melyet a felhasználói felületen beállítunk a megfelelő szövegrészletekhez.
 
-Az egyetlen hibakezelés, melyet ebben a szekcióban tudunk végezni az az értelmetlen vagy nem megfelelő tokenek szűrése. Mivel a tokenizáló algoritmusnak nincs tudása arról, hogy a különböző tokeneknek milyen sorrendben is kell követniük egymást (ez a következő lépés feladata), ezért hiba nélkül fel fog dolgozni olyan kódokat is, mely hibás szintaxissal rendelkezik.
+Az egyetlen hibakezelés, melyet ezen lépés során tudunk végezni az az értelmetlen vagy nem megfelelő tokenek szűrése. Mivel a tokenizáló algoritmusnak nincs tudása arról, hogy a különböző tokeneknek milyen sorrendben is kell követniük egymást (ez a következő lépés feladata), ezért hiba nélkül fel fog dolgozni olyan kódokat is, mely hibás szintaxissal rendelkezik.
 
 Tehát például egy olyan kód, mely a következőképp szól „ha amíg x+5” hiba nélkül tokenizálható, hisz az összes benne található nyelvi elem érvényes tokennek felel meg annak ellenére, hogy a kód maga nyilvánvalóan hibás.
 
@@ -165,7 +165,7 @@ A típusellenörzés szabályai röviden a következőek:
     \item Atom esetén annak értéke alapján meg tudjuk határozni a típust,
     \item Értékadáshoz esetén eltároljuk a változót és annak típusát a jelenlegi típus-szótárba, megbizonyosdva afelől, hogy az eltárolt típus nem üres-típus,
     \item Változó esetén lekérjük annak típusát név alapján. Ha nem találjuk kivételt dobunk,
-    \item Függvénydeklaráció esetén eltároljuk annak visszatérési értékét a függvénytörzs utasításai alapján és a paramétereinek számát és azok elvárt típusait. Ha egy paraméter generikus, annak kezelését lejjebb, a \ref{sec:generic} szekcióban mutatom be.
+    \item Függvénydeklaráció esetén eltároljuk annak visszatérési értékét a függvénytörzs utasításai alapján és a paramétereinek számát és azok elvárt típusait. Ha egy paraméter generikus, annak kezelését lejjebb, a \ref{sec:generic} fejezetben mutatom be.
     \item Függvényhívás esetén lekérjük a fentebb eltárolt értékeket és a következőket ellenőrizzük:
     \begin{itemize}
         \item A függvény megfelelő számú paramétert kapott-e,
@@ -189,6 +189,7 @@ Ha meghívunk egy generikus paraméterrel rendelkező függvényt egzakt típuss
 Ez alapján, ha például \texttt{T}-re helyettesítünk \texttt{egész} típussal, akkor a \texttt{T, T tömb,} és \texttt{T referencia} típusok mind megfelelő egzakt típussá változnak (\texttt{egész}, \texttt{egész} \texttt{tömb}, és \texttt{egész} \texttt{referencia}).
 
 \subsection{Szekvenciális program generálása}
+\label{sec:compiler}
 
 Az így kapott szintaxisfa ekkor garantáltan helyes szinaktika, típusok, és szemantika szempontjából. Ekkor lehetőségünk volna önmagában lefuttatni egy interpreter segítségével, ám két okból mégse ezt tesszük.
 
@@ -268,7 +269,7 @@ A létrehozott szekvenciális kód egy egyszerű verem-alapú virtuális gépen 
         \item \textbf{Számláló-verem} (PC stack) - A függvéynhívások esetén ide mentjük és innent töltjük be az utasítás-számláló értékét.
         \item \textbf{Verem} (stack) - Egy atomi értékeket tárolni képes verem, melynek a tetejére pakolhatunk értékeket és onnan értékeket vehetünk le.
         \item \textbf{Allokátor} (store) - Egy memória-allokátor, mely atomi értékeket és tömböket képes eltárolni egy lineáris memóriatartományon. Az egyes memóriacellákat azok sorszáma alapján azonosítjuk. Az allokátor számontartja hány referencia tartozik az egyes cellákhoz és, ha ez az érték nullára vált, felszabadítja a cellát (garbage collection).
-        \item \textbf{Változók} (variables) - Egy változótartományokra (ezek működését részletesebben a \ref{code_scope} szekcióban tárgyaljuk) bontott asszociatív tömb. Elemei szöveges neveket párosítanak mutatókkal (melyek a változóhoz tartozó memóriacella címének számszerű értéke).
+        \item \textbf{Változók} (variables) - Egy változótartományokra (ezek működését részletesebben a \ref{code_scope} fejezetben tárgyalom) bontott asszociatív tömb. Elemei szöveges neveket párosítanak mutatókkal (melyek a változóhoz tartozó memóriacella címének számszerű értéke).
         \item \textbf{Futás-indikátor} (running) - Egy logikai érték, mely hamis érték esetén azt jelzi hogy a következő lépés végrehajtása előtt meg kell állítanunk a virtuális gépet.
 \end{itemize}
 

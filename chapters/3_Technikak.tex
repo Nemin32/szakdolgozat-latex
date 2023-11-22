@@ -9,7 +9,7 @@ Bár a C-szerű nyelvekben, így a Pszeudokódban is, az üres helyek és sortö
 
 Rengetegféle variáció létezik az ilyen szabályrendszerekre, beleértve, hogy hová helyezzük a kapcsos-zárójeleket vagy hány üres helyet (vagy esetleg tabulátor karaktert) helyezzünk az egyes sorok elé. A C-nyelv alkotói például így vélekednek a könyvükben:
 
-\say{A kapcsos-zárójelek elhelyezése kevésbé fontos, ám az embereknek szenvedélyes meggyőződéseik vannak velük kapcsolatban. Mi az egyik közkedvelt stílust választottuk. Válassz egy olyat, ami számodra megfelelő, aztán tartsd hozzá magad.}\cite{kr}
+\say{\textit{A kapcsos-zárójelek elhelyezése kevésbé fontos, ám az embereknek szenvedélyes meggyőződéseik vannak velük kapcsolatban. Mi az egyik közkedvelt stílust választottuk. Válassz egy olyat, ami számodra megfelelő, aztán tartsd hozzá magad.}}\cite{kr}
 
 Épp emiatt átfogó algoritmust, technikát, de akárcsak szabályrendszert is megnevezni ehhez a lépéshez lehetetlen volna. Ehelyett én csupán azt definiálnám itt, hogy az általam kialakított stílusra a következő szabályok vonatkoznak:
 
@@ -30,7 +30,7 @@ Ezeket a szabályokat alkalmazva a felhasználói bemenettől függetlenül konz
 
 Robert Nystrom a \textit{Crafting Interpreters}\cite{crafting} című könyvének tokenizálásról szóló fejezetét a következővel nyitja:
 
-\say{Az első lépés bármely értelmező vagy fordító létrehozásában a szkennelés. A szkenner a nyers bemeneti forráskódot karakterek sorozataként fogadja, majd ezeket tokeneknek nevezett csoportokba gyűjti. Ezek a nyelv értelmes \say{szavai} és \say{írásjelei} melyek kialakítják annak nyelvtanát.}
+\say{\textit{Az első lépés bármely értelmező vagy fordító létrehozásában a szkennelés. A szkenner a nyers bemeneti forráskódot karakterek sorozataként fogadja, majd ezeket tokeneknek nevezett csoportokba gyűjti. Ezek a nyelv értelmes \say{szavai}} és \say{\textit{írásjelei}} melyek kialakítják annak nyelvtanát.}
 
 Ahogy az fentebb is olvasható, a nyers szöveg hiába van jól formázva, önmagában a számítógép számára továbbra is egy egybefüggő, értelmezhetetlen adat. Ezt orvosolni két lehetőségünk van:
 
@@ -101,19 +101,19 @@ Erre a \ref{fig:aritmast} ábra mutat be egy egyszerű példát, mely a 10 / 2 *
 
 \addimage{ast.png}{Példa egy absztrakt szintaxisfára.}{aritmast}
 
-A megvalósításom első verziójában én is ezt a verziót választottam és hamar el is érkeztem egy olyan állapothoz, melyben a kód (típusellenőrzés nélkül) értelmezésre került, majd a program egy interpreter segítségével le is futott. Ekkor azonban beláttam a módszer hátrányát, ami pedig az, hogy mivel ez egy rekurzív, fa-alapú bejárás, így nincs módunk arra, hogy egy szálon futó program esetén a folyamatot tetszőleges ponton megállíthassuk. Ez viszont ütközik a projekt céljával, hisz olyan értelmezőt szeretnék írni, mely belső állapotának változását a felhaználó akár minden utasítás lefutása után megvizsgálhatja.
+A megvalósításom első verziójában én is ezt a verziót választottam és hamar el is érkeztem egy olyan állapothoz, melyben a kód (típusellenőrzés nélkül) értelmezésre került, majd a program egy interpreter segítségével le is futott. Ekkor azonban beláttam a módszer hátrányát, ami pedig az, hogy mivel ez egy rekurzív, fa-alapú bejárás, így nincs módunk arra, hogy egy szálon futó program esetén a folyamatot tetszőleges ponton megállíthassuk. Ez viszont ütközik a szakdolgozatom céljával, hisz olyan értelmezőt szeretnék írni, mely belső állapotának változását a felhaználó akár minden utasítás lefutása után megvizsgálhatja.
 
 Ehelyett a jelenlegi megvalósításom egy úgynevezett bájtkód interpreter. Ennek lényege, hogy a szintaxisfát a fentebb említett mélységi-bejárás módszerével feldolgozzuk, ám lefuttatás helyett egy újabb kódot generáltatunk belőle. Ezen kód olyan utasításokból áll, melyek nem függenek egymástól és egy tömb adatszerkezetben kerülnek eltárolásra, így az index elmentésével triviális megjegyeznünk meddig is futott már le a kód.
 
 A nem tanítási jelleggel készült nyelvekben a bájtkód, ahogy azt a neve is sugallja, általában egy bájtokból álló utasításokat tartalmazó kód, melyet az értelmező sokkal gyorsabban képes beolvasni és feldolgozni mint egy szöveges fájlt. Azonban mivel az én célom az oktatás elősegítése és az értelmező sebessége másodlagos cél, így az általam generált bájtkód sokkal inkább hasonlít egy Assembly-nyelven írt programhoz, hisz az egyes utasítások olvasható nevekből és atomi értékekből álló paraméterekből épülnek fel. 
 
-Harmadik lehetőség lenne még, hogy bájtkód helyett gépi kódot generáltatok, melyet a számítógép egyéb futtatási környezet nélkül képes értelmezni, majd ezt valamely hibakereső (például GDB vagy LLDB) segítségével teszem megvizsgálhatóvá a felhasználó számára. A leggyakrabban használt, sebességkritikus programozási nyelvek, mint például a C, a C++, a Rust mind ezt a módszert használják. Ez a módszer viszont egyrészt nagyban megbonyolítaná a projektet (és az internetes elérést is sokkal komplexebbé tenné), másrészt a megértésben se segítene, hisz a kezdő programozók nem arról tanulnak, hogyan is működik a számítógép a legalacsonyabb szintjén, hanem, hogy egyáltalán az algoritmusok maguk hogy működnek. Így ezt a módszert elvetettem.
+Harmadik lehetőség lenne még, hogy bájtkód helyett gépi kódot generáltatok, melyet a számítógép egyéb futtatási környezet nélkül képes értelmezni, majd ezt valamely hibakereső (például GDB vagy LLDB) segítségével teszem megvizsgálhatóvá a felhasználó számára. A leggyakrabban használt, sebességkritikus programozási nyelvek, mint például a C, a C++, a Rust mind ezt a módszert használják. Ez a módszer viszont egyrészt nagyban megbonyolítaná a feladatot (és az internetes elérést is sokkal komplexebbé tenné), másrészt a megértésben se segítene, hisz a kezdő programozók nem arról tanulnak, hogyan is működik a számítógép a legalacsonyabb szintjén, hanem, hogy egyáltalán az algoritmusok maguk hogy működnek. Így ezt a módszert elvetettem.
 
 Az bájtkód generálás részletes bemutatása a \ref{sec:compiler} alfejezetben történik.
 
 \subsection{Futtatás}
 
-Az így kapott bájtkód végre futtatható állapotban van, ám, ahogy azt az előző szekcióban is tárgyaltuk, valós gépi kód helyett egy képzeletbeli számítógép architektúrájára fordítottuk a szintaxisfánk.
+Az így kapott bájtkód végre futtatható állapotban van, ám, ahogy azt az előző fejezetben is tárgyaltuk, valós gépi kód helyett egy képzeletbeli számítógép architektúrájára fordítottuk a szintaxisfánk.
 
 Ezen képzeletbeli gép szimulátora az úgynezevett "virtuális gép". Ennek feladata, hogy olyan futtatási környezetet biztosítson, mely képes a bemeneti kódot egy specifikált szabályrendszer szerint lefuttatni.
 
@@ -127,9 +127,9 @@ Egy átlagos virtuális gép a következő elemekből áll össze:
 
 A virtuális gépes megvalósítás előnye, hogy teljes mértékben mi szabjuk meg annak belső működését, így például egyszerűen a felhasználó elé tudjuk tárni a futtatási környezet állapotát (milyen változók vannak, mi a memória tartalma, hányadik sor kódnál járunk), mely a projekt szempontjából kifejezetten kívánatos tulajdonság.
 
-Mivel a projektspecifikáció része, hogy a kód egyes utasításai között léptetni is lehessen előre- és visszafelé is, emiatt a gép állapotát úgynevezett megváltoztathatatlan („immutable”) adatszerkezetekben eltárolni, melyek lényege, hogy adattagjai az adatszerkezet létrehozása után nem módosíthatóak. 
+Mivel a projektspecifikáció része, hogy a kód egyes utasításai között léptetni is lehessen előre- és visszafelé is, emiatt a gép állapotát úgynevezett megváltoztathatatlan („immutable”) adatszerkezetekben érdemes eltárolni, melyek lényege, hogy adattagjai az adatszerkezet létrehozása után nem módosíthatóak. 
 
-Ha ezeket egy listában tároljuk el, a lista feje mindig az éppen aktív állapota a gépünknek. Előreléptetéskor egy új elemet számolunk ki, mely ezáltal a lista új fejévé válik, visszaléptetéskor pedig a tömb egy korábbi elemére lépnünk.
+Ha ezeket egy listában tároljuk el, a lista feje mindig az éppen aktív állapota a gépünknek. Előreléptetéskor egy új elemet számolunk ki, mely ezáltal a lista új fejévé válik, visszaléptetéskor pedig a lista egy korábbi elemére lépünk.
 
 \subsection{Felhasználói felület}
 
@@ -137,7 +137,7 @@ A felhasználói felület feladata, hogy interfészként szolgáljon az előző 
 
 Ez célunktól függően lehet automatikus (mely esetén a felhasználó csupán elindítja a folyamatot, esetleg úgy, hogy a program indulásakor bizonyos paramétereket beállít) vagy pedig interaktív (mely esetén a program bizonyos utasítások esetén megáll és a felhasználótól kapott bemenet alapján folytatja működését). Megjelenítés szempontjából készíthetünk parancssori programot, grafikus interfészt, vagy interneten át szolgált webes applikációt.
 
-Én ezutóbbit választottam, mivel a böngészőkben futó programok egységes környezetet nyújt operációs rendszertől és architektúrától függetlenül, így elég csupán egy változatban lefejleszteni a programom, mely így mindenhol működik.
+Én az utóbbit választottam, mivel a böngészőkben futó programok egységes környezetet nyújt operációs rendszertől és architektúrától függetlenül, így elég csupán egy változatban lefejleszteni a programom, mely így mindenhol működik.
 
 Emelett a végfelhasználó számára is sokkal kényelmesebb, ha csupán el kell navigálnia egy weboldalra, mely egyéb előzetes lépés nélkül rögtön képes értelmezni és végrehajtani az általa begépelt Pszeudokódot.
 
