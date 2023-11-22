@@ -1,5 +1,15 @@
-A projekt keretei között létrehozásra került egy program mely képes az Óbudai Egyetemen tanított Pszeudokódon írt kód értelmezésére, a kód típusosságának és szintaktikai helyességének ellenőrzésére, és a lefordított állomány futtatására oly módon, mely felfedi a felhasználó számára a futtatási környezet belső működését.
+A dolgozatom keretei között először is bevezettem a Pszeudokódot, mint programozási nyelvet, megadvan annak tulajdonságait, szintaktikáját és szemantikáját, kitérve külön az olyan elemekre, melyek a nyelvet definiáló jegyzettől eltérnek.
 
-A nyelv specifikációja legjobb képességeim szerint teljesen implementálásra került. 
+Ezután bemutatásra került annak folyamata, hogy a felhasználó által szolgáltatott nyers szövegen milyen átalakításokat is végzünk ahhoz, hogy az futtatható állapotba kerüljön. Bemutattam az egyes lépések módszereit és informális működésüket.
 
-Ezáltal a dolgozat főbb célkitűzései megvalósításra kerültek.
+A felhasznált technikák felsorolása után után két nyelven keresztül mutattam be a programozási nyelvek fejlesztésének folyamatát. Az első példában egy olyan értelmezőt mutattam be, mely az egyik legegyszerűbb nyelvet képes lefuttatni, mely ennek ellenére Turing-teljes. A másodikban pedig egy olyan nyelvet, mely alkotásának folyamata nagyban informálta a saját programom.
+
+Az ezt követő fejezetben mérlegeltem azokat a nyelveket, melyekre a projektem alapozhattam volna. Sorra vettem, hogy az egyes nyelveket, erősségeik és gyengeségeiket figyelembe véve miért nem választottam. Végül pedig hasonló módon bemutatásra került az értelmező alapjául szolgáló TypeScript nyelv.
+
+A nyelv kiválasztását a rendszerterv követte, mely során felvázoltam a programom különálló részeit, ezek milyen kapcsolatban állnak egymással és, hogy a felhasználó bemenete és az ezekből generált kód milyen utat jár be sikeres és sikertelen fordítás esetén. Ezen kívül bemutatásra kerül még, hogy a felhasználói felület hogyan néz ki és miket kell, hogy tudjon.
+
+Ezután a rendszertervben említett részek részletes bemutatására került sor. Definiáltam a \ref{sec:similar} fejezetben felsorolt lépések a dolgozatban elkészített projektre specifikus algoritmusait és technikáit, beleértve a tokenizálás folyamatát, a tokenekből szintaxisfát alkotó parsert, az ezt lineáris kóddá bontó fordítót, a program által használt virtuális gépet, és ennek utasításait táblázatos formában. Végül a felhasználói felület végleges dizájnja és funkcionalitása is bemutatásra került.
+
+Az elkészült program ezután tesztelésre került kétféle módon. Az első egy kevésbé specifikus, de az összes jegyzetben található algoritmust ellenőrző módszer, mely a fordítás első négy lépését hajta végre, ellenőrizve, hogy a program konzisztens típusosság szempontjából, mely tulajdonság garantálja, hogy szintaktikailag és szemantikailag is helyes. A második módszer a fordítást elejétől a végéig ellenőrzi azzal, hogy néhány adott algoritmust konkrét értékekre futtatunk le, majd az algoritmus végrehajtása után ellenőrizzük, hogy az így kapott érték megfelel-e annak, amire számítottunk.
+
+Az így kapott program képes az Óbudai Egyetemen tanított Pszeudokódon írt kód értelmezésére, a kód típusosságának és szintaktikai helyességének ellenőrzésére, és a lefordított állomány futtatására oly módon, mely felfedi a felhasználó számára a futtatási környezet belső működését. Ezáltal a dolgozat főbb célkitűzései megvalósításra kerültek.

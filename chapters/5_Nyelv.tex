@@ -20,9 +20,9 @@ Ennek ellenére a jelenlegi megvalósítás alapjait fektette le a nyelv haszná
     \hline
     \multicolumn{1}{c}{\bfseries{Pozitívumok}}         & \multicolumn{1}{c}{\bfseries{Negatívumok}} \\
     \hline
-    Ismerős szintaxis & Webes kommunikáció csak API-k segítségével \\
+    Ismerős szintaxis & Webes kommunikáció csak API-kon át \\
     ANTLR4 könyvtár & Nem fordul webes formátumba \\
-    Dinamikus memóriakezeléssel rendelkezik \\
+    Dinamikus memóriakezelés \\
     Erősen típusos nyelv \\
     \hline
   \end{tabularx}
@@ -32,7 +32,7 @@ Ennek ellenére a jelenlegi megvalósítás alapjait fektette le a nyelv haszná
 
 \say{\textit{A Blazor a Microsoft új kísérletbeli framework-je, mely pluginok használata nélkül hozza el a C\#-ot bármely böngészőbe.}}[11] 
 
-Az előző két nyelvvel ellentétben a C\# teljesen automatikus memóriakezeléssel rendelkezik, ezen kívül a C++-hoz hasonlóan ugyanúgy lehet benne osztályokat és interfészeket használni, mely által a kód sokkal átláthatóbb.
+A C és C++ nyelvekkel ellentétben a C\# teljesen automatikus memóriakezeléssel rendelkezik, ezen kívül a C++-hoz hasonlóan ugyanúgy lehet benne osztályokat és interfészeket használni, mely által a kód sokkal átláthatóbb.
 
 Viszont míg a többi nyelvnél a kliens maga képes a kód teljes feldolgozására és lefuttatására, a Blazor használatánál szükséges egy szervergép is, melyet fel kell szerelnünk a szerver futtatásának minden szükséges elemével (megfelelő hardver, .NET Core telepítése.)
 
@@ -47,9 +47,9 @@ Bár az egyetemi tanulmányaim miatt sok tapasztalattal rendelkezem már a nyelv
     Sok személyes tapasztalat                                               & Terjengősebb mint a többi nyelv                                 \\
     A memóriakezelést a rendszer intézi, nekünk nem kell foglalkoznunk vele & Semennyi tapasztalatom nincs a webes frameworkökkel             \\
     Blazor framework kifejezetten webes alkalmazások fejlesztésére          & Futtatási környezetet igényel, nagyobb mint a fentebbi nyelvek. \\
-    Kiváló standard könyvtár                                                                                                                  \\
-    Erős OOP                                                                                                                                  \\
-    Jó szövegkezelés                                                                                                                          \\
+    Kiforrottan támogatja az objektum-orientált programozást \\
+    Kiváló standard könyvtár \\
+    Jó szövegkezelés \\
     \hline
   \end{tabularx}
 \end{center}
@@ -68,10 +68,10 @@ A Structure and Interpretation of Computer Programs\cite{sicp} című könyv sok
     \hline
     \multicolumn{1}{c}{\bfseries{Pozitívumok}}               & \multicolumn{1}{c}{\bfseries{Negatívumok}}              \\
     \hline
-    A kód maga egyben adat is                                & Semmi reális tapasztalatom nincs a nyelvvel             \\
-    Nem igényel fordítást, gyorsan lehet prototípizálni vele & Idegen, nehezen átlátható szintaxissal rendelkezik      \\
-    Páratlan listafeldolgozási képességekkel rendelkezik     & Nem igazán interneten át való futtatásra kitalált nyelv \\
-    Kiforrott standard könyvtárral rendelkezik               & Nem szeretném használni                                 \\
+    Nem igényel fordítást, gyorsan lehet prototípizálni vele & Semmi reális tapasztalatom nincs a nyelvvel             \\
+    Páratlan listafeldolgozási képességekkel rendelkezik & Idegen, nehezen átlátható szintaxissal rendelkezik      \\    
+    Kiforrott standard könyvtárral rendelkezik & Nem internetes futtatásra kitalált nyelv \\               
+    A kód maga egyben adat is & Nem szeretném használni                                 \\
     \hline
   \end{tabularx}
 \end{center}
@@ -88,13 +88,15 @@ Bár ez a projektem szempontjából sokkal járhatóbb út, mint az első lehet�
 
 Természetesen nem hagyhatjuk ki az egyik legöregebb és mégis széles körűen használatos nyelvet.
 
-A C pozitívumai közé sorolandó, hogy nagyon könnyen lehet más platformokra fordítani. Az Emscripten nevű fordítói csomag segítségével a C Wasm formátumba is fordítható, ezáltal böngészőben is futni képes.
+A C pozitívumai közé sorolandó, hogy nagyon könnyen lehet más platformokra fordítani. Az Emscripten nevű fordítói csomag segítségével a C WASM formátumba is fordítható, ezáltal böngészőben is futni képes.
 
 A nyelv pozitívumai közé sorolandó még, hogy nem túl „meglepő” (kevés szintaxissal és aránylag átlátható szabályokkal rendelkezik), kifejezetten gyors és kis állományokká fordul, és szinte páratlan szabadságot ad a fejlesztőnek a rendszer erőforrásainak felhasználásához.
 
 Cserébe a több évtizedes standard könyvtár és a nyelv pár furcsasága miatt könnyen futhat a programozó furcsa hibákba, mint például a szövegeknél esetlegesen hiányzó null byteok esetén történő túlcsordulások, vagy a hibásan lefoglalt / korábban felszabadított memóriaterületekre való írás/olvasás esetén előforduló végzetes hibák.
 
 Ezen kívül a teljesen manuális memóriakezelés bár nagyon hasznos tud lenni, de jelen problémához fölösleges extra terhet jelentene csupán. Ezen kívül a nyelv nem támogatja az osztályokat, helyette struct-ok átadogatásával oldjuk meg az egybefüggő objektumok megváltoztatását. Ez könnyen tud átláthatatlansághoz vezetni, melyet egy ilyen nem-triviális projektnél nem szívesen vállalnék.
+
+Végül a nyelv nem támogatja az objektum-orientált programozási paradigmát (\textit{Object-Oriented} \textit{Programming}, OOP), helyette az egyes függvények paraméterként fogadják az adatszerkezeteket, melyeken dolgoznak. Bár ennek segítségével lehetséges utánozni az osztály-orientált programozási stílust, én mégis szívesebben választanék olyan nyelvet, mely ezt beépítve támogatja.
 
 Bár a nyelv az egyik személyes kedvencem, számomra nem megfelelő a feladathoz. A nyelv értékelésének összefoglalója az \ref{cnyelv} táblázatban látható.
 
@@ -104,10 +106,10 @@ Bár a nyelv az egyik személyes kedvencem, számomra nem megfelelő a feladatho
     \hline
     \multicolumn{1}{c}{\bfseries{Pozitívumok}} & \multicolumn{1}{c}{\bfseries{Negatívumok}}                                  \\
     \hline
-    Könnyen fordítható Wasm-be                 & Manuális memóriakezelés                                                     \\
-    Jól felszerelt eszköztár                   & Nincs OOP                                                                   \\
-    Személyes ismeretség                       & Kényelmi funkciók hiánya (pl.: regex, for-each, map, adatszerkezetek, stb.) \\
-    Más nyelveket is ebben írtak (pl.: Python) & Nincs könnyű mód a hibakezelésre (segfault)                                 \\
+    Könnyen fordítható WASM-be                 & Manuális memóriakezelés                                                     \\
+    Jól felszerelt eszköztár                   & Nem támogatja az OOP-t \\
+    Személyes ismeretség                       & Kényelmi funkciók hiánya (pl.: regex) \\
+    Más nyelveket is ebben írtak (pl.: Python) & Nincs könnyű mód a hibakezelésre \\
     \hline
   \end{tabularx}
 \end{center}
@@ -116,9 +118,9 @@ Bár a nyelv az egyik személyes kedvencem, számomra nem megfelelő a feladatho
 
 A C++ kijavítja a C főbb hibáit a RAII-vel (Resource Aquisition Is Initialization[18], „az erőforrás lefoglalása egyben inicializáció is,” magyarul a különböző adattagok létrehozásakor a memória automatikusan lefoglalódik, megszűnésükkor pedig felszabadul) és egy sokkal kevésbé meglepő standard könyvtárral, viszont cserébe saját negatívumokkal is rendelkezik.
 
-Bár az Emscripten képes Wasm formátumba fordítani a nyelvet, a hibakezelése problematikus. Alapesetben a generált kód végzetes hibával lép ki bármilyen hiba esetén, beleértve az amúgy elkapható exception-öket. Ugyan egy kapcsoló segítségével engedélyezhetjük, hogy az utóbbi hibák újra elkaphatóak legyenek, ez súlyos lelassuláshoz vezet a programban.[5]
+Bár az Emscripten képes WASM formátumba fordítani a nyelvet, a hibakezelése problematikus. Alapesetben a generált kód végzetes hibával lép ki bármilyen hiba esetén, beleértve az amúgy elkapható exception-öket. Ugyan egy kapcsoló segítségével engedélyezhetjük, hogy az utóbbi hibák újra elkaphatóak legyenek, ez súlyos lelassuláshoz vezet a programban.[5]
 
-Ezen kívül a szövegkezelése a lentebb tárgyalt nyelvekhez képest igen nehézkes. Bár a C++ rendelkezik regex könyvtárakkal, de ezekkel kapcsolatban semmi ismeretségem nincs. A C++ hibakezelési képességei ellenére dobhat segfaultot[1]. A nyelv nem rendelkezik hivatalos csomagkezelővel sem, így a könyvtárak beimportálása nem feltétlen egyszerű és nem garantált, hogy ezek valóban át is fordulnának Wasm-ra.
+Ezen kívül a szövegkezelése a lentebb tárgyalt nyelvekhez képest igen nehézkes. Bár a C++ rendelkezik regex könyvtárakkal, de ezekkel kapcsolatban semmi ismeretségem nincs. A C++ hibakezelési képességei ellenére dobhat segfaultot[1]. A nyelv nem rendelkezik hivatalos csomagkezelővel sem, így a könyvtárak beimportálása nem feltétlen egyszerű és nem garantált, hogy ezek valóban át is fordulnának WASM-ra.
 
 Mivel a nyelv használhatósága a feladathoz ennyire kétséges, így nem felel meg számomra. A nyelv értékelésének összefoglalója az \ref{cppnyelv}-es táblázatban látható.
 
@@ -128,10 +130,10 @@ Mivel a nyelv használhatósága a feladathoz ennyire kétséges, így nem felel
     \hline
     \multicolumn{1}{c}{\bfseries{Pozitívumok}}         & \multicolumn{1}{c}{\bfseries{Negatívumok}}                                             \\
     \hline
-    Van OOP                                            & Bár van hibakezelés, de segfaultok itt is történhetnek                                 \\
-    RAII (memóriakezelést leegyszerűsíti)              & A szövegkezelés nehézkes (stream-ek, atoi és hasonló átalakító függvények furcsaságai) \\
-    Ésszerű, kiforrott standard könyvtár               & A WebAssemblybe való fordítás lassú és több előkészületet igényel                      \\
-    Személyes tapasztalat (bár nem annyi mint a C-vel) & Nem minden külső könyvtár alkalmas a Wasm-ba való fordításra                           \\
+    Van OOP                                            & Van hibakezelés, de segfaultok is \\
+    RAII (memóriakezelést leegyszerűsíti)              & A szövegkezelés nehézkes\\
+    Ésszerű, kiforrott standard könyvtár               & A WASM-be való fordítás lassú, nehézkes                      \\
+    Személyes tapasztalat (bár nem annyi mint a C-vel) & Nem minden külső könyvtár alkalmas a WASM-ba való fordításra                           \\
     \hline
   \end{tabularx}
 \end{center}
@@ -152,10 +154,11 @@ Mivel a nyelv használata ilyen nehézkes és a prototípizálás lassú, így n
     \hline
     \multicolumn{1}{c}{\bfseries{Pozitívumok}}         & \multicolumn{1}{c}{\bfseries{Negatívumok}} \\
     \hline
-    Gazdag standard könyvtár                           & Nehézkes szintaxissal rendelkezik          \\
-    Jó hibakezelés, segfault átlagos kódban lehetetlen & Nincs vele elég tapasztalatom              \\
+    Gazdag standard könyvtár & Nehézkes szintaxissal rendelkezik          \\
+    Segfault átlagos kódban lehetetlen & Nincs vele elég tapasztalatom              \\
     Remek könyvtárak, csomagkezelővel                  & Fordítás kicsit lassú                      \\
-    Natív fordulás böngésző által is érthető formátumba                                             \\
+    Jó hibakezeléssel rendelkezik \\
+    Natív fordulás WASM formátumba \\ 
     \hline
   \end{tabularx}
 \end{center}

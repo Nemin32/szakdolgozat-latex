@@ -1,10 +1,10 @@
 \subsection{Összeállítás}
 
-\addimage{rendszerterv.png}{A fordítóprogram egységei.}{plan}
-
 Az értelmező egyes lépései külön egységekként lesznek lekódolva, melyek interfészekkel képesek egymással kommunikálni. Ez azért ideális, mert a végeredmény egy látványosan elkülönülő részekből álló, egyszerűen mozgatható és összeállítható csomag. Emellett mivel az eredeti forrásállományok egymással nincsenek szoros függésben, így  bármelyik részt könnyű lecserélni, ha ez esetleg szükségessé válna.
 
 Ezen egységek egymással való kapcsolatát a \ref{fig:plan} ábra mutatja be. A zölddel jelölt útvonalak a sikeres lépéseket jelölik, bennük feltüntetve, hogy milyen adattal is szolgálunk a következő lépés számára. Pirossal pedig az egyes hibákat jelöljük, melyek rendre megszakítják a fordítás folyamatát és a felhasználói felületen megjelenítésre kerülnek.
+
+\addimage{rendszerterv.png}{A fordítóprogram egységei.}{plan}
 
 Eredeti elképzelésem szerint a fordítóprogram egy szerverként működött volna, melyhez a felhasználó egy webes kliensen keresztül fért volna hozzá. Ezen szerver feladata az lett volna, hogy a felhasználó által átadott szövegeket feldolgozza, majd olyan formában küldje vissza a kliens számára, melyet az le képes futtatni.
 
@@ -18,16 +18,16 @@ Ezen felül tervezek unit tesztként néhány algoritmust lefuttattni, majd az �
 
 \subsection{Felhasználói interfész}
 
-\addimage{editor.png}{A felhasználói felület terve}{editor}
-
 Mivel a projekt célja, hogy a Pszeudokód megértéséhez és megtanulásához nyújtson segítséget, így a felhasználói interfésznek ehhez minél több és hasznosabb eszközt kell nyújtania.
 
 Szeretném, hogy a képernyő egyik oldalán a felhasználó folyamatosan láthassa milyen értékeket vettek fel a változók, amik a program során létrejönnek. Ezen kívül szeretnék egy szekciót, mely a hibákat sorolja fel. A program vizuális felosztása a 6.2-es ábrán látható.
+
+\addimage{editor.png}{A felhasználói felület terve}{editor}
 
 Ezen kívül természetesen egy szövegszerkesztő részlegre is szükség van, ahová a bemenetet írhatjuk. Alapvetően szöveges bemenetet képzeltem el, viszont ha az időm engedi esetleg valamiféle képről történő szövegfelismerést (OCR) is felhasználhatnék a felhasználótól való adatbekérésre. A kód megjelenítésénél hasznos volna, ha szintaxiskiemelést alkalmazhatnánk, erre remek külső könyvtárak állnak rendelkezésre (pl.: highlight.js), de szükség szerint kézzel is megírható.
 
 Futás közben pedig a kód leggyakrabban lefutó részeit valamilyen látványos módon ki szeretném emelni (például azzal, hogy elsötétedik a sor.) Szükség van még egy eszköztárra is, ahol az előre- és visszaléptetésre, a futtatásra, a megállításra és a kód formázásra szolgáló gombok vannak.
 
-Az oldalt egy letisztult, a szürke különböző árnyalatait felhasználó felületként szeretném megvalósítani széles és kisképernyőn is jól olvasható elrendezéssel, a webfejlesztésben megszokott HTML+CSS+JS párosításból állna össze. A dizájn a \ref{fig:editor}-es ábrán látható.
+Az oldalt egy letisztult, a szürke különböző árnyalatait felhasználó felületként szeretném megvalósítani széles és kisképernyőn is jól olvasható elrendezéssel, a webfejlesztésben megszokott HTML+CSS+JS párosításból állna össze.
 
 Ha van idő a fejlesztés során szeretnék egy extra oldalsó sávot is az oldalra helyezni, mely felsorolja a Pszeudokód PDF-ében található algoritmusokat és kattintásra be is tölti ezeket. Ezek tárolása akár egy akár több egyszerű, szöveges statikus fájlként oldható meg.

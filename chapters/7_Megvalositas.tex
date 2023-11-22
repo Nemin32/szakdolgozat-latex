@@ -1,4 +1,4 @@
-A felhasználó által begépelt bemeneti szöveg több átalakításon esik át míg futtatható állapotba nem kerül. Ez a fejezet ezt mutatja be.
+A felhasználó által begépelt bemeneti szöveg több átalakításon esik át míg futtatható állapotba nem kerül. Ez a fejezet a fejlesztés folyamatát, a feldolgozás egyes lépéseinek bemutatását tartalmazza.
 
 \subsection{Formázás}
 
@@ -7,9 +7,9 @@ Első lépésben a felhasználó szöveget gépel be a program által nyújtott 
 Ehhez a következő változókat tartja számon:
 
 \begin{itemize}
-    \item prevIndent - Értéke igaz, ha az előző sorban volt behúzás,
-    \item prevDedent - Értéke igaz, ha az előző sor egy szinttel kevébsé lett behúzva,
-    \item oldIndent - Az előző sor behúzásának értéke számszerint.
+    \item \texttt{prevIndent} - Értéke igaz, ha az előző sorban volt behúzás,
+    \item \texttt{prevDedent} - Értéke igaz, ha az előző sor egy szinttel kevébsé lett behúzva,
+    \item \texttt{oldIndent} - Az előző sor behúzásának értéke számszerint.
 \end{itemize}
 
 Megnézzük, hogy a jelenlegi sor első szava megegyezik-e egy olyan kulcsszóval, mely új blokkot kezdeményez ("ha", "függvény", "eljárás", "ciklus") és azt, hogy az utolsó szava pedig "vége"-e.
@@ -29,11 +29,11 @@ Ahogy azt a \ref{sec:tokenizer_tech} alfejezetben bevezettem a jól formázott s
 
 Bár alapesetben a tokenizáló algoritmus feladata, hogy a kommenteket és helykihagyásokat (üres helyek és sortörések) kiszűrje, a saját implementációmban ezek is tokenként kerülnek elmentésre, majd a következő lépés előtt kerülnek szűrésre.
 
-Az általam készített tokenizálás egy egyszerű, a szöveget balról-jobbra feldolgozó algoritmussal van megvalósítva. A feldolgozásért felelős osztály rendelkezik a nyelv összes lehetséges tokenjére egy metódussal, mely sikeres feldolgozás esetén a hozzá tartozó tokennel tér vissza (a fentebb specifikált egyéb információkat beleértve) és a bemenetetet annyi karakterrel lépteti előrébb, ahány a tokenhez szükséges. Sikertelen feldolgozás esetén null értékkel térünk vissza és az esetleges előreléptetést visszacsináljuk.
+Az általam készített tokenizálás egy egyszerű, a szöveget balról-jobbra feldolgozó algoritmussal van megvalósítva. A feldolgozásért felelős osztály rendelkezik a nyelv összes lehetséges tokenjére egy metódussal, mely sikeres feldolgozás esetén a hozzá tartozó tokennel tér vissza (a fentebb specifikált egyéb információkat beleértve) és a bemenetetet annyi karakterrel lépteti előrébb, ahány a tokenhez szükséges. Sikertelen feldolgozás esetén null értékkel térünk vissza és az esetleges előreléptetést visszavonjuk.
 
 Az algoritmus sorrendben végigpróbálja az összes lehetséges token mintáját és, ha olyat talál amely ráillik a jelenlegi bemenetre, akkor továbblépteti a bemeneti szöveget és a kapott tokent hozzáfűzi a kimeneti tokenek listájához.
 
-Mivel ennek a folyamatnak az algoritmusa a modern számítógépeken a felhasználó számára érzékelhetetlenül kevés időt vesz igénybe (a saját gépemen ez körülbelül 20-25 millisecundum), így a felhasználótól kapott bemenet még gépelés közben át is esik a folyamaton. 
+Mivel ennek a folyamatnak az algoritmusa a modern számítógépeken a felhasználó számára érzékelhetetlenül kevés időt vesz igénybe (egy napjainkban átlagos számítógépen ez körülbelül 20-25 millisecundum), így a felhasználótól kapott bemenet még gépelés közben át is esik a folyamaton. 
 
 Fölmerülhet bennünk, hogy erre mi szükség van, hisz a tokenizálás folyamatát elég lenne csupán egyszer a fordítás folyamatának elején lefuttatnunk. A válasz, hogy a program egyben szintaktikai kiemelést is végez a tokenek segítségével (tehát a különböző nyelvi elemeket különféle színekkel jelöljük, így egyszerűbbé téve a programozó számára, hogy eligazodjon a kódon). Ez egy egyszerű szótár adatszerkezettel van implementálva, minden token típushoz hozzápárosítunk egy színt, melyet a felhasználói felületen beállítunk a megfelelő szövegrészletekhez.
 
@@ -48,7 +48,7 @@ Ha a tokenizálás hibás tokenbe ütközik, a folyamat rögtön megáll és a h
 \subsection{Szintaxisfa generálás}
 \label{sec:parser}
 
-A szintaxisfa generelásához a kódomban egy úgynevezett monadikus kombinátor parsert\footnote{A "parser" szót a "nyelvi értelmező" kifejezéssel lehetne a legpontosabban magyarra fordítani. Ám, mivel a külföldi szakirodalomban is mindig a "parsing" / "parser" kifejezésekkel hivatkoznak a folyamatra és algoritmus-családra és mivel a magyar név kissé körülményes, ebben a szövegben én is az angol szóval fogom ezeket a fogalmakat illetni.} használtam, melynek működési elvét egy Haskell nyelven írt programot bemutató papírból\cite{monadic} vettem át.
+A szintaxisfa generelásához a kódomban egy úgynevezett monadikus kombinátor parsert használtam, melynek működési elvét egy Haskell nyelven írt programot bemutató cikkből\cite{monadic} vettem át.
 
 A parser a következőképp működik: Olyan függvényeket specifikálunk, mely bemenetként megkapja a bemeneti szöveget és azt az indexet, ahol jelenleg tartunk a szövegben és mely egy felhasználó által specifikált értékkel és egy új (bemenet, index) párossal tér vissza, melyben az index annyival előrébb lett tolva, ahány elemet felhasználtunk. Az algoritmus használható lenne sima szövegeken is (az eredeti papír így is tesz), viszont a saját fordítómban a parser a tokenizálásból eredő listát használja fel bemenetként.
 
@@ -94,7 +94,7 @@ Ezeket kiegészítettem még pár saját vagy más forrásból származó kombin
 
 Végezetül mivel néhány parser igen hosszúra tud nyúlni, így ez elkerülhetetlenül ahhoz vezet, hogy több egymásba ágyazott \textit{bind} hívást kéne kezelnünk. Az ilyen kódon a rengeteg zárójel-pár és különféle helyeken bevezetett paraméterek és változók miatt hírhedten nehéz kiigazodni. Olyannira hogy a JavaScriptben fejlesztő programozók frusztrációjukban a "callback hell" vagyis "visszahívó (függvény) pokol" fantázianévvel illeték a jelenséget.
 
-Ezt elkerülvén a parserek mellé még egy osztályt implementáltam, mely a Haskell nyelv úgynevezett \textit{"do"} ("csináld") szintaxisát imitálja. Ennek lényege, hogy a monadikus függvények egymáson való beágyaott meghívását lineáris kóddá tudjuk alakítani úgy, hogy ugyanazt a végeredményt produkálja.
+Ezt elkerülvén a parserek mellé még egy osztályt implementáltam, mely a Haskell nyelv úgynevezett \textit{"do"} ("csináld") szintaxisát imitálja. Ennek lényege, hogy a monadikus függvények egymáson való beágyazott meghívását lineáris kóddá tudjuk alakítani úgy, hogy ugyanazt a végeredményt produkálja.
 
 Ehhez egy listában tároljuk az egymás után meghívott parsereket és hogy ezeket milyen névhez szeretnénk kötni, majd egy végső függvényhívással a program egy rekurzív ciklus segítségével "visszajátssza" számunkra a \textit{bind} hívásokat úgy mintha azt mi magunk tettük volna manuálisan.
 
@@ -109,7 +109,7 @@ parserA.bind(A =>
             fn(A,B,C))))
 \end{code}
 
-Annak ellenére, hogy rövid és egyszerű példát választottam, a \ref{src_nested_bind}-es forráskód által bemutatott esetben már most háromszoros beágyazással kell dolgoznunk. A valós Pszeudokód egyes elemeinek értelmezéséhez öt-hat különféle parserre és esetleg több ignorált elemre is (mely külön feldolgozást nem igényel, csupán a nyelvi elem típusának eldöntéséhez kell) is szükség van, melyhez így legalább hatszoros beágyazást kéne alkalmaznunk, mely nyilvánvalóan teljesen átláthatatlan és szerkeszthetetlen.
+Annak ellenére, hogy rövid és egyszerű példát választottam, a \ref{src_nested_bind}-as forráskód által bemutatott esetben már most háromszoros beágyazással kell dolgoznunk. A valós Pszeudokód egyes elemeinek értelmezéséhez öt-hat különféle parserre és esetleg több ignorált elemre is (mely külön feldolgozást nem igényel, csupán a nyelvi elem típusának eldöntéséhez kell) is szükség van, melyhez így legalább hatszoros beágyazást kéne alkalmaznunk, mely nyilvánvalóan teljesen átláthatatlan és szerkeszthetetlen.
 
 A következő példában "Do" alakba írva láthatjuk ugyanezt. Az itt látható \texttt{Parser} osztály a parserek ősosztálya, melyen a \texttt{do()} egy statikus metódus, mely a inicializál egy \texttt{Do} osztályú elemet, amire parsereket köthetünk:
 
@@ -420,7 +420,7 @@ kiír Példa()
 
 Ahogy az a \ref{src_scope} forráskódban látható, az 5. lépésnél, bár a \texttt{z} értéke valóban szintén kettőre lett állítva, ahogy az az \texttt{y} változóban is történt, se az \texttt{y}, se az \texttt{x} változó nem elérhető annak ellenére, hogy a \texttt{PéldaBelső} függvény tartománya a \texttt{Példa} függvény törzsén belül található.
 
-Ennek a kivételnek célja, hogy a programozó számára egyértelmű legyen mely változók és értékek mely függvényhez is tartoznak. Ha tegyük fel egy programban a második sorban definiálnánk egy változót egy függvényben, melyet legközelebb a századik sorban, egy teljesen más függvényben módosítanánk, az bármely más programozó számára (de akár az írónak is pár hónap elteltével) teljesen átláthatatlan kódot eredményezne.
+Ennek a kivételnek célja, hogy a programozó számára egyértelmű legyen mely változók és értékek mely függvényhez is tartoznak. Ha tegyük fel egy programban a második sorban definiálnánk egy változót egy függvényben, melyet legközelebb a századik sorban, egy teljesen más függvényben módosítanánk, az bármely más programozó számára (de akár a program eredetí készítőjének is pár hónap elteltével) teljesen átláthatatlan kódot eredményezne.
 
 Egyes programozási nyelvekben lehetőségünk van a változók úgynevezett árnyékolásra is (angolul \textit{"variable shadowing"}), mely annyit jelent, hogy ha egy változótartományon belül módosítjuk egy változó értékét, akkor a módosult érték csupán a tartományon belül érvényes, annak elhagyásakor visszaáll az eredetire.
 
