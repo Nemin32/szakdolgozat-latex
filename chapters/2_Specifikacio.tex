@@ -125,7 +125,7 @@ A Pszeudokód a C-szerű nyelvekkel ellentétben támogatja a több értékkel v
 
 A helyzetet még az komplikálja, hogy bizonyos esetekben más számú visszatérési értékekkel kell számolnunk. Ez legtöbbször például a kereső függvényeknél van használva, ahol az első érték azt jelzi, hogy egyáltalán megtaláltuk-e a keresett értéket, míg a második ennek indexével tér vissza, ha igen. Ilyen esetekben, ha nem találtunk megfelelő értéket egy darab visszatérési értékkel rendelkezünk, ha igen, akkor pedig kettővel.
 
-Ennek támogatása erősen bonyolítana a típusellenörző kódján, így helyette kötelezem a függvényeket, hogy minden águkban ugyanolyan típusú értékkel térjenek vissza. Például a fentebb említett kereső függvényeknél ilyen esetben \texttt{(hamis, 0)} elempárral térünk vissza.
+Ennek támogatása erősen bonyolítana a típusellenörző kódján, így helyette kötelezem a függvényeket, hogy minden águkban ugyanolyan típusú és mennyiségű értékkel térjenek vissza. Például a fentebb említett függvényeknél, ha nem találjuk a keresett értéket \texttt{(hamis, 0)} elempárral térünk vissza.
 
 \subsubsection{Különleges karakterek}
 

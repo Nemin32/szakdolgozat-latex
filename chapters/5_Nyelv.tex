@@ -30,11 +30,9 @@ Ennek ellenére a jelenlegi megvalósítás alapjait fektette le a nyelv haszná
 
 \subsubsection{C\#}
 
-\say{\textit{A Blazor a Microsoft új kísérletbeli framework-je, mely pluginok használata nélkül hozza el a C\#-ot bármely böngészőbe.}}[11] 
+A C\# a Microsoft válasza a Java nyelvre, mely a .NET keretrendszer része. Hasonlóképp az ihlető nyelvhez, szintén automatikus memóriakezeléssel rendelkezik, ezen kívül kiváló osztály és interfész támogatással bír. Ezek segítségével a kód sokkal egyszerűbben tehető átlátahóbbá és sok óvatlanságból eredő hiba válik vagy lehetetlenné vagy könnyen megelőzhetővé.
 
-A C és C++ nyelvekkel ellentétben a C\# teljesen automatikus memóriakezeléssel rendelkezik, ezen kívül a C++-hoz hasonlóan ugyanúgy lehet benne osztályokat és interfészeket használni, mely által a kód sokkal átláthatóbb.
-
-Viszont míg a többi nyelvnél a kliens maga képes a kód teljes feldolgozására és lefuttatására, a Blazor használatánál szükséges egy szervergép is, melyet fel kell szerelnünk a szerver futtatásának minden szükséges elemével (megfelelő hardver, .NET Core telepítése.)
+A nyelvhez beépülő ASP.NET és Blazor könyvtárak segítségével az amúgy kliensoldalon futó nyelv a böngészőbe is átültethető.
 
 Bár az egyetemi tanulmányaim miatt sok tapasztalattal rendelkezem már a nyelvvel kapcsolatban, nem szívesen kötném magam egy webes frameworkhöz, így a C\# sem megfelelő számomra a feladathoz. A nyelv értékelésének összefoglalója az \ref{csnyelv}-as táblázatban látható.
 
@@ -56,7 +54,7 @@ Bár az egyetemi tanulmányaim miatt sok tapasztalattal rendelkezem már a nyelv
 
 \subsubsection{LISP}
 
-A LISP[16] egy C-hez hasonló korú nyelv, mely lényege, hogy a kód és az adat ugyanolyan adatszerkezetben vannak tárolva. Ez nem más, mint a láncolt lista, mely lehetővé teszi, hogy bármilyen hosszúságú és bonyolultságú adatot el tudjunk tárolni aránylag egyszerű módon.
+A LISP\cite{lisp} egy C-hez hasonló korú nyelv, mely lényege, hogy a kód és az adat ugyanolyan adatszerkezetben vannak tárolva. Ez nem más, mint a láncolt lista, mely lehetővé teszi, hogy bármilyen hosszúságú és bonyolultságú adatot el tudjunk tárolni aránylag egyszerű módon.
 
 Bár egyáltalán nem tartom megfelelő nyelvnek a projektemhez, nem hagyhattam ki a megemlítését, hisz a láncolt lista futtatása nagyon hasonlít a virtuális gépről szóló fejezetben tárgyalt működéséről.
 
@@ -80,7 +78,7 @@ A Structure and Interpretation of Computer Programs\cite{sicp} című könyv sok
 
 Második opció, hogy egy olyan nyelvet használunk, mely képes WASM formátumba fordulni. Ez egy pár évvel ezelőtt bevezett nyelv, mely a JavaScripttől eltérően egy verem-alapú, bájtkóddal reprezentált programozási nyelv. Különlegessége, hogy több olyan programozási nyelv, mely korábban csak asztali környezetben volt használható lefordítható rá, így lehetőségünk nyílik ezek használatára webes környezetben is.
 
-„Az Emscripten egy nyílt-forráskódú fordító WebAssembly-re. A segítségével C és C++ kódot vagy bármely más LLVM-et használó nyelvet WebAssembly-re fordíthatunk és az Web-en, Node.js-en, vagy más wasm futtatási környezetben futtathatjuk.”[4]
+„Az Emscripten egy nyílt-forráskódú fordító WebAssembly-re. A segítségével C és C++ kódot vagy bármely más LLVM-et használó nyelvet WebAssembly-re fordíthatunk és az Web-en, Node.js-en, vagy más wasm futtatási környezetben futtathatjuk.”\cite{emscripten}
 
 Bár ez a projektem szempontjából sokkal járhatóbb út, mint az első lehetőség, itt is felmerül, hogy a WASM és a JavaScriptes környezetek között oda és vissza kell konvertálnunk az adatokat. Például a WASM natívan nem támogatja a szöveges értékeket\cite{wasmstring}, így ezeket C-szerű szövegekként (vagyis számokat tartalmazó tömbökként) kellene kezelnünk. Mivel az implementációmban másodlagos a fordító sebessége és az egyik felmerült nyelvet se találtam kifejezetten alkalmasabbnak mint a JavaScript, így az ezzel a módszerrel nyert előnyök számomra nem ellensúlyozzák az extra lépéseket.
 
@@ -116,11 +114,11 @@ Bár a nyelv az egyik személyes kedvencem, számomra nem megfelelő a feladatho
 
 \subsubsection{C++}
 
-A C++ kijavítja a C főbb hibáit a RAII-vel (Resource Aquisition Is Initialization[18], „az erőforrás lefoglalása egyben inicializáció is,” magyarul a különböző adattagok létrehozásakor a memória automatikusan lefoglalódik, megszűnésükkor pedig felszabadul) és egy sokkal kevésbé meglepő standard könyvtárral, viszont cserébe saját negatívumokkal is rendelkezik.
+A C++ kijavítja a C főbb hibáit a RAII-vel (Resource Aquisition Is Initialization\cite{raii}, „az erőforrás lefoglalása egyben inicializáció is,” magyarul a különböző adattagok létrehozásakor a memória automatikusan lefoglalódik, megszűnésükkor pedig felszabadul) és egy sokkal kevésbé meglepő standard könyvtárral, viszont cserébe saját negatívumokkal is rendelkezik.
 
-Bár az Emscripten képes WASM formátumba fordítani a nyelvet, a hibakezelése problematikus. Alapesetben a generált kód végzetes hibával lép ki bármilyen hiba esetén, beleértve az amúgy elkapható exception-öket. Ugyan egy kapcsoló segítségével engedélyezhetjük, hogy az utóbbi hibák újra elkaphatóak legyenek, ez súlyos lelassuláshoz vezet a programban.[5]
+Bár az Emscripten képes WASM formátumba fordítani a nyelvet, a hibakezelése problematikus. Alapesetben a generált kód végzetes hibával lép ki bármilyen hiba esetén, beleértve az amúgy elkapható exception-öket. Ugyan egy kapcsoló segítségével engedélyezhetjük, hogy az utóbbi hibák újra elkaphatóak legyenek, ez súlyos lelassuláshoz vezet a programban.\cite{slowdown}
 
-Ezen kívül a szövegkezelése a lentebb tárgyalt nyelvekhez képest igen nehézkes. Bár a C++ rendelkezik regex könyvtárakkal, de ezekkel kapcsolatban semmi ismeretségem nincs. A C++ hibakezelési képességei ellenére dobhat segfaultot[1]. A nyelv nem rendelkezik hivatalos csomagkezelővel sem, így a könyvtárak beimportálása nem feltétlen egyszerű és nem garantált, hogy ezek valóban át is fordulnának WASM-ra.
+Ezen kívül a szövegkezelése a lentebb tárgyalt nyelvekhez képest igen nehézkes. Bár a C++ rendelkezik regex könyvtárakkal, de ezekkel kapcsolatban semmi ismeretségem nincs. A C++ hibakezelési képességei ellenére nem egy memóriabiztonságos nyelv, így hibás címzés vagy egy változó kétszeri felszabadítása nem definiált viselkedést okoz\cite{cppundefined}, mely könnyen vezethet segfaulthoz. A nyelv nem rendelkezik hivatalos csomagkezelővel sem, így a könyvtárak beimportálása nem feltétlen egyszerű és nem garantált, hogy ezek valóban át is fordulnának WASM-ra.
 
 Mivel a nyelv használhatósága a feladathoz ennyire kétséges, így nem felel meg számomra. A nyelv értékelésének összefoglalója az \ref{cppnyelv}-es táblázatban látható.
 

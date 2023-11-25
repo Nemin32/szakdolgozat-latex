@@ -236,16 +236,24 @@ for ::= "ciklus" variable "<-" expression ("-tól" | "-től") expression "-ig" b
 
 Más nyelvekben \textit{for}-ciklusként ismert. Egy megadott kezdőértékkel rendelkező változót növel egy másik megadott értékig. A változó a függvénytörzsön belül elérhető, azon kívül nem.
 
+A ciklus a végső értékére tekintettel inklúzív, tehát a \texttt{számláló <= végsőÉrték} predikátumot ellenőrzi a ciklustörzsbe lépés előtt. Ez a tulajdonság a tömbök bejárásánál hasznos, hisz (mivel a tömbök 1-indexeltek) elegendő egyet kezdőértéknek, a tömb hosszát pedig végső értéknek megadnunk. 
+
 \begin{code}{Számláló-alapú ciklus megvalósítása}{code:for}
+// 1. Ciklus
 változó <- kezdő
 
 ciklus amíg változó < vég
     // Felhasználó által megadott ciklustörzs ...
     változó <- változó + 1
 ciklus vége
+
+// 2. Ciklus
+ciklus változó <- kezdő-től vég-ig
+    // Felhasználó által megadott ciklustörzs ...
+ciklus vége
 \end{code}
 
-Adott \texttt{kezdő} és \texttt{vég} érték esetén működése megegyezik a \ref{code:for} forráskódban látható cikluséval.
+A \ref{code:for} forráskódban látható két ciklus meghívása előtt föltételezzük, hogy a \texttt{kezdő} és \texttt{vég} változók valamilyen számértékkel lettek deklarálva úgy, hogy \texttt{kezdő < vég}. Ha ez a feltétel teljesül, a két ciklus ugyanúgy \texttt{kezdő - vég + 1} alkalommal fut le, azonban a második variáns egyrészt rövidebb kód szempontjából, másrészt pedig a \texttt{változó} változó az első esetben elérhető marad a ciklus befejeztével, a másodikban viszont nem.
 
 \subsubsection{Visszatérés függvényből}
 
