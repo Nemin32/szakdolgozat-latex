@@ -36,29 +36,28 @@ A nyelvhez beépülő ASP.NET és Blazor könyvtárak segítségével az amúgy 
 
 Bár az egyetemi tanulmányaim miatt sok tapasztalattal rendelkezem már a nyelvvel kapcsolatban, nem szívesen kötném magam egy webes frameworkhöz, így a C\# sem megfelelő számomra a feladathoz. A nyelv értékelésének összefoglalója az \ref{csnyelv}-as táblázatban látható.
 
-\begin{center}
-  \captionof{table}{A C\# nyelv értékelése.\label{csnyelv}}
-  \begin{tabularx}{\textwidth}{X X}
-    \hline
-    \multicolumn{1}{c}{\bfseries{Pozitívumok}}                              & \multicolumn{1}{c}{\bfseries{Negatívumok}}                      \\
-    \hline
-    Sok személyes tapasztalat                                               & Terjengősebb mint a többi nyelv                                 \\
-    A memóriakezelést a rendszer intézi, nekünk nem kell foglalkoznunk vele & Semennyi tapasztalatom nincs a webes frameworkökkel             \\
-    Blazor framework kifejezetten webes alkalmazások fejlesztésére          & Futtatási környezetet igényel, nagyobb mint a fentebbi nyelvek. \\
-    Kiforrottan támogatja az objektum-orientált programozást \\
-    Kiváló standard könyvtár \\
-    Jó szövegkezelés \\
-    \hline
-  \end{tabularx}
-\end{center}
+\comptable{A C\# nyelv értékelése.}{csnyelv}{
+  Sok személyes tapasztalat & Terjengősebb mint a többi nyelv \\
+  A memóriakezelést a rendszer intézi, nekünk nem kell foglalkoznunk vele & Semennyi tapasztalatom nincs a webes frameworkökkel \\
+  Blazor framework kifejezetten webes alkalmazások fejlesztésére & Futtatási környezetet igényel, nagyobb mint a fentebbi nyelvek \\
+  Kiforrottan támogatja az objektum-orientált programozást \\
+  Kiváló standard könyvtár \\
+  Jó szövegkezelés \\
+}
 
 \subsubsection{LISP}
 
-A LISP\cite{lisp} egy C-hez hasonló korú nyelv, mely lényege, hogy a kód és az adat ugyanolyan adatszerkezetben vannak tárolva. Ez nem más, mint a láncolt lista, mely lehetővé teszi, hogy bármilyen hosszúságú és bonyolultságú adatot el tudjunk tárolni aránylag egyszerű módon.
+A LISP\cite{lisp} egy C-hez hasonló korú nyelv, mely lényege, hogy a kód és az adat ugyanabban a rekurzív adatszerkezetben vannak tárolva. Ez nem más, mint az úgynevezett \textit{s-kifejezés} (\textit{s-expression}), mely háromféle elemből állhat: 
 
-Bár egyáltalán nem tartom megfelelő nyelvnek a projektemhez, nem hagyhattam ki a megemlítését, hisz a láncolt lista futtatása nagyon hasonlít a virtuális gépről szóló fejezetben tárgyalt működéséről.
+\begin{itemize}
+  \item lehet atomi érték, melyet önmagával reprezentálunk,
+  \item lehet üres érték, melyet a \texttt{nil} értékkel jelölünk,
+  \item végül pedig lehet úgynevezett \textit{cons}-cella\footnote{A \textit{cons} szó itt a \textit{"construct"} ("épít") angol kifejezésre, egyáltal a nyelvben használt egyik beépülő függvényre utal, mely segítségével értékeket tudunk összeláncolni és ezáltal az adatszerkezeteink felépíteni.\cite{cons}}, mely két adattagból áll. Ezek közül első a \textit{fej}, mely az adat maga, amit eltárolunk (mely lehet vagy atomi érték vagy egy másik s-kifejezés), a második pedig a \textit{farok}, amely egy mutató, mely egy másik s-kifejezésre mutat.
+\end{itemize}
 
-A Structure and Interpretation of Computer Programs\cite{sicp} című könyv sokat segített a folyamat megértésében, mely a LISP egyik átalakított változatát, a Scheme-t használja és egy fejezetében egy interpreter majd később egy fordító megírását mutatja be. A nyelv értékelésének összefoglalója az \ref{lispnyelv}-ös táblázatban látható.
+Ezeket felhasználva bármilyen bonyolultságú és hosszú adatot el tudunk tárolni \textit{cons}-cellákból álló láncolt listák alakjában. 
+
+Bár egyáltalán nem tartom megfelelő nyelvnek a projektemhez, nem hagyhattam ki a megemlítését, hisz a Structure and Interpretation of Computer Programs\cite{sicp} című könyv sokat segített a folyamat megértésében, mely a LISP egyik átalakított változatát, a Scheme-t használja és egy fejezetében egy interpreter majd később egy fordító megírását mutatja be. A nyelv értékelésének összefoglalója az \ref{lispnyelv}-ös táblázatban látható.
 
 \begin{center}
   \captionof{table}{A LISP nyelv értékelése.\label{lispnyelv}}
@@ -146,20 +145,13 @@ Cserébe a nyelv írása nagyon nehézkes, a fordító ott ahol tud felhívja a 
 
 Mivel a nyelv használata ilyen nehézkes és a prototípizálás lassú, így nem szeretném ezt a nyelvet választani. A nyelv értékelésének összefoglalója az \ref{rustnyelv}-os táblázatban látható.
 
-\begin{center}
-  \captionof{table}{A Rust nyelv értékelése.\label{rustnyelv}}
-  \begin{tabularx}{\textwidth}{X X}
-    \hline
-    \multicolumn{1}{c}{\bfseries{Pozitívumok}}         & \multicolumn{1}{c}{\bfseries{Negatívumok}} \\
-    \hline
-    Gazdag standard könyvtár & Nehézkes szintaxissal rendelkezik          \\
-    Segfault átlagos kódban lehetetlen & Nincs vele elég tapasztalatom              \\
-    Remek könyvtárak, csomagkezelővel                  & Fordítás kicsit lassú                      \\
-    Jó hibakezeléssel rendelkezik \\
-    Natív fordulás WASM formátumba \\ 
-    \hline
-  \end{tabularx}
-\end{center}
+\comptable{A Rust nyelv értékelése}{rustnyelv}{
+  Gazdag standard könyvtár & Nehézkes szintaxissal rendelkezik \\
+  Segfault átlagos kódban lehetetlen & Nincs vele elég tapasztalatom \\
+  Remek könyvtárak, csomagkezelővel & Fordítás kicsit lassú \\
+  Jó hibakezeléssel rendelkezik \\
+  Natív fordulás WASM formátumba \\ 
+}
 
 \subsection{JavaScript és arra forduló nyelvek}
 
@@ -167,11 +159,19 @@ Végül lehetőségünk van még az egész programot JavaScriptben vagy egy arra
 
 \subsubsection{JavaScript}
 
-A JavaScript a böngészőkben futó általános célú nyelv. Az évtizedek során kinőtte egyszerű interaktivitást nyujtó funkcionalitását és mára egy kifejlett, dinamikus gyenge típusosságal rendelkező programozási nyelv.
+A JavaScript böngészőkben futó, általános célú nyelv. Az évtizedek során kinőtte egyszerű interaktivitást nyujtó funkcionalitását és mára egy kifejlett, dinamikus gyenge típusosságal rendelkező programozási nyelv.
 
 Előnyei közé tartozik, hogy a nyelv automatikus memóriakezeléssel, dinamikus hosszúságú tömbökkel, és mutatók helyett referenciakezeléssel rendelkezik, így az egyes értékek szabadon egymásba ágyazhatóak. Emelett, mivel a böngészők natívan támogatják, így használata nem igényel fordítóprogramot.
 
-Hátránya viszont, hogy mivel gyengén típusos nyelv, így a progamozónak saját magának kell megbizonyosodnia afelől, hogy az egyes függvények és műveletek megfelelő típusú értékeken kerülnek elvégzésre. Ez könnyen vezethet óvatlanságból hibákhoz, főleg egy ilyen volumenű programban, így végül a TypeScript mellett döntöttem.
+Hátránya viszont, hogy mivel gyengén típusos nyelv, így a progamozónak saját magának kell megbizonyosodnia afelől, hogy az egyes függvények és műveletek megfelelő típusú értékeken kerülnek elvégzésre. Ez könnyen vezethet óvatlanságból hibákhoz, főleg egy ilyen volumenű programban, így végül a TypeScript mellett döntöttem. A nyelv bemutatása a \ref{jsnyelv} táblában látható.
+
+\comptable{A JavaScript nyelv értékelése}{jsnyelv}{
+  Natívan fut a böngészőkben & Gyengén típusos \\
+  Dinamikus memóriakezelés & Nagy kódbázis esetén átláthatatlan \\
+  Nem igényel fordítást \\
+  Homokozóban fut, biztonságos \\
+  Szabadon egymásba ágyazható adatszerkezetekkel rendelkezik \\
+}
 
 \subsubsection{TypeScript}
 
@@ -181,7 +181,13 @@ A JavaScript összes előnyével rendelkezik, azon felül még az óvatlanságb�
 
 Hátránya, hogy egy extra fordítási lépést igényel és hiába a típusellenőrzés, vannak szituációk, amik esetében a típusellenörző képtelen önmagától ítéletet hozni.
 
-Végül emellett a nyelv mellett döntöttem és az egész projekt, beleértve a fordítót és az azt meghajtó felhasználói felületet, így TypeScript nyelven írtam.
+Végül emellett a nyelv mellett döntöttem és az egész projekt, beleértve a fordítót és az azt meghajtó felhasználói felületet, így TypeScript nyelven írtam. A nyelv bemutatása a \ref{tsnyelv} táblában látható.
+
+\comptable{A TypeScript nyelv értékelése}{tsnyelv}{
+  A JavaScript összes pozitívuma & Fordítani szükséges \\
+  Aránylag jó típusossággal és típus-inferenciával rendelkezik & Azonban vannak esetek, amikor a típusrendszer nem képes önállóan dolgozni \\
+  Támogatja az osztályokat és interfészeket & A típusosság fordítás után elveszik \\
+}
 
 \subsubsection{ReScript}
 
@@ -189,4 +195,11 @@ A ReScript az OCaml nyelv szintaxisát kölcsönző programozási nyelv, mely Ja
 
 Hisz a dolgozatra való készülésben sokat segített a \ref{sec:simpl} alfejezetben tárgyalt SimPL nyelv, mely szintén OCaml nyelvben íródott, így fölmerült bennem, hogy ideális lenne a könyből tanult módszereket egy olyan nyelvben kamatoztatni, mely végül szintén JavaScriptre fordul, így eleget téve annak a kívánságnak, hogy ne kelljen két külön futtatási környezet között konvertálnunk adatokat.
 
-Sajnos azonban a nyelvvel való kísérletezés során arra jutottam, hogy nagyon kényelmetlen számomra a használata és azon parser algoritmus, melyet fel szerettem volna használni a nyelv egy limitációja miatt nem is működne. Így sajnos látványos előnyei ellenére el kellett vetnem a nyelv használatát.
+Sajnos azonban a nyelvvel való kísérletezés során arra jutottam, hogy nagyon kényelmetlen számomra a használata és azon parser algoritmus, melyet fel szerettem volna használni a nyelv egy limitációja miatt nem is működne. Ezt kiküszöbölni csupán azzal lehetett volna, ha JavaScript nyelven írt függvényeket hívünk meg, majd az azok által nyújtott értékekkel dolgozunk tovább. Azonban ezzel a módszerrel a nyelv fő erősségét vesztettem volna el, így sajnos látványos előnyei ellenére el kellett vetnem a használatát. A nyelv bemutatása a \ref{rsnyelv} táblában látható.
+
+\comptable{A ReScript nyelv értékelése}{rsnyelv}{
+  Sok programozási minta tömörebb, mint más nyelvekben & A használni kívánt algoritmust nem támogatja \\
+  Nincs null érték, se \texttt{undefined} & Fordítóprogramot igényel \\
+  Erősen és statikusan típusos & A fejlesztése nem aktív \\
+  & Egyes funkciókhoz szükséges JavaScript kódot hívnunk, melyek helyességéről nem tudunk meggyőződni \\
+}

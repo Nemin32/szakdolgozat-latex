@@ -279,6 +279,7 @@ A létrehozott szekvenciális kód egy egyszerű verem-alapú virtuális gépen 
 Alább olvasható a szekvenciális kódba fejtés után kapott, a virtuális gép által értelmezett összes utasítás.
 
 \newcommand{\codetable}[3]{
+\minipage[t]{\linewidth}\vspace{-8pt}
     \begin{center}
         \captionof{table}{#1\label{#2}}
         \begin{tabularx}{\textwidth}{ l l X }
@@ -291,6 +292,7 @@ Alább olvasható a szekvenciális kódba fejtés után kapott, a virtuális gé
             \hline
         \end{tabularx}
     \end{center}
+\endminipage
 }
 
 \subsubsection{Hibakeresés}
@@ -304,17 +306,19 @@ Bár \ref{code_debug} táblában látható két kulcsszó nem része a nyelv spe
 
 \subsubsection{Ugrások}
 
+A \ref{code_jump} tábla mutatja be a nyelv által támogatott két elágazási formát. A szokásos Assembly nyelvekhez hasonlóan itt is lehetőségünk van feltételes és feltétel nélküli ugrásokhoz, ám azoktól eltérően külön "ugrás ha [nagyobb, kisebb, (nem) egyenlő]" utasítások helyett, a feltételes ugrás a verem tetején lévő logikai érték alapján dönti el, hogy a program számláló változzon-e vagy sem.
+
 \codetable{Ugrásokra vonatkozó utasítások}{code_jump}{
     LABEL & név & Létrehoz egy \textit{név} nevű cimkét, melyre az ugrások hivatkozhatnak. \\
     JMP & cimke & Feltétel nélkül ugrik a \textit{cimke} nevű cimkéhez. \\
     FJMP &cimke & Ugrik a \textit{cimke} nevű cimkéhez, ha a verem tetején lévő elem hamis. \\
 }
 
-A \ref{code_jump} tábla mutatja be a nyelv által támogatott két elágazási formát. A szokásos Assembly nyelvekhez hasonlóan itt is lehetőségünk van feltételes és feltétel nélküli ugrásokhoz, ám azoktól eltérően külön "ugrás ha [nagyobb, kisebb, (nem) egyenlő]" utasítások helyett, a feltételes ugrás a verem tetején lévő logikai érték alapján dönti el, hogy a program számláló változzon-e vagy sem.
-
 Fontos még megjegyezni, hogy a nyelv csak abszolút címekre való ugrást engedélyez, mivel relatív ugrásra (tehát a jelenlegi vagy felhasználó által megadott címtől bizonyos meghatározott távolságra lévő címre lépni) nincs szükségünk és csak nehezebbé tenné az egymást követő utasítások menetét.
 
 \subsubsection{Függvényhívás és függvényekből való visszatérés}
+
+Mivel a Pszeudokód lehetőséget biztosít függvények és eljárások létrehozására, így ezt a virtuális gépben is biztosítanunk kell, ezeket a \ref{code_func} tábla mutatja be.
 
 \codetable{Függvényhívás és visszatérési utasítások}{code_func}{
     CALL & függvény & Meghívja a \textit{függvény} függvényt. A jelenlegi program számláló (PC) elmentésre kerül a számláló-verembe, majd ugrunk a \textit{függvény} cimkéhez. \\
@@ -322,7 +326,7 @@ Fontos még megjegyezni, hogy a nyelv csak abszolút címekre való ugrást enge
     RETCMP & hossz & \textit{hossz} hosszúságú tömböt készít a veremben lévő elemekből, majd egy erre mutató címet helyez el a tömbön. \\
 }
 
-Mivel a Pszeudokód lehetőséget biztosít függvények és eljárások létrehozására, így ezt a virtuális gépben is biztosítanunk kell. Maguk a függvények a kód többi részével együtt kerülnek listába, a fordító nem helyezi őket külön memóriaterületre. Azonban, hogy elkerüljük, hogy a futás során az értelmező belépjen egy meg nem hívott függvény törzsébe, a függvények elé egy feltétel nélküli ugrást helyezünk, mellyel annak végére ugrunk és onnan folytatjuk a végrehajtást.
+Maguk a függvények a kód többi részével együtt kerülnek listába, a fordító nem helyezi őket külön memóriaterületre. Azonban, hogy elkerüljük, hogy a futás során az értelmező belépjen egy meg nem hívott függvény törzsébe, a függvények elé egy feltétel nélküli ugrást helyezünk, mellyel annak végére ugrunk és onnan folytatjuk a végrehajtást.
 
 A \texttt{CALL} utasítás lebontható volna egy egyszerű feltétel nélküli ugrásra és a program számláló jelenlegi értékének a számláló-veremre helyezéséért felelős utasításokra, ám mivel a számláló-veremben tárolt értékek csak függvényhívás és azokból való visszatérés esetén módosulnak, így egybe vettem a kettőt.
 
@@ -354,7 +358,7 @@ Fontos megjegyezni, hogy bár a verem miatt \textit{első} és \textit{második}
     BINOP & mod & Az \textit{első} és \textit{második} érték hányadosának maradékát adja. \\
 }
 
-A \ref{code_arithm} végeredményei mind szám típusú értékek.
+A \ref{code_arithm} tábla utasításainak végeredményei mind szám típusú értékek.
 
 \codetable{Összehasonlító műveletek}{code_comp}{
     BINOP & < & Igaz, ha \textit{első} kisebb, mint \textit{második}. \\
@@ -365,14 +369,14 @@ A \ref{code_arithm} végeredményei mind szám típusú értékek.
     BINOP & =/= & Igaz, ha \textit{első} nem egyenlő \textit{második}-al. \\
 }
 
-A \ref{code_comp} végeredményei mind logikai értékek.
+A \ref{code_comp} tábla utasításainak végeredményei mind logikai értékek.
 
 \codetable{Összehasonlító műveletek}{code_logic}{
     BINOP & és & Igaz, ha \textit{első} és \textit{második} értéke is igaz. \\ 
     BINOP & vagy & Igaz, ha \textit{első} vagy \textit{második} értéke igaz. \\ 
 }
 
-A \ref{code_logic} végeredményei szintén mind logikai értékek.
+A \ref{code_logic} tábla utasításainak végeredményei szintén mind logikai értékek.
 
 \subsubsection{Változótartományok létrehozása és megszüntetése}
 \label{sec:scope}

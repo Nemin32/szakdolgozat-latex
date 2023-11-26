@@ -89,7 +89,7 @@
     label={#2},
     alsoletter={()[].=},
     }
-    \minipage[t]{\linewidth}\vspace{-14pt}
+    \minipage[t]{\linewidth}\vspace{-8pt}
     }
   {\endminipage}
 
@@ -99,7 +99,7 @@
     % caption={#1} \label{ebnf:#2},
     alsoletter={()[].=},
     }
-    \minipage[t]{\linewidth}\vspace{-14pt}
+    \minipage[t]{\linewidth}\vspace{-8pt}
 }{\endminipage}
 
 
@@ -140,7 +140,7 @@
 % sorköz
 \linespread{1.15}
 
-\setlength{\footskip}{2cm}
+% \setlength{\footskip}{2cm}
 
 % ábra és táblázat számozás beállítása fejezetenként
 \setcounter{figure}{0}
@@ -177,6 +177,22 @@
     \caption{#2}
     \label{fig:#3}
   \end{figure}
+}
+
+\newcommand{\comptable}[3]{
+
+    \minipage[t]{\linewidth}\vspace{-8pt}
+\begin{center}
+  \captionof{table}{#1\label{#2}}
+  \begin{tabularx}{\textwidth}{X X}
+    \hline
+    \multicolumn{1}{c}{\bfseries{Pozitívumok}}         & \multicolumn{1}{c}{\bfseries{Negatívumok}} \\
+    \hline
+    #3
+    \hline
+  \end{tabularx}
+\end{center}
+\endminipage
 }
 
 % ábra és táblajegyzék formázása
