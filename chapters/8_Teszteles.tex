@@ -6,7 +6,106 @@ Mivel a program része, hogy az oldalsávból a felhasználó betölthet tetsző
 
 A tesztelési környezet sorra lefuttatja a tokenizálás, értelmezés, és típusellenőrzés lépéseit az egyes algoritmusokon, majd ennek eredményét egy webes felületen összegzi a felhasználó számára.
 
-A program jelenlegi állapotában mind a 96 algoritmust sikeresen feldolgozza.
+Alább látható a kilencvenhat algoritmus, melyre ezt a folyamatot lefuttattam:
+
+\begin{tabularx}{\textwidth}{X X}
+1.1. Euklideszi algoritmus & 8.3. Kupacrendezés \\
+1.2. Euklideszi algoritmus (2) & 8.2. Kupac építése \\
+1.3. Relatív prím vizsgálat & 8.1. Kupactulajdonság fenntartása \\
+1.4. Nullát eredményező elempárok száma & 7.12. Ütemezés késés minimalizálással \\
+2.1. Sorozatszámítás programozási tétel & 7.11. Esemény elkülönítés \\
+2.2. Eldöntés programozási tétel & 7.10. Esemény kiválasztás \\
+2.3. Módosított eldöntés programozási tétel & 7.9. Kincsek begyűjtése (mohó algoritmus) \\
+2.4. Prím teszt & 7.8. Bejárási út kiolvasása (dinamikus programozás) \\
+2.5. Növekvő rendezettség vizsgálata & 7.7. Összegyűjtött kincsek összege (dinamikus programozás) \\
+2.6. Kiválasztás programozási tétel & 7.6. 0-1 hátizsák probléma mohó megoldása \\
+2.7. Lineáris keresés programozási tétel & 7.5. Pénzkifizetés mohó algoritmusa \\
+2.8. Lineáris keresés programozási tétel (konkrét érték keresése) & 7.4. Leghosszabb közös részsorozat előállítása \\
+2.9. Megszámlálás programozási tétel & 7.3. Leghosszabb közös részsorozat hossza \\
+2.10. Maximumkiválasztás programozási tétel. & 7.2. Kiválasztott elemek kiolvasása \\
+2.11. Másolás programozási tétel & 7.1. 0-1 hátizsák probléma \\
+2.12. Kiválogatás programozási tétel & 6.6. k-adik legkisebb elem kiválasztása \\
+2.13. Kiválogatás programozási tétel az eredeti tömbben & 6.5. Gyorsrendezés szétválogatása \\
+2.14. Kiválogatás programozási tétel az eredeti tömbben az eredeti elemek megtartásával & 6.4. Gyorsrendezés \\
+2.15. Szétválogatás programozási tétel & 6.3. Összefésülés \\
+2.16. Szétválogatás programozási tétel egyetlen új kimeneti tömbbe & 6.2. Összefésülő rendezés \\
+2.17. Szétválogatás programozási tétel az eredeti tömbben & 6.1. Felező maximumkiválasztás \\
+2.18. Metszet programozási tétel & 5.17. Halmazok szimmetrikus differenciája \\
+2.19. Közös elem létezésének vizsgálata & 5.16. Halmazok különbsége \\
+2.20. Unió programozási tétel & 5.15. Halmazok metszete \\
+2.21. Ismétlődések kiszűrése & 5.14. Halmazok uniója \\
+2.22. Összefuttatás programozási tétel & 5.13. Részhalmaz vizsgálat \\
+2.23. Módosított összefuttatás programozási tétel & 5.12. Tartalmazás vizsgálat \\
+2.24. Másolás és sorozatszámítás összeépítése & 5.11. Halmaz létrehozása \\
+2.25. Másolás és maximumkiválasztás összeépítése & 5.10. Halmaztulajdonság vizsgálata \\
+2.26. Másolás és maximumkiválasztás összeépítése (módosított, kevésbé hatékony változat) & 5.9. Megszámlálás programozási tétel rendezett tömbben \\
+2.27. Megszámolás és keresés összeépítése & 5.8. Módosított kiválogatás programozási tétel rendezett tömbben \\
+2.28. Maximumkiválasztás és kiválogatás összeépítése & 5.7. Kiválogatás programozási tétel rendezett tömbben \\
+2.29. Kiválogatás és sorozatszámítás összeépítése & 5.6. Kiválasztás programozási tétel rendezettben \\
+2.30. Kiválogatás és maximumkiválasztás összeépítése & 5.5. Módosított eldöntés programozási tétel rendezett tömbben \\
+2.31. Kiválogatás és másolás összeépítése & 5.4. Eldöntés programozási tétel rendezett tömbben \\
+3.1. Csere & 5.3. Logaritmikus keresés rekurzív megvalósítása \\
+3.2. Egyszerű cserés rendezés & 5.2. Logaritmikus keresés iteratív megvalósítása \\
+3.3. Minimumkiválasztásos rendezés & 5.1. Lineáris keresés rendezett tömbben \\
+3.4. Buborékrendezés & 4.13. Maximumkiválasztás programozási tétel rekurzív megvalósítása \\
+3.5. Javított buborékrendezés & 4.12. Megszámlálás programozási tétel rekurzív megvalósítása \\
+3.6. Beillesztéses rendezés & 4.11. Lineáris keresés programozási tétel rekurzív megvalósítása \\
+3.7. Javított beillesztéses rendezés & 4.10. Sorozatszámítás programozási tétel rekurzív megvalósítása \\
+3.8. Shell rendezés & 4.8. $a^N$ felezéses elvű rekurzív meghatározása \\
+3.9. Szétosztó rendezés & 4.7. $a^N$ rekurzív meghatározása \\
+3.10. Számlálva szétosztó rendezés & 4.6. $a^N$ iteratív meghatározása \\
+3.11. Számláló rendezés & 4.5. Az első N darab Fibonacci szám megadása \\
+4.1. Faktoriális iteratív kiszámítása & 4.4. Fibonacci sorozat N-edik elemének iteratív meghatározása \\
+4.2. Faktoriális rekurzív kiszámítása & 4.3. Fibonacci sorozat N-edik elemének rekurzív meghatározása \\
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{tabularx}
 
 Ezen módszer előnye, hogy semmi felhasználói interakciót nem kíván és átfogóan ellenőrzi a program futásának első három állomását (a formázást nem beleértve, mely lényegi átalakítást nem végez). Hátránya azonban, hogy a kód bár garantáltan helyes típusosság szempontjából az implementáció pontosságát nem ellenőrzi, hisz az egyes függvények nem kerülnek lefuttatásra.
 
@@ -16,4 +115,51 @@ Az előző fejezetben felvázolt hiányosság pótlására néhány algoritmust 
 
 \addimage{teszt.png}{Az algoritmusok tesztelésének folyamata}{testing}
 
-A \ref{fig:testing} ábrán látható ennek folyamata. Adott algoritmus esetén megadjuk annak bemenetét és az elvárt kimenetet. A bemenetet Pszeudokód értékké konvertáljuk, majd létrehozunk egy virtuális gépet, melyben a bemeneti érték elérhető a \texttt{bemenet} változóval. Eztán lefordítjuk az ellenőrizni kívánt algoritmust és meghívjuk a szolgáltatott értékkel. A függvény kimenetét ezután visszakonvertáljuk JavaScript értékké, majd ezt összehasonlítjuk az elvárt értékkel.
+A \ref{fig:testing} ábrán látható ennek folyamata. Adott algoritmus esetén megadjuk annak bemenetét és az elvárt kimenetet. A bemenetet Pszeudokód értékké konvertáljuk, majd létrehozunk egy virtuális gépet, melyben az így kapott értéket a \texttt{bemenet} változóban tesszük elérhetővé. Eztán lefordítjuk az ellenőrizni kívánt algoritmust és meghívjuk a szolgáltatott értékkel. A függvény kimenetét ezután visszakonvertáljuk JavaScript értékké, majd ezt összehasonlítjuk az elvárt értékkel.
+
+\minipage[t]{\linewidth}\vspace{-14pt}
+\begin{center}
+    \captionof{table}{Tesztelt algoritmusok\label{tesztelt}}
+    \begin{tabularx}{\textwidth}{ l l X X }
+        \hline
+        \multicolumn{1}{c}{\bfseries{Kód}}  &
+        \multicolumn{1}{c}{\bfseries{Bemenet}} &
+        \multicolumn{1}{c}{\bfseries{Várt kimenet}} &
+        \multicolumn{1}{c}{\bfseries{Kapott kimenet}}      \\
+
+        \hline
+        \texttt{kimenet <- bemenet * 2} & 5 & 10 & 10 \\
+        \texttt{kimenet <- bemenet + 5} & "Helló!" & Típushiba & Típushiba \\
+        1.1. Euklideszi algoritmus & [15, 33] & 3 & 3 \\
+        3.4. Buborékrendezés & [3,2,1,5,4] & [1,2,3,4,5] & [3,2,1,5,4] \\
+        3.4. Buborékrendezés átalakítva & [3,2,1,5,4] & [1,2,3,4,5] & [1,2,3,4,5] \\
+        4.5. Az első N Fibonacci szám & 3 & [1,2,3] & [1,2,3] \\ 
+        4.5. Az első N Fibonacci szám & 5 & [1,2,3,5,8,13] & [1,2,3,5,8,13] \\ 
+        2.5. Rendezettség eldöntése & [3,2,1] & Hamis & Hamis \\
+        2.5. Rendezettség eldöntése & [1,2,3,4,5] & Igaz & Igaz \\
+        5.3. Logaritmikus keresés (10-re) & [3,5,8,10,12] & 4 & 4 \\
+        \hline
+    \end{tabularx}
+\end{center}
+\endminipage
+
+Ahogy látható a Buborékrendezés algoritmus tesztelésénél hibás értéket kapunk. Ez amiatt történik, mivel a megvalósításomban a \texttt{for}-típusú számláló ciklusok nem képesek lefelé számolni, ami az algoritmushoz szükséges lenne. Ezt küszöböli ki az alatta lévő verzió, mely kódja a \ref{code:bubor} forráskódban található.
+
+\begin{code}{Átalakított buborékrendezés}{code:bubor}
+eljárás BuborékRendezés(címszerint x : T tömb, n : egész)
+    i <- n
+
+    ciklus amíg i >= 2
+        ciklus j <- 1-től (i - 1)-ig
+            ha x[j] > x[j + 1] akkor
+                x[j] <-> x[j + 1]
+            elágazás vége
+        ciklus vége
+
+        i <- i - 1
+    ciklus vége
+eljárás vége
+
+kimenet <- bemenet
+BuborékRendezés(&kimenet, 5)
+\end{code}
