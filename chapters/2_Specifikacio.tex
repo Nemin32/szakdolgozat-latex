@@ -1,6 +1,6 @@
 Közel minden magyar, programozást tanító egyetemen, így az Óbudai Egyetemen is megtalálható egy Pszeudokódnak nevezett, legtöbbször C-re hasonlító képzeletbeli programozási nyelv. 
 
-Lényegük, hogy az informálisan definiált algoritmusokat, mint például az "adjuk össze az első tíz páros számot" a \ref{code:firstten} forráskódhoz hasonló egységes, a számítógép által is értelmezhető utasításokra fordítható alakra hozza:
+Lényegük, hogy az olyan informálisan definiált algoritmusokat, mint például az "adjuk össze az első tíz páros számot", a \ref{code:firstten} forráskódhoz hasonló egységes, a számítógép által is értelmezhető utasításokra fordítható alakra hozza:
 
 \begin{code}{Az első tíz páros szám összege}{code:firstten}
 i <- 1
@@ -19,7 +19,7 @@ ciklus vége
 kiír összeg
 \end{code}
 
-Ennek célja az algoritmikus gondolkodás elsajátításának megkönnyebbítése, ezen kívül az olyan fogalmak bemutatása és megtanítása is, mint hogy mit jelent és miből áll a szintaxis, mik a típusok, az alapvető alkotóelemek, melyek minden programban megtalálhatóak, és egyéb, hasonlóképp kihagyhatatlan részei a programozó eszköztárának.
+Ennek célja az algoritmikus gondolkodás elsajátításának megkönnyebbítése, ezen kívül az olyan fogalmak bemutatása és megtanítása is, mint hogy mit jelent és miből áll a szintaxis, mik a típusok, melyek azok az alkotóelemek, melyek minden programban megtalálhatóak és egyéb, hasonlóképp kihagyhatatlan részei a programozó eszköztárának.
 
 Ebben a fejezetben specifikálni szeretném pontosan milyen elemekből is áll a Pszeudokód, milyen szintaxissal rendelkezik és milyen egyéb igényeket támaszt, melyet a dolgozatomnak el kell tudnia látni.
 
@@ -27,7 +27,7 @@ Ebben a fejezetben specifikálni szeretném pontosan milyen elemekből is áll a
 
 A Pszuedokód egy imperatív, Turing-teljes programozási nyelv, mely a C-szerű nyelvek családjába tartozik.
 
-Az imperatív nyelvek esetében a programozó egy bizonyos szintű abszrtraktció mellett a "Hogyan?" kérdésre válaszolva alkotja meg a programját. Ez alatt azt értjük, hogy a gép számára egzakt utasításokat adunk, mint például "töltsd be a \texttt{3} értéket az \texttt{i} változóba" vagy "ha \texttt{x} érték igaz, ugorj az \texttt{igaz\_ág} elágazásba". A legtöbb C-szerű nyelv, beleértve a Pszeudokódot is, imperatív.
+Az imperatív nyelvek esetében a programozó egy bizonyos szintű abszrtraktció mellett a "Hogyan?" kérdésre válaszolva alkotja meg a programját. Ez alatt azt értjük, hogy a gép számára egzakt utasításokat adunk, mint például "töltsd be a \texttt{3} értéket az \texttt{i} változóba" vagy "ha \texttt{x} érték igaz, ugorj az \texttt{igaz\_ág} cimkéjű elágazásba". A legtöbb C-szerű nyelv, beleértve a Pszeudokódot is, imperatív.
 
 Velük ellentétben állnak az úgynevezett deklaratív nyelvek, melyeknél a programozó a "Mit?" kérdésre ad választ. Ilyen például az SQL nyelv, ahol nem feladtunk meghatázorzni pontosan hogyan is érjük el az egyes elemeket egy adatbázisból, csupán annak deklarálása hogy melyik elemeket szeretnénk lekérni.
 
@@ -37,20 +37,20 @@ A Turing-teljesség definícióját Stephan Kepser cikkéből kölcsönöztem, m
 
 Ahhoz, hogy a teljességet bizonyítsuk, meg kell mutatnunk, hogy a nyelv képes egy univerzális Turing-gépet szimulálni. Ez a képzeletbeli gép egy végtelen hosszú tekerccsel rendelkező olvasó/író fej, mely egy véges hosszúságú utasítási lista alapján képes a tekercsről adatokat beolvasni, majd ezeket értelmezve új adatokat írni arra (vagy a meglévőket felülírni.)
 
-Mivel a Pszeudokód képes (elvben) tetszőleges hosszúságú tömbök létrehozására, ezekben a tömbökben véletlenszerű adatelérésre és módosításra, és rendelkezik folyamatvezérlő szerkezetekkel, így kimondhatjuk, hogy a nyelv Turing-teljes és ezáltal bármely más tetszőleges ennek megfelelő nyelv kódját átfordíthatjuk rá vagy bármely Pszeudokódban írt program átfordítható egy másik ilyen nyelvre.
+Mivel a Pszeudokód képes (elvben) tetszőleges hosszúságú tömbök létrehozására, ezekben a tömbökben véletlenszerű adatelérésre és módosításra, ezen kívl rendelkezik folyamatvezérlő szerkezetekkel, így kimondhatjuk, hogy a nyelv Turing-teljes és ezáltal bármely más tetszőleges ennek megfelelő nyelv kódját átfordíthatjuk rá vagy bármely Pszeudokódban írt program átfordítható egy másik ilyen nyelvre.
 
 \subsection{Szintaktikai elemek és szemantikájuk}
 
 A Pszeudokód sokat merít a C-szerű nyelvekből, így sok hasonlóság is felfedezhető benne, ám bizonyos részeiben eltér. A következőkben a Pszeudokód szemantikai elemei és értelmezésük kerül bemutatásra.
 
-Az egyes programozási nyelvek "nyelvtana" (angol szakszóval a nyelv \textit{"grammar"}-ja), alatt azokat a szabályokat értjük, melyek az összes a nyelv által értelmezett, szintaktikailag érvényes programot jellemzik. Ide értjük az összes kulcsszó és operátorok felsorolását, a nyelv által használt írásjeleket, és azt is, hogy ezeket milyen alakban vagyunk képesek összeépíteni.
+Az egyes programozási nyelvek "nyelvtana" (angol szakszóval a nyelv \textit{"grammar"}-ja), alatt azokat a szabályokat értjük, melyek az összes a nyelv által értelmezett, szintaktikailag érvényes programot jellemzik. Ide értjük az összes kulcsszó és operátorok felsorolását, a nyelv által használt írásjeleket és azt is, hogy ezeket milyen alakban vagyunk képesek összeépíteni.
 
-John W. Backus 1959-ben az ALGOL 60 nyelv nyelvi elemeinek formális definiálására alkotott meg egy leíró nyelvet\cite{bnf}, melyet ma (Peter Naur hozzájárulásainak köszönhetően, aki Backus eredeti nyelvét egyszerűbb alakba hozta) Backus-Naur-formaként (BNF) ismerünk. A BNF segítségével konzisztens és formális alakban tudjuk rögzíteni a nyelveket definiáló, fentebb említett elemeket.
+John W. Backus 1959-ben az ALGOL 60 nyelv nyelvi elemeinek formális definiálására alkotott meg egy leíró nyelvet\cite{bnf}, melyet napjainkban is használunk és (Peter Naur hozzájárulásainak köszönhetően, aki Backus eredeti nyelvét egyszerűbb alakba hozta) Backus-Naur-formaként (BNF) ismerünk. A BNF segítségével konzisztens és formális alakban tudjuk rögzíteni a nyelveket definiáló, fentebb említett elemeket.
 
 \begin{code}{Példa a Backus-Naur-formára}{code:bnfexample}
 <non-zero> ::= '1' | '2' | '3' 
-            | '4' | '5' | '6' 
-            | '7' | '8' | '9'
+             | '4' | '5' | '6' 
+             | '7' | '8' | '9'
 
 <zero> ::= '0'
 

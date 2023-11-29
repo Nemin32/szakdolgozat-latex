@@ -1,10 +1,10 @@
 Az értelmező jelenlegi állapotában képes az elsőéves kurzusban használt jegyzet\cite{jegyzet} összes algoritmusának értelmezésére, ellenőrzésére, és lefuttatására. A felhasználói felület lehetőséget nyújt a program tetszőleges pontjában való megállítására, a változók, vermek, és memória megvizsgálására. Mivel ez a működés megfelel a szakdolgozat által kitűzött céloknak, így az értelmező késznek tekinthető, azonban továbbfejlesztés esetén a programot a következő funkcionalitással láthatnánk még el:
 
 \begin{itemize}
-    \item A program által értelmezett szintaxist ki lehetne bővíteni a második félév jegyzetében által használt elemekre is,
-    \item Hibakeresés esetén az egyes veremben és változókban található értékeket módosíthatóvá lehetne tenni, eztáltal a program működését annak futása közben befolyásolhatnánk,
-    \item A parser hibaüzenetei nehézkesen értelmezhetőek. Ezek helyett érdemes volna könnyebben érthető üzeneteket kéne a felhasználó számára mutatni,
-    \item A futó algoritmusok esetén a \say{forró} (vagyis a kód többi részéhez képest sokkal gyakrabban lefutó) részeket külön színnel jelölhetnénk, ezáltal bemutatva mely részek is a legerőforrásigényesebbek is a kódban,
-    \item A tömbön műveleteket végző algoritmusok esetén meg lehetne becsülni az adott algoritmus futásidejét azzal, hogy különféle méretű tömböket futtatunk le rajtuk, majd kiszámoljuk hogy ezen méret növekededésével hogy nő az utasítások száma,
-    \item Egy OCR (\textit{Optical Character Recognition}, olyan algoritmusok, melyek képesek a képeken lévő szövegeket fölismerni és kigyűjteni) könyvtár integrálásának segítségével lehetővé tehetnénk, hogy az általam kigyűjtött kilencvenhat algoritmuson túl is egyszerűen vihessék be a felhasználók a nyomtatott vagy jegyzetben talált kódokat.
+    \item a program által értelmezett szintaxist ki lehetne bővíteni a második félév jegyzetében által használt elemekre is,
+    \item hibakeresés esetén az egyes veremben és változókban található értékeket módosíthatóvá lehetne tenni, eztáltal a program működését annak futása közben befolyásolhatnánk,
+    \item bár a parser megvalósítása elegáns módszeren alapul, hátránya, hogy hibaüzenetei nehezen értelmezhetőek. Érdemes volna kikutatni, hogy ez kiküszöbölhetó-e vagy más parser metódusra áttérni, hogy könnyebben érthető üzeneteket mutathassunk a felhasználó számára,
+    \item a futó algoritmusok esetén a \say{forró} (vagyis a kód többi részéhez képest sokkal gyakrabban lefutó) részeket külön színnel jelölhetnénk, ezáltal bemutatva mely részek is a legerőforrásigényesebbek is a kódban,
+    \item a tömbön műveleteket végző algoritmusok esetén meg lehetne becsülni az adott algoritmus futásidejét azzal, hogy különféle méretű tömböket futtatunk le rajtuk, majd kiszámoljuk hogy ezen méret növekededésével hogy nő az utasítások száma,
+    \item egy OCR (\textit{Optical Character Recognition}, olyan algoritmusok, melyek képesek a képeken lévő szövegeket fölismerni és kigyűjteni) könyvtár integrálásának segítségével lehetővé tehetnénk, hogy az általam kigyűjtött kilencvenhat algoritmuson túl is egyszerűen vihessék be a felhasználók a nyomtatott vagy jegyzetben talált kódokat.
 \end{itemize}

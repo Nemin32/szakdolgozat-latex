@@ -1,78 +1,3 @@
-\iffalse
-\begin{code}{A Pszeudokód szintaktikai specifikációja}{code:syntax}
-expression ::= arrayIndex | atom | binaryOperation | functionCall | not | reference | variable
-
-statement ::= arrayComprehension | assignment | block | debug | for | functionCall | functionDeclaration | if | newArray | print | return | swap | while
-
-block ::= statement+
-
-newArray ::= variable " <- " (oneDimensionalArray | multiDimensionalArray)
-multiDimensionalArray ::= "TáblaLétrehoz(" atomType ")[" expression ("," expression)+ "]"
-oneDimensionalArray ::= "Létrehoz(" atomType ")[" expression "]"
-
-swap ::= address " <-> " address
-
-assignment ::= address " <- " expression
-
-if ::= ifHead (ifElseIf* ifElse)? " elágazás vége"
-
-ifElseIf ::= ( " különben ha " expression " akkor " block)
-ifElse ::= " különben " block
-ifHead ::= "ha " expression " akkor " block 
-
-for ::= "ciklus" variable "<-" expression ("-tól" | "-től") expression "-ig" block " ciklus vége"
-
-while ::= normalWhile | doWhile
-doWhile ::= "ciklus " block " amíg " expression
-normalWhile ::= "ciklus amíg " expression block " ciklus vége"
-
-return ::= "vissza " (expression | arrayComprehension) 
-
-debug ::= "debug"
-
-print ::= "kiír " expression
-
-binaryOperation ::= logicOp
-
-mulOp ::= primary | primary ("*" | "/" | "mod") primary
-addOp ::= mulOp | mulOp ("+" | "-") mulOp
-compOp ::= addOp | addOp ("<" | "<=" | ">" | ">=" | "=" | "=/=") addOp
-logicOp ::= compOp | compOp ("és" | "vagy") compOp
-
-primary ::= "(" expression ")" | not | reference | functionCall | arrayIndex | variable | atom
-
-not ::= "~" expression
-reference ::= "&" address
-
-functionCall ::= functionName ("()" | "(" expression ("," expression)* ")")
-
-functionDeclaration ::= "függvény " functionName ("()" | "(" parameter ("," parameter)* ")") statement+ " függvény vége"
-
-functionName ::= [A-Z] ([a-z] | [A-Z])*
-
-parameter ::= "címszerint "? (functionName | variable) " : " type
-
-baseType ::= atomType | arrayType
-arrayType ::= "rendezett "? atomType " tömb"
-atomType ::= "egész" | "szöveg" | "logikai"
-
-address ::= arrayIndex | variable
-
-arrayIndex ::= variable "[" expression ("," expression)* "]"
-
-variable ::= [a-z] ([a-z] | [A-Z])+
-
-atom ::= string | number | boolean
-
-string ::= '"' [a-z]* '"'
-number ::= "0" | ( "-"? [1-9] [0-9]* )
-boolean ::= "Igaz" | "igaz" | "Hamis" | "hamis"
-
-nl ::= " "* "\n"+ " "*
-
-\end{code}
-\fi
-
 \subsubsection{Üres helyek és sorkihagyások}
 
 A Pythonhoz hasonló nyelvekkel ellentétben, a Pszeudokód nem veszi figyelembe az üres helyeket, ezeket csupán az átláthatósághoz és a kód fordításánál használjuk fel, a nyelvi elemek és utasítások elhatárolására. A végső szintaxisfából kiszűrésre kerülnek.
@@ -196,7 +121,7 @@ swap ::= address " <-> " address
 assignment ::= address " <- " expression
 \end{ebnf}
 
-Két azonos típusú változó esetén azok értékeit felcserélhetjük. Ez funkcionálisan megegyezik a jegyzet\cite{jegyzet} 3.1-es algoritmusával.
+Két azonos típusú változó (vagy tömb elem) esetén azok értékeit felcserélhetjük ideiglenes változó bevezetése nélkül. Ez funkcionálisan megegyezik a jegyzet\cite{jegyzet} 3.1-es algoritmusával.
 
 Egyéb esetben a változók és tömbök elemeinek értékét egy azonos típusú kifejezés végeredményére állíthatjuk. A kifejezésekről a \ref{sec:expressions} fejezetben írok.
 
@@ -213,12 +138,13 @@ ifHead ::= "ha " expression " akkor " block
 Három elágazás-alakot különböztetünk meg:
 
 \begin{itemize}
-    \item Egyszerű elágazás, egy predikátum ággal rendelkezik, melynek értéke ha igaz, akkor lefut az elágazás törzse,
-    \item Hamis ágas elágazás, ahol ha a predikátum értéke hamis, akkor egy alternatív ág fut le,
-    \item Végül pedig lehetőségünk van olyan elágazást is készíteni, mely tetszőleges számú egyéb predikátumot és hozzájuk tartozó törzset fogad és ezeket sorra próbálja, míg az egyik igaz nem lesz. Ha egyik sem igaz, akkor a kötelező hamis ág törzse fut le.
+    \item egyszerű elágazás, egy predikátum ággal rendelkezik, melynek értéke ha igaz, akkor lefut az elágazás törzse,
+    \item hamis ágas elágazás, ahol ha a predikátum értéke hamis, akkor egy alternatív ág fut le,
+    \item végül pedig lehetőségünk van olyan elágazást is készíteni, mely tetszőleges számú egyéb predikátumot és hozzájuk tartozó törzset fogad és ezeket sorra próbálja, míg az egyik igaz nem lesz. Ha egyik sem igaz, akkor a kötelező hamis ág törzse fut le.
 \end{itemize}
 
 \subsubsection{Predikátum-alapú ciklusok}
+\label{whileciklus}
 
 \begin{ebnf}
 while ::= normalWhile | doWhile
@@ -229,6 +155,7 @@ normalWhile ::= "ciklus amíg " expression block " ciklus vége"
 A ciklusok törzse addig fut le, amíg a megadott predikátum értéke igaz. Ha a predikátumot a ciklustörzs után írjuk, akkor annak értékétől függetlenül a törzs egyszer lefut.
 
 \subsubsection{Számláló-alapú ciklusok}
+\label{forciklus}
 
 \begin{ebnf}
 for ::= "ciklus" variable "<-" expression ("-tól" | "-től") expression "-ig" block " ciklus vége"
@@ -253,15 +180,15 @@ ciklus változó <- kezdő-től vég-ig
 ciklus vége
 \end{code}
 
-A \ref{code:for} forráskódban látható két ciklus meghívása előtt föltételezzük, hogy a \texttt{kezdő} és \texttt{vég} változók valamilyen számértékkel lettek deklarálva úgy, hogy \texttt{kezdő < vég}. Ha ez a feltétel teljesül, a két ciklus ugyanúgy \texttt{kezdő - vég + 1} alkalommal fut le, azonban a második variáns egyrészt rövidebb kód szempontjából, másrészt pedig a \texttt{változó} változó az első esetben elérhető marad a ciklus befejeztével, a másodikban viszont nem.
+A \ref{code:for} forráskódban látható két ciklus meghívása előtt föltételezzük, hogy a \texttt{kezdő} és \texttt{vég} változók valamilyen számértékkel lettek deklarálva úgy, hogy a \texttt{kezdő < vég} állítás igaz. Ha ez a feltétel teljesül, mindkét ciklus törzse \texttt{kezdő - vég + 1} alkalommal fut le, azonban a második variáns egyrészt rövidebb kód szempontjából, másrészt pedig a \texttt{változó} változó az első esetben elérhető marad a ciklus befejeztével, a másodikban viszont nem.
 
 \subsubsection{Visszatérés függvényből}
 
 \begin{ebnf}
-return ::= "vissza " (expression | arrayComprehension) 
+return ::= "vissza " (expression | ("(" expression ("," expression)* ")") ) 
 \end{ebnf}
 
-Megszakítja a jelenlegi függvény törzsét és az adott kifejezéssel visszatér. A Pszeudokód nem ad lehetőséget érték nélküli visszatérésre.
+Megszakítja a jelenlegi függvény törzsét és az adott kifejezéssel vagy kifejezésekből alkotott tömbbel visszatér. A Pszeudokód nem ad lehetőséget érték nélküli visszatérésre.
 
 \subsubsection{Hibakeresési töréspont}
 
@@ -283,16 +210,14 @@ Az adott kifejezés értéke az implementáció által definiált kimenetre ker�
 \label{sec:funcdecl}
 
 \begin{ebnf}
-functionDeclaration ::= 
-    "függvény " functionName parameterList (" : " baseType)?
-        statement+ 
-    " függvény vége"
+functionDeclaration ::= ("függvény " functionBody " függvény vége")
+                      | ("eljárás " functionBody " eljárás vége")
+
+functionBody ::= functionName parameterList (" : " baseType)? block
 
 parameterList ::="()" | (" parameter ("," parameter)* ")"
+parameter ::= (functionName | ("címszerint"? variable)) " : " type
 functionName ::= [A-Z] ([a-z] | [A-Z])*
-
-parameter ::=
-    "címszerint "? (functionName | variable) " : " type
 \end{ebnf}
 
 A függvények egy törzsből és tetszőleges számú paraméterből állnak, melyek a törzsön belül elérhetővé válnak. A nyelv lehetőséget biztosít érték alapján átadott paraméterekre és cím alapján átadottakra, ami esetén a változó függvénytörzsben történt változásai annak eredeti példányán is megjelennek.
@@ -313,6 +238,27 @@ függvény vége
 
 A függvények nevei nagybetűvel kezdődnek, majd tetszőleges karakterből állnak.
 
+\subsubsection{Tömbök létrehozása felsorolással}
+
+\begin{ebnf}
+arrayComprehension ::= variable " <- " "(" expression ("," expression)* ")"
+\end{ebnf}
+
+Létrehozhatunk tömböket azok elemeinek explicit felsorolásával. Ilyen esetben csak egydimenziós tömböket deklarálhatunk, azonban az elemek típusai eltérhetnek egymástól.
+
+\subsubsection{Megadott hosszúságú tömbök létrehozása}
+
+\begin{ebnf}
+newArray ::= variable " <- " (oneDimArray | multiDimArray)
+
+multiDimArray ::= 
+    "TáblaLétrehoz(" atomType ")[" expression ("," expression)+ "]"
+
+oneDimArray ::= "Létrehoz(" atomType ")[" expression "]"
+\end{ebnf}
+
+Lehetőségünk van hossz alapján inicializálnunk egy- és többdimenziós tömböket. Az így kapott tömb értékei a típusnak megfelelő nullértékekké válnak. Ez számok esetén 0, logikai értékeknél hamis, szövegeknél pedig az üres szöveg.
+
 \subsubsection{Utasítások}
 
 \begin{ebnf}
@@ -328,11 +274,12 @@ statement ::= arrayComprehension
     | swap 
     | while
 
-block ::= (functionDeclaration | statement)+
+block ::= statement+
+program ::= (functionDeclaration | statement)+
 \end{ebnf}
 
 Míg a kifejezések magukat az elvégzett számolásokat és műveleteket definiálják, az utasítások a program folyamatvezérlését, a változók elérését és módosítását, a standard kimenetre történő írást, és a hibakereső töréspontjait határozzák meg.
 
 Bár az utasítások definíció szerint nem térhetnek vissza értékekkel, ez alól kivételt képez a „vissza” utasítás, mely annak ellenére, hogy ehhez a kategóriához van sorolva, képes egy függvényt megszakítani és egy értékkel visszatérni.
 
-A program szintaxisfájának gyökere egy darab \texttt{<block>} elem.
+A program szintaxisfájának gyökere egy darab \texttt{<program>} elem.

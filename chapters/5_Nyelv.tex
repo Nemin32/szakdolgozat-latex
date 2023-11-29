@@ -15,7 +15,7 @@ Sajnos azonban a fejlesztés során hamar rájöttem, hogy mivel a nyelv nem ké
 Ennek ellenére a jelenlegi megvalósítás alapjait fektette le a nyelv használata, így mindenképp megérdemel egy helyet a listában. A nyelv értékelésének összefoglalója az \ref{javanyelv}-es táblázatban látható.
 
 \begin{center}
-  \captionof{table}{A Java nyelv értékelése.\label{javanyelv}}
+  \captionof{table}{A Java nyelv értékelése\label{javanyelv}}
   \begin{tabularx}{\textwidth}{X X}
     \hline
     \multicolumn{1}{c}{\bfseries{Pozitívumok}}         & \multicolumn{1}{c}{\bfseries{Negatívumok}} \\
@@ -36,7 +36,7 @@ A nyelvhez beépülő ASP.NET és Blazor könyvtárak segítségével az amúgy 
 
 Bár az egyetemi tanulmányaim miatt sok tapasztalattal rendelkezem már a nyelvvel kapcsolatban, nem szívesen kötném magam egy webes frameworkhöz, így a C\# sem megfelelő számomra a feladathoz. A nyelv értékelésének összefoglalója az \ref{csnyelv}-as táblázatban látható.
 
-\comptable{A C\# nyelv értékelése.}{csnyelv}{
+\comptable{A C\# nyelv értékelése}{csnyelv}{
   Sok személyes tapasztalat & Terjengősebb mint a többi nyelv \\
   A memóriakezelést a rendszer intézi, nekünk nem kell foglalkoznunk vele & Semennyi tapasztalatom nincs a webes frameworkökkel \\
   Blazor framework kifejezetten webes alkalmazások fejlesztésére & Futtatási környezetet igényel, nagyobb mint a fentebbi nyelvek \\
@@ -60,7 +60,7 @@ Ezeket felhasználva bármilyen bonyolultságú és hosszú adatot el tudunk tá
 Bár egyáltalán nem tartom megfelelő nyelvnek a projektemhez, nem hagyhattam ki a megemlítését, hisz a Structure and Interpretation of Computer Programs\cite{sicp} című könyv sokat segített a folyamat megértésében, mely a LISP egyik átalakított változatát, a Scheme-t használja és egy fejezetében egy interpreter majd később egy fordító megírását mutatja be. A nyelv értékelésének összefoglalója az \ref{lispnyelv}-ös táblázatban látható.
 
 \begin{center}
-  \captionof{table}{A LISP nyelv értékelése.\label{lispnyelv}}
+  \captionof{table}{A LISP nyelv értékelése\label{lispnyelv}}
   \begin{tabularx}{\textwidth}{X X}
     \hline
     \multicolumn{1}{c}{\bfseries{Pozitívumok}}               & \multicolumn{1}{c}{\bfseries{Negatívumok}}              \\
@@ -87,7 +87,7 @@ Természetesen nem hagyhatjuk ki az egyik legöregebb és mégis széles körűe
 
 A C pozitívumai közé sorolandó, hogy nagyon könnyen lehet más platformokra fordítani. Az Emscripten nevű fordítói csomag segítségével a C WASM formátumba is fordítható, ezáltal böngészőben is futni képes.
 
-A nyelv pozitívumai közé sorolandó még, hogy nem túl „meglepő” (kevés szintaxissal és aránylag átlátható szabályokkal rendelkezik), kifejezetten gyors és kis állományokká fordul, és szinte páratlan szabadságot ad a fejlesztőnek a rendszer erőforrásainak felhasználásához.
+A nyelv pozitívumai közé sorolandó még, hogy nem túl „meglepő” (kevés szintaxissal és aránylag átlátható szabályokkal rendelkezik), kifejezetten gyors és kis állományokká fordul és szinte páratlan szabadságot ad a fejlesztőnek a rendszer erőforrásainak felhasználásához.
 
 Cserébe a több évtizedes standard könyvtár és a nyelv pár furcsasága miatt könnyen futhat a programozó furcsa hibákba, mint például a szövegeknél esetlegesen hiányzó null byteok esetén történő túlcsordulások, vagy a hibásan lefoglalt / korábban felszabadított memóriaterületekre való írás/olvasás esetén előforduló végzetes hibák.
 
@@ -98,7 +98,7 @@ Végül a nyelv nem támogatja az objektum-orientált programozási paradigmát 
 Bár a nyelv az egyik személyes kedvencem, számomra nem megfelelő a feladathoz. A nyelv értékelésének összefoglalója az \ref{cnyelv} táblázatban látható.
 
 \begin{center}
-  \captionof{table}{A C nyelv értékelése.\label{cnyelv}}
+  \captionof{table}{A C nyelv értékelése\label{cnyelv}}
   \begin{tabularx}{\textwidth}{X X}
     \hline
     \multicolumn{1}{c}{\bfseries{Pozitívumok}} & \multicolumn{1}{c}{\bfseries{Negatívumok}}                                  \\
@@ -122,7 +122,7 @@ Ezen kívül a szövegkezelése a lentebb tárgyalt nyelvekhez képest igen neh�
 Mivel a nyelv használhatósága a feladathoz ennyire kétséges, így nem felel meg számomra. A nyelv értékelésének összefoglalója az \ref{cppnyelv}-es táblázatban látható.
 
 \begin{center}
-  \captionof{table}{A C++ nyelv értékelése.\label{cppnyelv}}
+  \captionof{table}{A C++ nyelv értékelése\label{cppnyelv}}
   \begin{tabularx}{\textwidth}{X X}
     \hline
     \multicolumn{1}{c}{\bfseries{Pozitívumok}}         & \multicolumn{1}{c}{\bfseries{Negatívumok}}                                             \\
@@ -141,7 +141,7 @@ Mivel a nyelv használhatósága a feladathoz ennyire kétséges, így nem felel
 
 A Rust egy relatíve új programozási nyelv, mely céljának a teljes memória-biztonságot és a gyakori hibák elkerülését tűzte ki, emellett natív fordításra is képes. A statikus analízise erősebb az összes fentebb felsorolt nyelvnél, a sebessége pedig a C/C++-hoz hasonlatos. Ezen kívül remek könyvtárakkal rendelkezik, melyek például a regexelést nagyon egyszerűvé teszik. A nyelv natívan fordul WebAssembly-re így ez se okoz problémát.
 
-Cserébe a nyelv írása nagyon nehézkes, a fordító ott ahol tud felhívja a figyelmét a programozónak az esetleges hibákra vagy kifelejtett ellenőrzésekre. Ez természetesen a program minőségére nézve abszolút pozitív, ám cserébe nagyon nehézkessé teszi a prototípusok létrehozását.
+Cserébe a nyelv írása nagyon nehézkes, a fordító ott ahol tud felhívja a figyelmét a programozónak az esetleges hibákra vagy kifelejtett ellenőrzésekre. Ez természetesen a program minőségére nézve teljes mértékben pozitívum, ám cserébe nagyon nehézkessé teszi a prototípusok létrehozását.
 
 Mivel a nyelv használata ilyen nehézkes és a prototípizálás lassú, így nem szeretném ezt a nyelvet választani. A nyelv értékelésének összefoglalója az \ref{rustnyelv}-os táblázatban látható.
 
@@ -161,7 +161,7 @@ Végül lehetőségünk van még az egész programot JavaScriptben vagy egy arra
 
 A JavaScript böngészőkben futó, általános célú nyelv. Az évtizedek során kinőtte egyszerű interaktivitást nyujtó funkcionalitását és mára egy kifejlett, dinamikus gyenge típusosságal rendelkező programozási nyelv.
 
-Előnyei közé tartozik, hogy a nyelv automatikus memóriakezeléssel, dinamikus hosszúságú tömbökkel, és mutatók helyett referenciakezeléssel rendelkezik, így az egyes értékek szabadon egymásba ágyazhatóak. Emelett, mivel a böngészők natívan támogatják, így használata nem igényel fordítóprogramot.
+Előnyei közé tartozik, hogy a nyelv automatikus memóriakezeléssel, dinamikus hosszúságú tömbökkel és mutatók helyett referenciakezeléssel rendelkezik, így az egyes értékek szabadon egymásba ágyazhatóak. Emelett, mivel a böngészők natívan támogatják, így használata nem igényel fordítóprogramot.
 
 Hátránya viszont, hogy mivel gyengén típusos nyelv, így a progamozónak saját magának kell megbizonyosodnia afelől, hogy az egyes függvények és műveletek megfelelő típusú értékeken kerülnek elvégzésre. Ez könnyen vezethet óvatlanságból hibákhoz, főleg egy ilyen volumenű programban, így végül a TypeScript mellett döntöttem. A nyelv bemutatása a \ref{jsnyelv} táblában látható.
 

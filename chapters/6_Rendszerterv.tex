@@ -4,11 +4,11 @@ Az értelmező egyes lépései külön egységekként lesznek lekódolva, melyek
 
 Ezen egységek egymással való kapcsolatát a \ref{fig:plan} ábra mutatja be. A zölddel jelölt útvonalak a sikeres lépéseket jelölik, bennük feltüntetve, hogy milyen adattal is szolgálunk a következő lépés számára. Pirossal pedig az egyes hibákat jelöljük, melyek rendre megszakítják a fordítás folyamatát és a felhasználói felületen megjelenítésre kerülnek.
 
-\addimage{rendszerterv.png}{A fordítóprogram egységei.}{plan}
+\addimage{rendszerterv.png}{A fordítóprogram egységei}{plan}
 
 Eredeti elképzelésem szerint a fordítóprogram egy szerverként működött volna, melyhez a felhasználó egy webes kliensen keresztül fért volna hozzá. Ezen szerver feladata az lett volna, hogy a felhasználó által átadott szövegeket feldolgozza, majd olyan formában küldje vissza a kliens számára, melyet az le képes futtatni.
 
-Azonban, mivel a kliens-szerver architektúra ötletét elvetettem és a TypeScript nyelv mellett döntöttem, így a program egy egyfájlos JS formátumú egységgé fog fordulni, mely egymagában képes a kód értelmezésére, futtatható állományba fordítására, és a webes interfész meghajtására is.
+Azonban, mivel a kliens-szerver architektúra ötletét elvetettem és a TypeScript nyelv mellett döntöttem, így a program egy egyfájlos JS formátumú egységgé fog fordulni, mely egymagában képes a kód értelmezésére, futtatható állományba fordítására és a webes interfész meghajtására is.
 
 Mivel a program egyszerű JavaScriptből és HTML+CSS fájlokból áll és letöltés után a végfelhasználó számítógépén fut, így szinte bármilyen interneteléréssel és statikus fájlokat elérhetővé tenni képes szerverrel felszerelt gépről felszolgálható.
 

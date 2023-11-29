@@ -1,6 +1,4 @@
-A tervezett értelmezőnek képesnek kell lennie a felhasználó által szolgáltatott nyers szövegen olyan átalakításokat végeznie, melynek végeredménye egy megállítható és léptethető programkód.
-
-Ehhez a következő lépéseket kell elvégeznünk
+A tervezett értelmezőnek képesnek kell lennie a felhasználó által szolgáltatott nyers szövegen olyan átalakításokat végeznie, melynek végeredménye egy megállítható és léptethető programkód. A következő fejezetekben ezen átalakításokat veszem sorra:
 
 \subsection{Formázás}
 \label{sec:formatting}
@@ -14,13 +12,13 @@ Rengetegféle variáció létezik az ilyen szabályrendszerekre, beleértve, hog
 Épp emiatt átfogó algoritmust, technikát, de akárcsak szabályrendszert is megnevezni ehhez a lépéshez lehetetlen volna. Ehelyett én csupán azt definiálnám itt, hogy az általam kialakított stílusra a következő szabályok vonatkoznak:
 
 \begin{itemize}
-    \item Az egyes behúzások két üres helynek felelnek meg,
-    \item Az egyes egymástól elhatárolt blokkok közé (függvények, elágazások, ciklusok) sortörést helyezünk,
-    \item Az egymást követő utasítások közé nem helyezünk sortörést, kivéve ha az előző szabály szerint tennénk,
+    \item az egyes behúzások két üres helynek felelnek meg,
+    \item az egyes egymástól elhatárolt blokkok közé (függvények, elágazások, ciklusok) sortörést helyezünk,
+    \item az egymást követő utasítások közé nem helyezünk sortörést, kivéve ha az előző szabály szerint tennénk,
     \item A kód se az elején, se a végén nem tartalmaz fölösleges üres helyeket vagy sortöréseket,
-    \item Az egyes sorok nem tartalmaznak se az elejükön, se a végükön fölösleges üres helyeket,
-    \item Ha új blokkot kezdeményező utasítással kezdődik a sor (például "ciklus", "függvény", "ha", stb.), akkor a jelenlegi sort követő kód behúzásra kerül,
-    \item Ha blokkot záró utasítással végződik egy sor ("[utasítás] vége"), akkor már a jelenlegi sort és az azokat követőket egy szinttel kevésbé húzzuk be.
+    \item az egyes sorok nem tartalmaznak se az elejükön, se a végükön fölösleges üres helyeket,
+    \item ha új blokkot kezdeményező utasítással kezdődik a sor (például "ciklus", "függvény", "ha", stb.), akkor a jelenlegi sort követő kód behúzásra kerül,
+    \item ha blokkot záró utasítással végződik egy sor ("[utasítás] vége"), akkor már a jelenlegi sort és az azokat követőket egy szinttel kevésbé húzzuk be.
 \end{itemize}
 
 Ezeket a szabályokat alkalmazva a felhasználói bemenettől függetlenül konzisztens és jól tördelt kódot kapunk, melyet továbbadunk a következő lépésnek.
@@ -40,16 +38,16 @@ Jó példa erre a FORTH, mely egy minimalista, verem-alapú programozási nyelv,
 
 Helyette a nyers szöveget a fordítóprogram által is értelmezni képes legkisebb egységekre (úgynevezett "tokenekbe") bontjuk. Ez a folyamat a tokenizálás.\footnote{A szakirodalmat böngészve több különböző kifejezéssel is találkozhatunk erre a folyamatra. A fentebb idézett szövegben az író a "szkennelés" szót alkalmazta, míg én a "tokenizálást". Megint más szövegek pedig a "lexer" vagy "lexing" kifejezéssel hivatkoznak a forrásszövegek egységekre való bontására. Szigorúan véve van különbség a fogalmak között (a tokenizáló csupán elemekre bontja a szöveget, míg egy lexer egyéb információkat is fűz az elemekhez), ám általánosságban szinonímaként használjuk őket.}
 
-A tokenek közé tartoznak például az operátorok, a változónevek, a különböző utasítások és kifejezések nevei, a különféle zárójelek, és a már tovább nem bontható, önmagukban is értelmes értékek, az úgynevezett "atomok". A Pszeudokód nyelvben a számokat, szövegeket, és logikai értékeket értjük atomok alatt.
+A tokenek közé tartoznak például az operátorok, a változónevek, a különböző utasítások és kifejezések nevei, a különféle zárójelek és a már tovább nem bontható, önmagukban is értelmes értékek, az úgynevezett "atomok". A Pszeudokód nyelvben a számokat, szövegeket és logikai értékeket értjük atomok alatt.
 
 Ugyanígy ebben a lépésben szűrjük ki a jelentéssel nem rendelkező elemeket (úgynevezett \textit{triviákat}). Ezek közé tartoznak a kommentek (hisz ezeket az értelmező figyelmen kívül hagyja) és az jelentést nem módosító üres helyek (mivel a program szempontjából nem okoz semmiféle különbséget, hogy valaki \verb|5 + 3|-t ír vagy \verb|5     +3|-t vagy akár mindhárom karaktert különböző sorba írja).
 
 Kód szempontjából a tokenek olyan adatszerkezetek, melyek ezeket a legkisebb értelmes egységeket tartalmazzák, valamiféle extra információval. Bár minden nyelvben kicsit más az eltárolt információ, van pár gyakori adattag, mely majdnem mindenhol megjelenik. Ezek a következők:
 
 \begin{itemize}
-    \item Saját típusuk, mely megmondja a token milyen értéket is tartalmaz (például atomot vagy kulcsszót),
-    \item A bemeneti szöveg releváns részletét (például "elágazás"), melyet a következő feldolgozási lépésben fogunk felhasználni komplexebb adatszerkezetek felépítésére,
-    \item A token kezdetének sor-oszlop párosát, melyet hibák esetén tudunk a felhasználó számára megjeleníteni, így segítvén a hibakeresést.
+    \item saját típusuk, mely megmondja a token milyen értéket is tartalmaz (például atomot vagy kulcsszót),
+    \item a bemeneti szöveg releváns részletét (például "elágazás"), melyet a következő feldolgozási lépésben fogunk felhasználni komplexebb adatszerkezetek felépítésére,
+    \item a token kezdetének sor-oszlop párosát, melyet hibák esetén tudunk a felhasználó számára megjeleníteni, így segítvén a hibakeresést.
 \end{itemize}
 
 A tokenizálás megvalósítása általában kétféleképp történik. Ha a nyelv, melyben az értelmezőnket írjuk, támogatja a reguláris kifejezéseket, akkor elegendő csupán minden tokentípusra egy ilyen kifejezést írnunk, majd a mintákat egyesével végigpróbálgatnunk. Ellenkező esetben nagyon hasonló az eljárás, ám itt manuálisan a bemenet karaktereinek egyesével való feldolgozásával tudjuk eldönteni, hogy milyen típusú tokent olvasunk éppen.
@@ -99,7 +97,7 @@ Ha a feladatunk csupán ennek lefuttatása volna, akkor a szintaxisfánk futtat�
 
 Erre a \ref{fig:aritmast} ábra mutat be egy egyszerű példát, mely a 10 / 2 * 15 + 5 egyenletet számolja ki a szintaxisfa közvetlen feldolgozásával.
 
-\addimage{ast.png}{Példa egy absztrakt szintaxisfára.}{aritmast}
+\addimage{ast.png}{Példa egy absztrakt szintaxisfára}{aritmast}
 
 A megvalósításom első verziójában én is ezt a verziót választottam és hamar el is érkeztem egy olyan állapothoz, melyben a kód (típusellenőrzés nélkül) értelmezésre került, majd a program egy interpreter segítségével le is futott. Ekkor azonban beláttam a módszer hátrányát, ami pedig az, hogy mivel ez egy rekurzív, fa-alapú bejárás, így nincs módunk arra, hogy egy szálon futó program esetén a folyamatot tetszőleges ponton megállíthassuk. Ez viszont ütközik a szakdolgozatom egyik fő céljával, hisz olyan értelmezőt szeretnék írni, mely belső állapotának változását a felhaználó akár minden utasítás lefutása után megvizsgálhatja.
 
@@ -133,7 +131,7 @@ Ha ezeket egy listában tároljuk el, a lista feje mindig az éppen aktív álla
 
 \subsection{Felhasználói felület}
 
-A felhasználói felület feladata, hogy interfészként szolgáljon az előző alfejezetekben vázolt folyamatokhoz, azokat meghjvja, és eredményeiket a felhasználó számára láthatóvá tegye.
+A felhasználói felület feladata, hogy interfészként szolgáljon az előző alfejezetekben vázolt folyamatokhoz, azokat meghjvja és eredményeiket a felhasználó számára láthatóvá tegye.
 
 Ez célunktól függően lehet automatikus (mely esetén a felhasználó csupán elindítja a folyamatot, esetleg úgy, hogy a program indulásakor bizonyos paramétereket beállít) vagy pedig interaktív (mely esetén a program bizonyos utasítások esetén megáll és a felhasználótól kapott bemenet alapján folytatja működését). Megjelenítés szempontjából készíthetünk parancssori programot, grafikus interfészt, vagy interneten át szolgált webes applikációt.
 

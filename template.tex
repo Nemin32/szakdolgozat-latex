@@ -24,9 +24,11 @@
 
 \usepackage{parskip}
 \usepackage{tabularx}
+\usepackage{xltabular}
 \usepackage[format=plain, font=normalfont]{caption}
 \usepackage{listings}
 \usepackage{dirtytalk}
+\usepackage{multicol}
 
   % Graciously taken from: https://tex.stackexchange.com/a/574950
 \lstdefinestyle{mystyle}{
@@ -89,7 +91,7 @@
     label={#2},
     alsoletter={()[].=},
     }
-    \minipage[t]{\linewidth}\vspace{-8pt}
+    \minipage[t]{\linewidth}\vspace{-14pt}
     }
   {\endminipage}
 
@@ -99,7 +101,7 @@
     % caption={#1} \label{ebnf:#2},
     alsoletter={()[].=},
     }
-    \minipage[t]{\linewidth}\vspace{-8pt}
+    \minipage[t]{\linewidth}\vspace{-14pt}
 }{\endminipage}
 
 
@@ -181,7 +183,7 @@
 
 \newcommand{\comptable}[3]{
 
-    \minipage[t]{\linewidth}\vspace{-8pt}
+    \minipage[t]{\linewidth}\vspace{-14pt}
 \begin{center}
   \captionof{table}{#1\label{#2}}
   \begin{tabularx}{\textwidth}{X X}
