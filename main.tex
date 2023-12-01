@@ -12,11 +12,24 @@
 \pagenumbering{gobble}
 
 % ELŐLAPOK: borító, feladatlap, nyilatkozat, konzultációs napló
-\includepdf[pages=-]{includes/BELSO-BORITOLAP.pdf}
+\includepdf[pages=-]{includes/BELSO-BORITOLAP2.pdf}
 % \includepdf[pages=-]{includes/feladatlap.pdf}
 \includepdf[pages=-]{includes/nyilatkozat.pdf}
 % \includepdf[pages=-]{includes/konzultacios_naplo.pdf}
 
+% -----------------------------------------------------
+
+% ITT KELL HOZZÁADNI A FEJEZETEKET, CÍM NAGYBETŰVEL:
+
+\clearpage
+\section{ABSZTRAKT}
+
+A következő szakdolgozat témája az Óbudai Egyetemen tanított, a programozás alapjainak demonstrálására használt Pszeudokód programozási nyelv és egy, a nyelvhez írt értelmezőprogram elkészítésének bemutatása. Célja, hogy dokumentálja és elmagyarázza egy programozási nyelv értelmezőjének megalkotását egy informális specifikációból kiindulva. Ehhez a nyelv szintaxisának és szemantikájának definiálása után sorra veszem a forráskód lefordításának lépéseit. Bevezetésre kerül a tokenizálás és az értelmezés fogalma, majd annak folyamata, hogy a fává alakított kódot hogyan tudjuk önálló lépésekre bontani. Ezután következik annak a virtuális gépnek definiálása, mely az előző fázisban kapott lépéseket végre is tudja hajtani és ezt oly módon a felhasználó elé tárni, hogy az belelásson a program belső működésébe és igény esetén a kódot megállítani és akár léptetni is tudja. A fogalmak és folyamatok leírása után bemutatok két egyéb fordítóprogramot és az elkészítésükhöz használt technológiákat, majd kiválasztom a saját projektemhez használt nyelvet. Végül a fordítás egyes lépéseit meg is valósítom, leírva azok gyakorlati működését a programomban. Az dolgozat végére egy olyan alkalmazás készül el, mely az egyetemen oktatott algoritmusokat képes végrehajtani és működésüket demonstrálni, ezáltal segítséget nyújtva az elsőéves hallgatók számára azok megértéséhez.
+
+\clearpage
+\section{ABSTRACT}
+
+The following dissertation details the Pszeudokód ("Pseudocode") programming language taught at Óbuda University, along with the creation of a compiler capable of interpreting the language. The goal of the paper is to document and explain the process of creating a compiler when given an informal specification. I begin by describing the syntax and semantics of the language, followed by detailing the individual steps of transforming source code into a runnable state. I introduce the concepts of tokenizing and parsing, followed by the process during which the code's syntax-tree is unraveled into steps which can be individually executed. This is then followed by the introduction of a virtual machine, which is capable of running the instructions created during the last step in a way, that allows the user to monitor the algorithm's inner workings and, if need be, stop the program and execute instructions one by one. After describing these concepts and processes, I demonstrate two other compilers and their technologies, followed by choosing which language to use for my own project. Finally, I realize the steps described above, during which I explain their functionality and behavior specific to my program. By the end of this dissertation, the finished application is capable of interpreting and executing the algorithms taught at the university, and thus help first-year students understand them better.
 
 \newpage
 \tableofcontents
@@ -24,11 +37,6 @@
 
 % csak a tartalomjegyzék után kezdődik a számozás
 \pagenumbering{arabic}
-
-
-% -----------------------------------------------------
-
-% ITT KELL HOZZÁADNI A FEJEZETEKET, CÍM NAGYBETŰVEL:
 
 \clearpage
 \section{BEVEZETÉS}

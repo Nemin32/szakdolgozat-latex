@@ -269,7 +269,7 @@ Az utasításkód mellett az utasítástól függően eltárolhatunk még nullá
 
 \subsubsection{Utasítás-számláló} 
 
-Egy kód által csak indirekt módon változtatható regiszter, mellyel számontartjuk a jelenleg végrehajtott utasítás indexét, tehát a jelenlegi utasítás mindig \texttt{tape[PC]}. Értéke 1-el nő minden végrehajtási lépés után, beleértve az ugrásokat is, hisz a \texttt{LABEL} utasítás amit így átugrunk amúgy se végez egyéb feladatot.
+Egy kód által csak indirekt módon változtatható regiszter, mellyel számontartjuk a jelenleg végrehajtott utasítás indexét. Értéke 1-el nő minden végrehajtási lépés után, beleértve az ugrásokat is, hisz a \texttt{LABEL} utasítás amit így átugrunk amúgy se végez egyéb feladatot.
 
 \subsubsection{Számláló-verem} 
 
@@ -281,7 +281,9 @@ Egy veremként használt dinamikus méretű tömb, mely atomi értékeket és mu
 
 \subsubsection{Memória}
 
-A program memóriáját egy dinamikusan növekvő tömbbel szimuláljuk, mely feladata atomi értékek és ezekből felépülő tömbök eltárolása. Az egyes memóriacellákat azok sorszáma alapján azonosítjuk. A memória számontartja mely cellák címei vannak változóhoz kötve, ezáltal a már nem használt adatok kiszűrhetőek és celláik felszabadíthatóak új értékek számára,
+A program memóriáját egy dinamikusan növekvő tömbbel szimuláljuk, mely feladata atomi értékek és ezekből felépülő tömbök eltárolása. Az egyes memóriacellákat azok sorszáma alapján azonosítjuk.
+
+A futtatási környezet számontartja mely cellák címei vannak változóhoz kötve vagy vannak elhelyezve a vermen. Ezeken végigiterálva meg tudjuk vizsgálni mely memóriacellák tartalmaznak még használt adatokat és melyeket szabadíthatjuk fel új értékek számára.
 
 \subsubsection{Változók} 
 
@@ -327,7 +329,7 @@ Bár \ref{code_debug} táblában látható két kulcsszó nem része a nyelv spe
 A \ref{code_jump} tábla mutatja be a nyelv által támogatott két elágazási formát. A szokásos Assembly nyelvekhez hasonlóan itt is lehetőségünk van feltételes és feltétel nélküli ugrásokhoz, ám azoktól eltérően külön "ugrás ha [nagyobb, kisebb, (nem) egyenlő]" utasítások helyett, a feltételes ugrás a verem tetején lévő logikai érték alapján dönti el, hogy a program számláló változzon-e vagy sem.
 
 \codetable{Ugrásokra vonatkozó utasítások}{code_jump}{
-    LABEL & név & Létrehoz egy \textit{név} nevű cimkét, melyre az ugrások hivatkozhatnak. \\
+    LABEL & név & Létrehoz egy \textit{név} nevű cimkét, melyre az ugrások hivatkozhatnak. Egyéb műveletet nem végez. \\
     JMP & cimke & Feltétel nélkül ugrik a \textit{cimke} nevű cimkéhez. \\
     FJMP &cimke & Ugrik a \textit{cimke} nevű cimkéhez, ha a verem tetején lévő elem hamis. \\
 }
@@ -341,12 +343,12 @@ Mivel a Pszeudokód lehetőséget biztosít függvények és eljárások létreh
 \codetable{Függvényhívás és visszatérési utasítások}{code_func}{
     CALL & függvény & Meghívja a \textit{függvény} függvényt. A jelenlegi program számláló (PC) elmentésre kerül a számláló-verembe, majd ugrunk a \textit{függvény} cimkéhez. \\
     RETURN & - & Az \texttt{LSCOPE} művelethez hasonlóan megszünteti a jelenlegi változótartományt, majd leveszi a számláló-verem legfelső elemét és betölti a PC regiszterbe. \\
-    RETCMP & hossz & \textit{hossz} hosszúságú tömböt készít a veremben lévő elemekből, majd egy erre mutató címet helyez el a tömbön. \\
+    RETCMP & hossz & \textit{hossz} hosszúságú tömböt készít a veremben lévő elemekből, majd egy erre mutató címet helyez el a tömbön. Ezután a fentebb tárgyalt módon visszatér. \\
 }
 
 Maguk a függvények a kód többi részével együtt kerülnek listába, a fordító nem helyezi őket külön memóriaterületre. Azonban, hogy elkerüljük, hogy a futás során az értelmező belépjen egy meg nem hívott függvény törzsébe, a függvények elé egy feltétel nélküli ugrást helyezünk, mellyel annak végére ugrunk és onnan folytatjuk a végrehajtást.
 
-A \texttt{CALL} utasítás lebontható volna egy egyszerű feltétel nélküli ugrásra és a program számláló jelenlegi értékének a számláló-veremre helyezéséért felelős utasításokra, ám mivel a számláló-veremben tárolt értékek csak függvényhívás és azokból való visszatérés esetén módosulnak, így egybe vettem a kettőt.
+A \texttt{CALL} utasítás lebontható volna egy egyszerű feltétel nélküli ugrásra és a program számláló jelenlegi értékének a számláló-veremre helyezéséért felelős utasításokra, ám mivel a számláló-veremben tárolt értékek csak függvényhívás és azokból való visszatérés esetén módosulnak, így az átláthatóság kedvéért egybe vettem a kettőt.
 
 \subsubsection{Veremműveletek}
 
